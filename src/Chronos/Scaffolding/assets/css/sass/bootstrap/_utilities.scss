@@ -1,0 +1,76 @@
+//
+// Utility classes
+// --------------------------------------------------
+
+
+// Floats
+// -------------------------
+
+.clearfix {
+  @include clearfix();
+}
+
+.center-block {
+  @include center-block();
+}
+
+.pull-right {
+  float: right !important;
+}
+
+.pull-left {
+  float: left !important;
+}
+
+@media (min-width: $screen-sm-min) {
+    .pull-sm-left {
+        float: left;
+    }
+    .pull-sm-right {
+        float: right;
+    }
+}
+
+@media (min-width: $screen-md-min) {
+    .pull-md-left {
+        float: left;
+    }
+    .pull-md-right {
+        float: right;
+    }
+}
+
+@media (min-width: $screen-lg-min) {
+    .pull-lg-left {
+        float: left;
+    }
+    .pull-lg-right {
+        float: right;
+    }
+}
+
+// Toggling content
+// -------------------------
+.hide {
+  display: none !important;
+}
+
+.show {
+  display: block !important;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.text-hide {
+  @include text-hide();
+}
+
+
+// Hide from screenreaders and browsers
+//
+.hidden {
+  display: none !important;
+  visibility: hidden !important;
+}

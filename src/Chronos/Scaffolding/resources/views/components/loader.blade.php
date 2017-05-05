@@ -1,0 +1,1 @@
+<div class="loader" v-if="loader"></div><!--/.loader -->

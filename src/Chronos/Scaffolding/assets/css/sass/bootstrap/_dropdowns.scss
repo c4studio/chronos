@@ -1,0 +1,118 @@
+//
+// Dropdown menus
+// --------------------------------------------------
+.dropdown {
+	display: inline-block;
+	position: relative;
+}
+
+.dropdown-toggle:focus {
+	outline: 0;
+}
+
+.dropdown-menu {
+	background-color: #ffffff;
+	background-clip: padding-box;
+	border: 1px solid $gray-light;
+	display: none;
+	float: left;
+	left: 3px;
+	list-style: none;
+	margin: 3px 0 0;
+	padding: 0;
+	position: absolute;
+	top: 100%;
+	width: calc(100% - 6px);
+	min-width: 200px;
+	z-index: 1000;
+
+	.divider {
+		@include nav-divider($gray-light);
+	}
+
+	a {
+		clear: both;
+		color: $gray-darker;
+		cursor: pointer;
+		display: block;
+		padding: 10px;
+		line-height: 1;
+		white-space: nowrap;
+
+		&:hover,
+		&:focus {
+			background-color: lighten($gray-lighter, 2.5%);
+			color: $gray-darker;
+			outline: none;
+			text-decoration: none;
+		}
+	}
+}
+
+// Active state
+.dropdown-menu > .active > a {
+	&,
+	&:hover,
+	&:focus {
+		background-color: $brand-primary;
+		color: #ffffff;
+	}
+}
+
+// Disabled state
+.dropdown-menu > .disabled > a {
+	color: $gray;
+
+	&:hover,
+	&:focus {
+		@include reset-filter();
+		background-color: transparent;
+		cursor: not-allowed;
+	}
+}
+
+// Open state for the dropdown
+.open {
+	& > .dropdown-menu {
+		display: block;
+	}
+}
+
+// Menu positioning
+.dropdown-menu-left {
+	left: 0;
+	right: auto;
+}
+
+.dropdown-menu-right {
+	left: auto;
+	right: 0;
+}
+
+// Dropdown section headers
+.dropdown-header {
+	background-color: $gray-darker;
+	color: #ffffff;
+	display: block;
+	line-height: 1;
+	padding: 10px;
+}
+
+// Backdrop to catch body clicks on mobile, etc.
+.dropdown-backdrop {
+	bottom: 0;
+	left: 0;
+	position: fixed;
+	right: 0;
+	top: 0;
+	z-index: 990;
+}
+
+// Allow for dropdowns to go bottom up (aka, dropup-menu)
+.dropup {
+	.dropdown-menu {
+		bottom: 100%;
+		margin-bottom: 3px;
+		top: auto;
+	}
+}

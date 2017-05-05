@@ -1,0 +1,117 @@
+//
+// Buttons
+// --------------------------------------------------
+
+
+// Base styles
+// --------------------------------------------------
+.btn {
+	@include user-select(none);
+	background-image: none;
+	border: none;
+	border-radius: 3px;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 14px;
+	line-height: 1;
+	margin-bottom: 0;
+	min-width: 100px;
+	padding: 8px 15px;
+	text-align: center;
+	vertical-align: middle;
+	white-space: nowrap;
+
+	&,
+	&:active,
+	&.active {
+		&:focus {
+			outline: 0;
+		}
+	}
+
+	&:hover,
+	&:focus {
+		text-decoration: none;
+	}
+
+	&:active,
+	&.active {
+		background-image: none;
+		outline: 0;
+	}
+
+	&.disabled,
+	&[disabled],
+	fieldset[disabled] & {
+		@include opacity(.65);
+		cursor: not-allowed;
+		pointer-events: none;
+	}
+}
+
+
+// Alternate buttons
+// --------------------------------------------------
+.btn-primary {
+	@include button-variant(#ffffff, $brand-primary);
+}
+.btn-secondary {
+	@include button-variant(#ffffff, $brand-secondary);
+}
+.btn-action {
+	@include button-variant(#ffffff, $brand-action);
+}
+// Success appears as green
+.btn-success {
+	@include button-variant(darken($brand-success, 25%), $brand-success);
+}
+// Info appears as blue-green
+.btn-info {
+	@include button-variant(#ffffff, $brand-info);
+}
+// Warning appears as orange
+.btn-warning {
+	@include button-variant(darken($brand-warning, 25%), $brand-warning);
+}
+// Danger and error appear as red
+.btn-danger {
+	@include button-variant(#ffffff, $brand-danger);
+}
+// Cancel appears as gray
+.btn-cancel {
+	@include button-variant($gray, darken($gray-lighter, 2%));
+}
+
+
+// Button Sizes
+// --------------------------------------------------
+.btn-lg {
+	border-radius: 3px;
+	line-height: 1;
+	font-size: 14px;
+	padding: 12px 15px;
+}
+
+
+// Block button
+// --------------------------------------------------
+.btn-block {
+	display: block;
+	padding-left: 0;
+	padding-right: 0;
+	width: 100%;
+}
+
+// Vertically space out multiple block buttons
+.btn-block + .btn-block {
+	margin-top: 5px;
+}
+
+// Specificity overrides
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+	&.btn-block {
+		width: 100%;
+	}
+}

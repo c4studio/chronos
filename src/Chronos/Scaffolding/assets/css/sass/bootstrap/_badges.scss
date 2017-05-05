@@ -1,0 +1,48 @@
+//
+// Badges
+// --------------------------------------------------
+
+
+// Base classes
+.badge {
+	background-color: $brand-primary;
+	border-radius: 3px;
+	color: #ffffff;
+	display: inline-block;
+	font-size: 11px;
+	font-weight: 900;
+	line-height: 1;
+	min-width: 10px;
+	padding: 2px 8px 3px;
+	text-align: center;
+	vertical-align: baseline;
+	white-space: nowrap;
+
+	&:empty {
+		display: none;
+	}
+
+	.btn & {
+		position: relative;
+		top: -1px;
+	}
+}
+
+a.badge {
+	&:hover,
+	&:focus {
+		color: #ffffff;
+		text-decoration: none;
+		cursor: pointer;
+	}
+}
+
+// Account for counters in navs
+a.list-group-item.active > .badge,
+.nav-pills > .active > a > .badge {
+	background-color: #ffffff;
+	color: $brand-primary;
+}
+.nav-pills > li > a > .badge {
+	margin-left: 3px;
+}

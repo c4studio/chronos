@@ -1,0 +1,521 @@
+//
+// Forms
+// --------------------------------------------------
+
+
+// Normalize non-controls
+//
+fieldset {
+	border: 0;
+	margin: 0;
+	min-width: 0;
+	padding: 0;
+}
+
+legend {
+	border: 0;
+	border-bottom: 1px solid $gray-lighter;
+	display: block;
+	font-size: 12px;
+	line-height: 1;
+	margin-bottom: 15px;
+	padding: 0 0 5px;
+	text-transform: uppercase;
+	width: 100%;
+}
+
+label {
+	display: inline-block;
+	font-weight: 700;
+	margin-bottom: 5px;
+}
+
+
+// Normalize form controls
+//
+
+// Override content-box in Normalize (* isn't specific enough)
+input[type="search"] {
+	@include box-sizing(border-box);
+}
+
+// Position radios and checkboxes better
+input[type="radio"],
+input[type="checkbox"] {
+	line-height: normal;
+	margin: 4px 0 0;
+	margin-top: 1px \9; /* IE8-9 */
+}
+
+// Set the height of file controls to match text inputs
+input[type="file"] {
+	display: block;
+}
+
+// Make range inputs behave like textual form controls
+input[type="range"] {
+	display: block;
+	width: 100%;
+}
+
+// Make multiple select elements height not fixed
+select[multiple],
+select[size] {
+	height: auto;
+}
+
+// Focus for file, radio, and checkbox
+input[type="file"]:focus,
+input[type="radio"]:focus,
+input[type="checkbox"]:focus {
+	@include tab-focus();
+}
+
+// Adjust output element
+output {
+	color: $gray-darker;
+	display: block;
+	font-size: 12px;
+	line-height: 1;
+	padding-top: 5px;
+}
+
+
+// Common form controls
+//
+// Shared size and type resets for form controls. Apply `.form-control` to any
+// of the following form controls:
+//
+// select
+// textarea
+// input[type="text"]
+// input[type="password"]
+// input[type="datetime"]
+// input[type="datetime-local"]
+// input[type="date"]
+// input[type="month"]
+// input[type="time"]
+// input[type="week"]
+// input[type="number"]
+// input[type="email"]
+// input[type="url"]
+// input[type="search"]
+// input[type="tel"]
+// input[type="color"]
+.form-control {
+	@include box-shadow(inset 0 1px 0 $gray-light);
+	background-color: $gray-lighter;
+	background-image: none;
+	border: none;
+	border-radius: 3px;
+	color: $gray-darker;
+	display: block;
+	font-size: 12px;
+	height: 30px;
+	line-height: 30px;
+	padding: 0 10px;
+	width: 100%;
+
+	&:focus {
+		outline: none;
+	}
+
+	// Placeholder
+	@include placeholder($gray);
+
+	// Disabled and read-only inputs
+	&[disabled],
+	&[readonly],
+	fieldset[disabled] & {
+		cursor: not-allowed;
+		opacity: .75;
+	}
+
+	&.input-lg {
+		font-size: 18px;
+		height: 45px;
+		line-height: 45px;
+	}
+
+	&.short-control {
+		width: $input-short-width;
+	}
+}
+
+// Reset height for textareas
+textarea.form-control {
+	height: auto;
+	line-height: 1.5;
+	padding: 10px;
+	resize: vertical;
+}
+
+
+// Search inputs in iOS
+input[type="search"] {
+	-webkit-appearance: none;
+}
+
+
+// Special styles for iOS date input
+input[type="date"] {
+	line-height: 1;
+}
+
+
+// Form groups
+//
+.form-group {
+	margin-bottom: 15px;
+
+	// Feedback states
+	&.has-warning {
+		.help-block,
+		.control-label,
+		.radio,
+		.checkbox,
+		.radio-inline,
+		.checkbox-inline  {
+			color: darken($brand-warning, 20%);
+		}
+
+		.form-control {
+			@include box-shadow(inset 0 1px 0 $brand-warning);
+			background-color: lighten($brand-warning, 30%);
+		}
+	}
+
+	&.has-error,
+	.has-error {
+		.help-block,
+		.control-label,
+		.radio,
+		.checkbox,
+		.radio-inline,
+		.checkbox-inline  {
+			color: darken($brand-danger, 10%);
+		}
+
+		.form-control {
+			@include box-shadow(inset 0 1px 0 lighten($brand-danger, 20%));
+			background-color: lighten($brand-danger, 30%);
+		}
+	}
+}
+
+
+// Checkboxes and radios
+//
+.radio,
+.checkbox {
+	display: block;
+	margin-bottom: 10px;
+	padding-left: 20px;
+
+	label {
+		cursor: pointer;
+		display: inline;
+	}
+}
+
+.radio input[type="radio"],
+.radio-inline input[type="radio"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
+	float: left;
+	margin-left: -20px;
+}
+.radio + .radio,
+.checkbox + .checkbox {
+	margin-top: -5px; // Move up sibling radios or checkboxes for tighter spacing
+}
+
+// Radios and checkboxes on same line
+.radio-inline,
+.checkbox-inline {
+	cursor: pointer;
+	display: inline-block;
+	font-weight: normal;
+	margin-bottom: 0;
+	padding-left: 15px;
+	vertical-align: middle;
+}
+
+.radio-inline + .radio-inline,
+.checkbox-inline + .checkbox-inline {
+	margin-top: 0;
+	margin-left: 10px;
+}
+
+// Apply same disabled cursor tweak as for inputs
+//
+input[type="radio"],
+input[type="checkbox"],
+.radio,
+.radio-inline,
+.checkbox,
+.checkbox-inline {
+	&[disabled],
+	fieldset[disabled] & {
+		cursor: not-allowed;
+	}
+}
+
+// Mandatory fields
+//
+.control-label {
+	color: $gray;
+	font-size: 11px;
+	font-weight: 900;
+	margin-bottom: 3px;
+	text-transform: uppercase;
+
+	&.label-req:after {
+		color: $brand-danger;
+		content: '*';
+		display: inline;
+		font-size: 15px;
+		line-height: 11px;
+		margin-left: 3px;
+	}
+}
+
+// Static form control text
+//
+.form-control-static {
+	margin-bottom: 0;
+}
+
+
+// Autocomplete
+//
+.form-autocomplete {
+	font-size: $font-size-base;
+	position: relative;
+
+	.suggestions {
+		background-color: $gray-lighter;
+		border: 1px solid $gray-light;
+		left: 5px;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		position: absolute;
+		width: calc(100% - 10px);
+		z-index: 10;
+
+		& > li {
+			height: 25px;
+			line-height: 25px;
+			padding: 0 10px;
+
+			&:hover {
+				background-color: $gray-light;
+				cursor: pointer;
+			}
+
+			&.no-results {
+				font-size: $font-size-base;
+				font-weight: 600;
+				margin: 0;
+				text-align: left;
+			}
+		}
+	}
+
+	.tags {
+		list-style: none;
+		margin: 10px 0 0;
+		padding: 0;
+
+		& > li {
+			background-color: $gray-lighter;
+			border-radius: 3px;
+			box-shadow: inset -1px -1px 0 $gray-light;
+			display: inline-block;
+			height: 25px;
+			line-height: 25px;
+			margin-right: 15px;
+			padding: 0 5px 0 10px;
+
+			&:hover {
+				background-color: $brand-danger;
+				box-shadow: inset -1px -1px 0 lighten($brand-danger, 10%);
+				color: #ffffff;
+				cursor: pointer;
+
+				&:after {
+					border-left-color: lighten($brand-danger, 10%);
+				}
+			}
+
+			span {
+				vertical-align: top;
+			}
+
+			&:after {
+				border-left: 1px solid $gray-light;
+				content: '\00d7';
+				display: inline-block;
+				font-size: 17px;
+				margin-left: 5px;
+				padding-left: 5px;
+				text-align: center;
+				vertical-align: top;
+				width: 21px;
+			}
+		}
+	}
+}
+
+
+// Help text
+//
+.help-block {
+	display: block;
+	margin-top: 5px;
+	margin-bottom: 10px;
+	color: darken($gray, 10%);
+}
+
+
+// Inline forms
+//
+.form-inline {
+	@media (min-width: $screen-sm-min) {
+		.form-group {
+			display: inline-block;
+			margin-bottom: 0;
+			margin-right: 10px;
+			vertical-align: middle;
+		}
+
+		.form-control {
+			display: inline-block;
+			vertical-align: middle;
+			width: auto;
+
+			&.short-control {
+				width: $input-short-width;
+			}
+		}
+
+		.input-group {
+			display: inline-table;
+			vertical-align: middle;
+		}
+
+		.input-group-addon {
+			width: auto;
+		}
+
+		.control-label {
+			margin-bottom: 0;
+			margin-right: 5px;
+			vertical-align: middle;
+		}
+
+		.radio,
+		.checkbox {
+			display: inline-block;
+			margin-top: 0;
+			margin-bottom: 0;
+			padding-left: 0;
+			vertical-align: middle;
+		}
+
+		.radio input[type="radio"],
+		.checkbox input[type="checkbox"] {
+			float: none;
+			margin-left: 0;
+		}
+
+		// Validation states
+		.has-feedback .form-control-feedback {
+			top: 0;
+		}
+	}
+}
+
+
+// Horizontal forms
+//
+.form-horizontal {
+	.control-label,
+	.radio,
+	.checkbox,
+	.radio-inline,
+	.checkbox-inline {
+		margin-top: 0;
+		margin-bottom: 0;
+		padding-top: 5px;
+	}
+
+	.ui-select {
+		min-width: 0;
+	}
+
+	.form-control,
+	.ui-select-field {
+		@include placeholder(darken($gray-light, 30%));
+		background-color: transparent;
+		border-radius: 0;
+		box-shadow: none;
+		color: $gray-darker;
+		height: auto;
+		line-height: 1;
+		padding: 6px 0 0;
+	}
+
+	.radio,
+	.checkbox {
+		min-height: 20px;
+	}
+
+	// Make form groups behave like rows
+	.form-group {
+		@include make-row();
+		margin: 0 0 15px;
+	}
+
+	.form-control-static {
+		padding-top: 5px;
+	}
+
+	// Only right align form labels here when the columns stop stacking
+	@media (min-width: $screen-sm-min) {
+		.control-label {
+			display: block;
+			text-align: right;
+		}
+	}
+
+	// Validation states
+	.has-feedback .form-control-feedback {
+		right: ($grid-gutter-width / 2);
+		top: 0;
+	}
+}
+
+
+// Info group
+//
+.info-group {
+	@extend .form-group;
+}
+
+.info-label {
+	@extend .control-label;
+	display: block;
+}
+
+.info-value {
+	a {
+		color: $gray-darker;
+		text-decoration: none;
+
+		&:hover {
+			color: darken($brand-action, 10%);
+		}
+	}
+}

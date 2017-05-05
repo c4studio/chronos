@@ -1,0 +1,277 @@
+//
+// Tables
+// --------------------------------------------------
+
+
+table {
+	max-width: 100%;
+}
+
+th {
+	text-align: left;
+}
+
+
+// Baseline styles
+.table {
+	margin-bottom: 15px;
+	width: 100%;
+
+	// Cells
+	& > thead,
+	& > tbody,
+	& > tfoot {
+		& > tr {
+			& > td {
+				border-top: 1px solid $gray-lighter;
+				line-height: 1;
+				padding: 15px 10px;
+				vertical-align: top;
+			}
+		}
+	}
+
+	// Column headings
+	& > thead > tr > th,
+	& > tbody > tr > th {
+		border-bottom: 1px dashed $gray-light;
+		padding: 15px 10px;
+		text-transform: uppercase;
+		vertical-align: bottom;
+
+		& > a {
+			color: $text-color;
+			cursor: pointer;
+			text-decoration: none;
+
+			&.active {
+				color: $brand-primary;
+			}
+
+			&:hover {
+				color: $brand-secondary;
+			}
+		}
+	}
+
+	// Cells
+	& > tbody > tr > td {
+		border-bottom: 1px dashed $gray-light;
+		border-top: none;
+		height: 50px;
+		line-height: 1.5;
+		padding: 5px 10px;
+		vertical-align: middle;
+	}
+
+	// Remove top border from thead by default
+	& > caption + thead,
+	& > colgroup + thead,
+	& > thead:first-child {
+		& > tr:first-child {
+			& > th,
+			& > td {
+				border-top: 0;
+			}
+		}
+	}
+
+	// Account for multiple tbody instances
+	& > tbody + tbody {
+		border-top: 2px solid $gray-lighter;
+	}
+
+	// Nesting
+	.table {
+		background-color: $body-bg;
+	}
+
+	// Child elements
+	& > tbody {
+		& > tr {
+			&.child {
+				& > td {
+					border-top: none;
+
+					&:first-child {
+						padding-left: 40px;
+						position: relative;
+
+						&:before {
+							background: url(../img/tree-child.png) 0 0 no-repeat;
+							content: '';
+							display: inline-block;
+							height: 21px;
+							left: 20px;
+							margin-top: -21px;
+							position: absolute;
+							top: 50%;
+							width: 11px;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	em {
+		font-size: 13px;
+		font-style: normal;
+		font-weight: 600;
+	}
+
+	small {
+		color: darken($gray, 10%);
+		display: block;
+		font-size: 12px;
+	}
+}
+
+
+// Condensed
+//
+.table-condensed {
+	& > tbody > tr > td {
+		height: 25px;
+	}
+}
+
+
+// Bordered version
+//
+.table-bordered {
+	border: 1px solid $gray-lighter;
+
+	& > thead,
+	& > tbody,
+	& > tfoot {
+		& > tr {
+			& > th,
+			& > td {
+				border: 1px solid $gray-lighter;
+			}
+		}
+	}
+}
+
+
+// Zebra-striping
+//
+.table-striped {
+	& > tbody > tr:nth-child(odd) {
+		& > td,
+		& > th {
+			background-color: lighten($gray-lighter, 4%);
+		}
+	}
+}
+
+
+// Hover effect
+//
+.table-hover-all {
+	& > tbody > tr > td.hover {
+		background-color: $gray-lighter;
+	}
+}
+
+.table-hover,
+.table-hover-all {
+	& > tbody > tr:hover {
+		& > td,
+		& > th {
+			background-color: $gray-lighter;
+		}
+
+		& > td.hover {
+			background-color: darken($gray-lighter, 5%);
+		}
+	}
+}
+
+
+// Table cell sizing
+//
+table col[class*="col-"] {
+	display: table-column;
+	float: none;
+	position: static;
+}
+
+table {
+	td,
+	th {
+		&[class*="col-"] {
+			display: table-cell;
+			float: none;
+			position: static;
+		}
+	}
+}
+
+
+// Responsive tables
+@media (max-width: $screen-sm-max) {
+	.table-responsive {
+		border: 1px solid $gray-lighter;
+		margin-bottom: 15px;
+		overflow-x: scroll;
+		overflow-y: hidden;
+		-ms-overflow-style: -ms-autohiding-scrollbar;
+		-webkit-overflow-scrolling: touch;
+		width: 100%;
+
+		// Tighten up spacing
+		& > .table {
+			margin-bottom: 0;
+
+			// Ensure the content doesn't wrap
+			& > thead,
+			& > tbody,
+			& > tfoot {
+				& > tr {
+					& > th,
+					& > td {
+						white-space: nowrap;
+					}
+				}
+			}
+		}
+
+		// Special overrides for the bordered tables
+		& > .table-bordered {
+			border: 0;
+
+			// Nuke the appropriate borders so that the parent can handle them
+			& > thead,
+			& > tbody,
+			& > tfoot {
+				& > tr {
+					& > th:first-child,
+					& > td:first-child {
+						border-left: 0;
+					}
+
+					& > th:last-child,
+					& > td:last-child {
+						border-right: 0;
+					}
+				}
+			}
+
+			// Only nuke the last row's bottom-border in `tbody` and `tfoot` since
+			// chances are there will be only one `tr` in a `thead` and that would
+			// remove the border altogether.
+			& > tbody,
+			& > tfoot {
+				& > tr:last-child {
+					& > th,
+					& > td {
+						border-bottom: 0;
+					}
+				}
+			}
+
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+  "name": "chronos/scaffolding",
+  "description": "Chronos scaffolding",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Peter Illés",
+      "email": "peter.illes@c4studio.ro"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.4"
+  },
+  "autoload": {
+    "classmap": [
+      "database"
+    ],
+    "files": [
+      "app/Helpers/helpers.php"
+    ]
+  },
+  "minimum-stability": "dev"
+}

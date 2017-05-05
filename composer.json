@@ -1,0 +1,28 @@
+{
+  "name": "c4studio/chronos",
+  "description": "Chronos CMS - A developer friendly CMS built by C4studio",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "C4studio",
+      "email": "office@c4studio.ro"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.4",
+    "intervention/image": "^2.3",
+    "laravel/framework": "^5.3",
+    "laravel/passport": "^2.0",
+    "laravelcollective/html": "^5.3",
+    "lavary/laravel-menu": "dev-master"
+  },
+  "replace": {
+    "chronos/scaffolding": "self.version"
+  },
+  "autoload": {
+    "psr-4": {
+      "Chronos\\": "src/Chronos"
+    }
+  },
+  "minimum-stability": "dev"
+}

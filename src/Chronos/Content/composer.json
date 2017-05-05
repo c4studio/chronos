@@ -1,0 +1,20 @@
+{
+  "name": "chronos/content",
+  "description": "Chronos content",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Peter Illés",
+      "email": "peter.illes@c4studio.ro"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.4"
+  },
+  "autoload": {
+    "classmap": [
+      "database"
+    ]
+  },
+  "minimum-stability": "dev"
+}

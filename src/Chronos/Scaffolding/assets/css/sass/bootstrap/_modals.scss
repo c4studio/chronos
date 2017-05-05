@@ -1,0 +1,160 @@
+.modal-open {
+	overflow: hidden;
+}
+
+.modal-open > *:not(.modal):not(.modal-backdrop) {
+//	-webkit-filter: blur(3px);
+//	filter: blur(3px);
+}
+
+.modal {
+	bottom: 0;
+	display: none;
+	left: 0;
+	outline: 0;
+	overflow: auto;
+	overflow-y: scroll;
+	position: fixed;
+	right: 0;
+	top: 0;
+	z-index: 1050;
+	-webkit-overflow-scrolling: touch;
+
+	&.fade .modal-dialog {
+		@include translate(0, -25%);
+		@include transition-transform(0.3s ease-out);
+	}
+
+	&.in .modal-dialog {
+		@include translate(0, 0)
+	}
+}
+
+.modal-dialog {
+	margin: 10px auto;
+	position: relative;
+	width: auto;
+}
+
+.modal-content {
+	background-color: #ffffff;
+	background-clip: padding-box;
+	border-top: 3px solid $brand-primary;
+	outline: none;
+	position: relative;
+
+	&.modal-danger {
+		border-top-color: $brand-danger;
+	}
+
+	&.modal-info {
+		border-top-color: $brand-info;
+	}
+
+	&.modal-success {
+		border-top-color: $brand-success;
+	}
+
+	&.modal-warning {
+		border-top-color: $brand-warning;
+	}
+
+	&.modal-body-bg {
+		background-color: $body-bg;
+	}
+}
+
+.modal-backdrop {
+	background-color: #000000;
+	bottom: 0;
+	left: 0;
+	position: fixed;
+	right: 0;
+	top: 0;
+	z-index: 1040;
+
+	&.fade {
+		@include opacity(0);
+	}
+
+	&.in {
+		@include opacity(.5);
+	}
+}
+
+.modal-header {
+	border-bottom: 1px solid $gray-lighter;
+	padding: 15px;
+}
+
+.modal-close {
+	background: transparent;
+	border: 0;
+	color: $gray-darker;
+	float: right;
+	font-size: 14px;
+	margin-top: -2px;
+	padding: 0;
+
+	&:focus {
+		outline: none;
+	}
+}
+
+.modal-title {
+	font-size: 16px;
+	line-height: 1;
+	margin: 0;
+	text-transform: uppercase;
+}
+
+.modal-body {
+	padding: 15px;
+	position: relative;
+}
+
+.modal-footer {
+	border-top: 1px solid $gray-lighter;
+	overflow: hidden;
+	padding: 15px;
+	text-align: right;
+
+	.btn {
+		margin-left: 10px;
+	}
+
+	.pull-left {
+		.btn {
+			margin-left: 0;
+			margin-right: 10px;
+		}
+	}
+}
+
+@media (min-width: $screen-sm-min) {
+	.modal-dialog {
+		margin: 80px auto 30px;
+		width: 600px;
+	}
+
+	.modal-sm {
+		width: 300px;
+	}
+}
+
+@media (min-width: $screen-md-min) {
+	.modal-lg {
+		margin: 30px auto;
+		width: 600px;
+	}
+}
+
+@media (min-width: $screen-lg-min) {
+	.modal-lg {
+		width: 900px;
+	}
+}
+
+.modal-full-width {
+	width: calc(100% - 30px);
+}

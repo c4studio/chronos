@@ -1,0 +1,168 @@
+//
+// Alerts
+// --------------------------------------------------
+
+// Wrapper
+.alerts-wrapper {
+	bottom: 10px;
+	left: 0;
+	position: fixed;
+	width: 100%;
+	z-index: 9999;
+
+	@include breakpoint(md) {
+		left: 50%;
+		margin-left: -($container-md / 2);
+		width: $container-md;
+	}
+
+	@include breakpoint(lg) {
+		margin-left: -($container-lg / 2);
+		width: $container-lg;
+	}
+}
+
+// Base style
+.alert {
+	@include animation-duration(.5s);
+	@include animation-iteration-count(1);
+	@include animation-name(flyInAlert);
+	@include animation-timing-function(ease);
+	border-radius: 5px;
+	color: #ffffff;
+	display: block;
+	font-size: 14px;
+	line-height: 16px;
+	margin-bottom: 5px;
+	overflow: hidden;
+	padding: 15px 15px 15px 90px;
+	position: relative;
+	width: 100%;
+
+	&:before {
+		display: inline-block;
+		font-family: "icon" !important;
+		font-size: 70px;
+		font-style: normal !important;
+		font-variant: normal !important;
+		font-weight: normal !important;
+		left: 10px;
+		line-height: inherit;
+		speak: none;
+		position: absolute;
+		text-rendering: auto;
+		text-transform: none !important;
+		vertical-align: -8%;
+	}
+
+	&.out {
+		@include animation-duration(.5s);
+		@include animation-iteration-count(1);
+		@include animation-name(flyOutAlert);
+		@include animation-timing-function(ease);
+	}
+
+	.alert-title {
+		font-weight: 700;
+	}
+
+	a {
+		color: #ffffff;
+		cursor: pointer;
+		text-decoration: underline;
+	}
+}
+
+// Dismissible alerts
+.alert-dismissible {
+	.alert-close {
+		float: right;
+		text-decoration: none;
+
+		&:hover {
+			color: #ffffff;
+		}
+
+		&:before {
+			content: '\00d7';
+			display: inline-block;
+			font-size: 16px;
+			font-weight: 700;
+			line-height: 16px;
+		}
+	}
+}
+
+// Alternate styles
+.alert-error {
+	background-color: $brand-danger;
+
+	a:hover {
+		color: darken($brand-danger, 25%);
+	}
+
+	&:before {
+		color: darken($brand-danger, 10%);
+		content: '\e1c1';
+	}
+}
+.alert-info {
+	background-color: $brand-info;
+
+	a:hover {
+		color: darken($brand-info, 25%);
+	}
+
+	&:before {
+		color: darken($brand-info, 10%);
+		content: '\e28c';
+	}
+}
+.alert-success {
+	background-color: $brand-success;
+
+	a:hover {
+		color: darken($brand-success, 25%);
+	}
+
+	&:before {
+		color: darken($brand-success, 10%);
+		content: '\e1b4';
+	}
+}
+.alert-warning {
+	background-color: $brand-warning;
+
+	a:hover {
+		color: darken($brand-warning, 25%);
+	}
+
+	&:before {
+		color: darken($brand-warning, 15%);
+		content: '\e104';
+	}
+}
+
+// Animation
+@include keyframes(flyInAlert) {
+	0% {
+		@include translate(0, 75px);
+		@include opacity(0);
+	}
+	100% {
+		@include translate(0, 0);
+		@include opacity(1);
+	}
+}
+@include keyframes(flyOutAlert) {
+	0% {
+		@include translate(0, 0);
+		@include opacity(1);
+		margin-top: 0;
+	}
+	100% {
+		@include translate(0, 75px);
+		@include opacity(0);
+		margin-top: -52px;
+	}
+}

@@ -1,0 +1,235 @@
+<script type="text/x-template" id="media-table-template">
+    <div id="media-table-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="filter-bar pull-left">
+                        <div class="search">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="c4icon-2x c4icon-search-2"></span></span>
+                                <input class="form-control" type="text" placeholder="{!! trans('chronos.content::interface.Search') !!}" v-on:keyup="search" v-model="filters.search" />
+                                <span class="input-group-addon reset" v-on:click="clearSearch"><span class="c4icon-lg c4icon-cross-2"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                    @if (Auth::user()->can('upload_media') && Route::currentRouteName() !== 'chronos.content.media')
+                    <div class="main-action create marginT15 pull-right">
+                        <ajax-upload action="{{ route('api.content.media.store') }}" v-bind:multiple="true">
+                            <a data-placement="left" data-tooltip="tooltip" title="{!! trans('chronos.content::interface.Upload media') !!}">{!! trans('chronos.content::interface.Upload media') !!}</a>
+                        </ajax-upload>
+                    </div>
+                    @endif
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel">
+                        <h2 class="panel-title">{!! trans('chronos.content::interface.Available files') !!}</h2>
+
+                        <div class="media-table">
+                            <ul class="media-list" v-if="!dataLoader && data.length > 0">
+                                <li v-bind:class="{ active: key == lastSelected }" v-for="(item, key) in data" v-on:click="select(key)">
+                                    <img v-bind:src="item.thumb" v-bind:alt="item.basename" v-if="item.thumb" />
+                                    <span class="icon c4icon-5x c4icon-file-2" v-else></span>
+                                    <span class="media-title" v-html="item.basename"></span>
+                                    <a class="media-delete" data-toggle="modal" data-target="#delete-file-dialog" v-on:click="setdeleteURL(data[lastSelected].endpoints.destroy, $event)"></a>
+                                </li>
+                            </ul>
+                            <div class="media-overview" v-if="!dataLoader && lastSelected != null">
+                                <h4>File overview</h4>
+                                <img v-bind:src="data[lastSelected].thumb" v-bind:alt="data[lastSelected].basename" v-if="data[lastSelected].thumb" />
+                                <span class="icon c4icon-5x c4icon-file-2" v-else></span>
+                                <table class="table table-condensed">
+                                    <tr>
+                                        <td><strong v-html="data[lastSelected].filename"></strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>ID: <span v-html="data[lastSelected].id"></span> <code>[media id="<span v-html="data[lastSelected].id"></span>"]</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td v-html="data[lastSelected].created_at"></td>
+                                    </tr>
+                                    <tr>
+                                        <td v-html="data[lastSelected].sizeFormatted"></td>
+                                    </tr>
+                                    <tr v-if="data[lastSelected].is_image">
+                                        <td v-html="data[lastSelected].image_width + ' × ' + data[lastSelected].image_height"></td>
+                                    </tr>
+                                </table>
+                                <a class="marginR15" v-bind:href="data[lastSelected].file" target="_blank">{!! trans('chronos.content::interface.Download file') !!}</a>
+                                @can ('delete_media')
+                                    <a class="text-danger" data-toggle="modal" data-target="#delete-file-dialog" v-on:click="setdeleteURL(data[lastSelected].endpoints.destroy, $event)">{!! trans('chronos.content::interface.Delete file') !!}</a><br />
+                                @endcan
+
+                                <a class="btn btn-action marginT15" v-on:click="selectFile(data[lastSelected])" v-if="selectable">{!! trans('chronos.content::interface.Select file') !!}</a>
+                            </div>
+                        </div>
+
+                        <p class="text-center" v-show="dataLoader"><span class="loader-small"></span></p>
+                        <p class="no-results" v-show="!dataLoader && data.length === 0">{!! trans('chronos.content::interface.There are no results here. Try broadening your search.') !!}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+<script>
+    var mediaEventHub = new Vue();
+
+    Vue.component('media-table', {
+        created: function() {
+            // load data
+            if (this.autoload)
+                this.getData();
+
+            // add listeners
+            mediaEventHub.$on('open-media-dialog', this.openMediaDialog);
+            uploadEventHub.$on('upload-finished', this.getData);
+            this.$parent.$on('deleted-model-from-dialog', this.deleteMedia);
+        },
+        data: function() {
+            return {
+                data: [],
+                dataLoader: false,
+                deleteURL: null,
+                dialog: null,
+                dialogData: null,
+                filters: {
+                    imagesOnly: false,
+                    search: ''
+                },
+                lastSelected: null,
+                searchOn: false
+            }
+        },
+        methods: {
+            clearSearch: function() {
+                this.filters.search = '';
+
+                this.searchOn = false;
+
+                this.getData();
+            },
+            closeMediaDialog: function() {
+                if (this.dialog != null) {
+                    this.dialog.close();
+
+                    this.dialog = null;
+                    this.dialogData = null;
+                }
+            },
+            deleteMedia: function(target) {
+                vm.$emit('show-loader');
+
+                var dialog = new Modal(target);
+                dialog.close();
+
+                this.$http.delete(this.deleteURL).then(function(response) {
+                    vm.$emit('hide-loader');
+
+                    if (response.body.alerts) {
+                        response.body.alerts.forEach(function(alert) {
+                            vm.$emit('add-alert', alert);
+                        }.bind(this));
+                    }
+
+                    this.getData();
+                }, function(response) {
+                    vm.$emit('hide-loader');
+
+                    if (response.body.alerts) {
+                        response.body.alerts.forEach(function(alert) {
+                            vm.$emit('add-alert', alert);
+                        }.bind(this));
+                    }
+                    else {
+                        vm.$emit('add-alert', {
+                            type: 'error',
+                            title: 'AJAX error',
+                            message: response.statusText + ' (' + response.status + ')'
+                        });
+                    }
+                });
+            },
+            getData: function() {
+                this.dataLoader = true;
+                this.lastSelected = null;
+
+                this.$http.get('/api/content/media', {params: {
+                    filters: this.filters,
+                    perPage: 0
+                }}).then(function(response) {
+                    this.data = response.body.data;
+
+                    this.dataLoader = false;
+                }, function(response) {
+                    this.dataLoader = false;
+
+                    if (response.body.alerts) {
+                        response.body.alerts.forEach(function(alert) {
+                            vm.$emit('add-alert', alert);
+                        }.bind(this));
+                    }
+                    else {
+                        vm.$emit('add-alert', {
+                            type: 'error',
+                            title: 'AJAX error',
+                            message: response.statusText + ' (' + response.status + ')'
+                        });
+                    }
+                });
+            },
+            openMediaDialog: function(imagesOnly, dialogData) {
+                this.filters.imagesOnly = imagesOnly;
+
+                var modal = document.getElementById('media-table-wrapper').closest('.modal');
+                this.dialog = new Modal(modal);
+                this.dialog.open();
+
+                this.dialogData = dialogData;
+
+                this.getData();
+            },
+            search: debounce(function() {
+                this.getData();
+
+                this.searchOn = true;
+            }, 500),
+            select: function(key) {
+                this.lastSelected = key;
+            },
+            selectFile: function(file) {
+                if (file)
+                    mediaEventHub.$emit('select-from-media-dialog', file, this.dialogData);
+
+                this.closeMediaDialog();
+            },
+            setdeleteURL: function(deleteURL, event) {
+                this.deleteURL = deleteURL;
+
+                // open model - we need this because model triggers don't work on dynamically created events
+                var target = event.target.getAttribute('data-target') && event.target.getAttribute('data-target').replace('#', '');
+                var modal = document.getElementById(target);
+                var dialog = new Modal(modal);
+                dialog.open();
+            }
+        },
+        props: {
+            autoload: {
+                default: true,
+                type: Boolean
+            },
+            selectable: {
+                default: false,
+                type: Boolean
+            }
+        },
+        template: '#media-table-template'
+    });
+</script>

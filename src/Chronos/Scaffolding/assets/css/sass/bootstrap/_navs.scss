@@ -1,0 +1,145 @@
+//
+// Navs
+// --------------------------------------------------
+
+
+// Base class
+// --------------------------------------------------
+
+.nav {
+	@include clearfix();
+	list-style: none;
+	margin-bottom: 0;
+	padding-left: 0;
+
+	& > li {
+		display: block;
+		position: relative;
+
+		& > a {
+			display: block;
+			font-size: 14px;
+			position: relative;
+			padding: 8px 15px;
+
+			&:hover,
+			&:focus {
+				background-color: #ffffff;
+				text-decoration: none;
+			}
+		}
+
+		&.disabled > a {
+			color: $gray;
+
+			&:hover,
+			&:focus {
+				background-color: transparent;
+				color: $gray;
+				cursor: not-allowed;
+				text-decoration: none;
+			}
+		}
+	}
+
+	// Prevent IE8 from misplacing imgs
+	& > li > a > img {
+		max-width: none;
+	}
+}
+
+
+// Tabs
+// -------------------------
+.nav-tabs {
+	border-bottom: 1px solid $gray-lighter;
+
+	& > li {
+		float: left;
+		margin-bottom: -1px;
+
+		& > a {
+			background-color: $brand-primary;
+			border-radius: 3px;
+			color: #ffffff;
+			line-height: 1;
+			margin-right: 3px;
+
+			&:hover {
+				background-color: $brand-secondary;
+			}
+		}
+
+		// Active state, and its :hover to override normal :hover
+		&.active > a {
+			&,
+			&:hover,
+			&:focus {
+				background-color: $gray-lighter;
+				color: $gray;
+				cursor: default;
+				padding: 10px 15px;
+			}
+		}
+	}
+}
+
+
+// Pills
+// -------------------------
+.nav-pills {
+	& > li {
+		float: left;
+
+		& > a {
+			background-color: $brand-primary;
+			border-radius: 3px;
+			color: #ffffff;
+			line-height: 1;
+
+			&:hover {
+				background-color: $brand-secondary;
+			}
+		}
+
+		& + li {
+			margin-left: 3px;
+		}
+
+		// Active state
+		&.active > a {
+			&,
+			&:hover,
+			&:focus {
+				background-color: $gray-lighter;
+				color: $gray;
+			}
+		}
+	}
+}
+
+
+// Stacked pills
+.nav-stacked {
+	> li {
+		float: none;
+		+ li {
+			margin-top: 2px;
+			margin-left: 0; // no need for this gap between nav items
+		}
+	}
+}
+
+
+
+// Tabbable tabs
+// -------------------------
+.tab-content {
+	& > .tab-pane {
+		display: none;
+	}
+
+	& > .active {
+		display: block;
+	}
+}

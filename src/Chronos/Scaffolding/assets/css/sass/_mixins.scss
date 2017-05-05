@@ -1,0 +1,831 @@
+//
+// Mixins
+// --------------------------------------------------
+
+
+// Utilities
+// -------------------------
+
+// Clearfix
+@mixin clearfix() {
+	&:before,
+	&:after {
+		content: '';
+		display: table;
+	}
+
+	&:after {
+		clear: both;
+	}
+}
+
+// WebKit-style focus
+@mixin tab-focus() {
+	// Default
+	outline: thin dotted;
+	// WebKit
+	outline: 5px auto -webkit-focus-ring-color;
+	outline-offset: -2px;
+}
+
+// Center-align a block level element
+@mixin center-block() {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+// Sizing shortcuts
+@mixin size($width, $height) {
+	height: $height;
+	width: $width;
+}
+@mixin square($size) {
+	@include size($size, $size);
+}
+
+// Placeholder text
+@mixin placeholder($color: $input-color-placeholder) {
+	&::-moz-placeholder {
+		color: $color;
+		opacity: 1;
+	}
+
+	&:-ms-input-placeholder {
+		color: $color;
+	}
+
+	&::-webkit-input-placeholder {
+		color: $color;
+	}
+}
+
+// Text overflow
+@mixin text-overflow() {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+// CSS image replacement
+@mixin text-hide() {
+	background-color: transparent;
+	border: 0;
+	color: transparent;
+	font: #{0/0} a;
+	text-shadow: none;
+}
+
+
+
+// CSS3 PROPERTIES
+// --------------------------------------------------
+
+// Single side border-radius
+@mixin border-top-radius($radius) {
+	border-top-right-radius: $radius;
+	border-top-left-radius: $radius;
+}
+
+@mixin border-right-radius($radius) {
+	border-bottom-right-radius: $radius;
+	border-top-right-radius: $radius;
+}
+
+@mixin border-bottom-radius($radius) {
+	border-bottom-right-radius: $radius;
+	border-bottom-left-radius: $radius;
+}
+
+@mixin border-left-radius($radius) {
+	border-bottom-left-radius: $radius;
+	border-top-left-radius: $radius;
+}
+
+// Drop shadows
+@mixin box-shadow($shadow...) {
+	-webkit-box-shadow: $shadow;
+	        box-shadow: $shadow;
+}
+
+// Transitions
+@mixin transition($transition...) {
+	-webkit-transition: $transition;
+	        transition: $transition;
+}
+
+@mixin transition-property($transition-property...) {
+	-webkit-transition-property: $transition-property;
+	transition-property: $transition-property;
+}
+
+@mixin transition-delay($transition-delay) {
+	-webkit-transition-delay: $transition-delay;
+	transition-delay: $transition-delay;
+}
+
+@mixin transition-duration($transition-duration...) {
+	-webkit-transition-duration: $transition-duration;
+	transition-duration: $transition-duration;
+}
+
+@mixin transition-transform($transition...) {
+	   -moz-transition: -moz-transform $transition;
+	     -o-transition: -o-transform $transition;
+	-webkit-transition: -webkit-transform $transition;
+	        transition: transform $transition;
+}
+
+// Transformations
+@mixin rotate($degrees) {
+	    -ms-transform: rotate($degrees) translateZ(0);
+	-webkit-transform: rotate($degrees) translateZ(0);
+	        transform: rotate($degrees) translateZ(0);
+}
+
+@mixin scale($scale-args...) {
+	    -ms-transform: scale($scale-args);
+	-webkit-transform: scale($scale-args);
+	        transform: scale($scale-args);
+}
+
+@mixin translate($x, $y) {
+	-webkit-transform: translate($x, $y);
+	    -ms-transform: translate($x, $y);
+	        transform: translate($x, $y);
+}
+
+@mixin skew($x, $y) {
+	-webkit-transform: skew($x, $y);
+	    -ms-transform: skewX($x) skewY($y);
+	        transform: skew($x, $y);
+}
+
+@mixin translate3d($x, $y, $z) {
+	-webkit-transform: translate3d($x, $y, $z);
+	        transform: translate3d($x, $y, $z);
+}
+
+@mixin rotateX($degrees) {
+	    -ms-transform: rotateX($degrees);
+	-webkit-transform: rotateX($degrees);
+	        transform: rotateX($degrees);
+}
+
+@mixin rotateY($degrees) {
+	    -ms-transform: rotateY($degrees);
+	-webkit-transform: rotateY($degrees);
+	        transform: rotateY($degrees);
+}
+
+@mixin perspective($perspective) {
+	   -moz-perspective: $perspective;
+	-webkit-perspective: $perspective;
+	        perspective: $perspective;
+}
+
+@mixin perspective-origin($perspective) {
+	   -moz-perspective-origin: $perspective;
+	-webkit-perspective-origin: $perspective;
+	        perspective-origin: $perspective;
+}
+
+@mixin transform-origin($origin) {
+	   -moz-transform-origin: $origin;
+	    -ms-transform-origin: $origin;
+	-webkit-transform-origin: $origin;
+	        transform-origin: $origin;
+}
+
+// Animations
+@mixin animation($animation) {
+	-webkit-animation: $animation;
+					animation: $animation;
+}
+
+@mixin animation-name($name) {
+	-webkit-animation-name: $name;
+	        animation-name: $name;
+}
+
+@mixin animation-duration($duration) {
+	-webkit-animation-duration: $duration;
+	        animation-duration: $duration;
+}
+
+@mixin animation-timing-function($timing-function) {
+	-webkit-animation-timing-function: $timing-function;
+	        animation-timing-function: $timing-function;
+}
+
+@mixin animation-delay($delay) {
+	-webkit-animation-delay: $delay;
+	        animation-delay: $delay;
+}
+
+@mixin animation-iteration-count($iteration-count) {
+	-webkit-animation-iteration-count: $iteration-count;
+	        animation-iteration-count: $iteration-count;
+}
+
+@mixin animation-direction($direction) {
+	-webkit-animation-direction: $direction;
+	        animation-direction: $direction;
+}
+
+// Keyframes
+@mixin keyframes($animationName) {
+	@-webkit-keyframes #{$animationName} {
+		@content;
+	}
+	@-moz-keyframes #{$animationName} {
+		@content;
+	}
+	@-o-keyframes #{$animationName} {
+		@content;
+	}
+	@keyframes #{$animationName} {
+		@content;
+	}
+}
+
+// Backface visibility
+@mixin backface-visibility($visibility){
+	   -moz-backface-visibility: $visibility;
+	-webkit-backface-visibility: $visibility;
+	        backface-visibility: $visibility;
+}
+
+// Box sizing
+@mixin box-sizing($boxmodel) {
+	   -moz-box-sizing: $boxmodel;
+	-webkit-box-sizing: $boxmodel;
+	        box-sizing: $boxmodel;
+}
+
+// User select
+@mixin user-select($select) {
+	   -moz-user-select: $select;
+	    -ms-user-select: $select;
+	-webkit-user-select: $select;
+	        user-select: $select;
+}
+
+// Resize anything
+@mixin resizable($direction) {
+	resize: $direction;
+	overflow: auto;
+}
+
+// CSS3 Content Columns
+@mixin content-columns($column-count, $column-gap: $grid-gutter-width) {
+	   -moz-column-count: $column-count;
+	-webkit-column-count: $column-count;
+	        column-count: $column-count;
+	   -moz-column-gap: $column-gap;
+	-webkit-column-gap: $column-gap;
+	        column-gap: $column-gap;
+}
+
+// Optional hyphenation
+@mixin hyphens($mode: auto) {
+	   -moz-hyphens: $mode;
+	    -ms-hyphens: $mode;
+	     -o-hyphens: $mode;
+	-webkit-hyphens: $mode;
+	        hyphens: $mode;
+	word-wrap: break-word;
+}
+
+// Opacity
+@mixin opacity($opacity) {
+	$opacity-ie: ($opacity * 100);
+	filter: #{alpha(opacity=$opacity-ie)};
+
+	opacity: $opacity;}
+
+
+// GRADIENTS
+// --------------------------------------------------
+
+// Horizontal gradient, from left to right
+@mixin gradient-horizontal($start-color, $end-color, $start-percent: 0%, $end-percent: 100%) {
+	background-image: -webkit-linear-gradient(left, color-stop($start-color $start-percent), color-stop($end-color $end-percent)); // Safari 5.1-6, Chrome 10+
+	background-image:  linear-gradient(to right, $start-color $start-percent, $end-color $end-percent); // Standard, IE10, Firefox 16+, Opera 12.10+, Safari 7+, Chrome 26+
+	background-repeat: repeat-x;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{ie-hex-str($start-color)}', endColorstr='#{ie-hex-str($end-color)}', GradientType=1); // IE9 and down
+}
+
+// Vertical gradient, from top to bottom
+//
+// Creates two color stops, start and end, by specifying a color and position for each color stop.
+// Color stops are not available in IE9 and below.
+@mixin gradient-vertical($start-color, $end-color, $start-percent: 0%, $end-percent: 100%) {
+	background-image: -webkit-linear-gradient(top, $start-color $start-percent, $end-color $end-percent);  // Safari 5.1-6, Chrome 10+
+	background-image: linear-gradient(to bottom, $start-color $start-percent, $end-color $end-percent); // Standard, IE10, Firefox 16+, Opera 12.10+, Safari 7+, Chrome 26+
+	background-repeat: repeat-x;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{ie-hex-str($start-color)}', endColorstr='#{ie-hex-str($end-color)}', GradientType=0); // IE9 and down
+}
+
+@mixin gradient-directional($start-color, $end-color, $deg: 45deg) {
+	background-repeat: repeat-x;
+	background-image: -webkit-linear-gradient($deg, $start-color, $end-color); // Safari 5.1-6, Chrome 10+
+	background-image: linear-gradient($deg, $start-color, $end-color); // Standard, IE10, Firefox 16+, Opera 12.10+, Safari 7+, Chrome 26+
+}
+
+@mixin gradient-horizontal-three-colors($start-color, $mid-color, $color-stop, $end-color) {
+	background-image: -webkit-linear-gradient(left, $start-color, $mid-color $color-stop, $end-color);
+	background-image: linear-gradient(to right, $start-color, $mid-color $color-stop, $end-color);
+	background-repeat: no-repeat;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{ie-hex-str($start-color)}', endColorstr='#{ie-hex-str($end-color)}', GradientType=1); // IE9 and down, gets no color-stop at all for proper fallback
+}
+
+@mixin gradient-vertical-three-colors($start-color, $mid-color, $color-stop, $end-color) {
+	background-image: -webkit-linear-gradient($start-color, $mid-color $color-stop, $end-color);
+	background-image: linear-gradient($start-color, $mid-color $color-stop, $end-color);
+	background-repeat: no-repeat;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{ie-hex-str($start-color)}', endColorstr='#{ie-hex-str($end-color)}', GradientType=0); // IE9 and down, gets no color-stop at all for proper fallback
+}
+
+@mixin gradient-radial($inner-color, $outer-color) {
+	background-image: -webkit-radial-gradient(circle, $inner-color, $outer-color);
+	background-image: radial-gradient(circle, $inner-color, $outer-color);
+	background-repeat: no-repeat;
+}
+
+@mixin gradient-striped($color: rgba(255, 255, 255, .15), $angle: 45deg) {
+	background-image: -webkit-linear-gradient($angle, $color 25%, transparent 25%, transparent 50%, $color 50%, $color 75%, transparent 75%, transparent);
+	background-image: linear-gradient($angle, $color 25%, transparent 25%, transparent 50%, $color 50%, $color 75%, transparent 75%, transparent);
+}
+
+
+// Reset filters for IE
+//
+@mixin reset-filter() {
+	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+
+
+
+// Retina images
+//
+@mixin img-retina($file-1x, $file-2x, $width-1x, $height-1x) {
+	background-image: url(if($bootstrap-sass-asset-helper, twbs-image-path("#{$file-1x}"), "#{$file-1x}"));
+
+	@media
+	only screen and (-webkit-min-device-pixel-ratio: 2),
+	only screen and (   min--moz-device-pixel-ratio: 2),
+	only screen and (     -o-min-device-pixel-ratio: 2/1),
+	only screen and (        min-device-pixel-ratio: 2),
+	only screen and (                min-resolution: 192dpi),
+	only screen and (                min-resolution: 2dppx) {
+		background-image: url(if($bootstrap-sass-asset-helper, twbs-image-path("#{$file-2x}"), "#{$file-2x}"));
+		background-size: $width-1x $height-1x;
+	}
+}
+
+
+// Responsive image
+//
+@mixin img-responsive($display: block) {
+	display: $display;
+	height: auto;
+	max-width: 100%;
+}
+
+
+// COMPONENT MIXINS
+// --------------------------------------------------
+
+// Horizontal dividers
+// -------------------------
+@mixin nav-divider($color: #e5e5e5) {
+	background-color: $color;
+	height: 1px;
+	overflow: hidden;
+}
+
+// Tables
+// -------------------------
+@mixin table-row-variant($state, $background) {
+	.table > thead > tr,
+	.table > tbody > tr,
+	.table > tfoot > tr {
+		> td.#{$state},
+		> th.#{$state},
+		&.#{$state} > td,
+		&.#{$state} > th {
+			background-color: $background;
+		}
+	}
+
+	.table-hover > tbody > tr {
+		> td.#{$state}:hover,
+		> th.#{$state}:hover,
+		&.#{$state}:hover > td,
+		&.#{$state}:hover > th {
+			background-color: darken($background, 5%);
+		}
+	}
+}
+
+// Button variants
+// -------------------------
+@mixin button-variant($color, $background) {
+	background-color: $background;
+	color: $color;
+
+	&:hover,
+	&:focus,
+	&:active,
+	&.active {
+		background-color: darken($background, 5%);
+		color: $color;
+	}
+
+	.open & {
+		&.dropdown-toggle {
+			background-color: darken($background, 5%);
+			color: $color;
+		}
+	}
+
+	&:active,
+	&.active {
+		background-image: none;
+	}
+
+	.open & {
+		&.dropdown-toggle {
+			background-image: none;
+		}
+	}
+
+	&.disabled,
+	&[disabled],
+	fieldset[disabled] & {
+		&,
+		&:hover,
+		&:focus,
+		&:active,
+		&.active {
+			background-color: $background;
+		}
+	}
+
+	.badge {
+		background-color: $color;
+		color: $background;
+	}
+}
+
+// Contextual backgrounds
+// -------------------------
+@mixin bg-variant($parent, $color) {
+	#{$parent} {
+		background-color: $color;
+		color: #ffffff;
+	}
+
+	a#{$parent}:hover {
+		background-color: darken($color, 10%);
+		color: #ffffff;
+	}
+}
+
+// Typography
+// -------------------------
+@mixin text-emphasis-variant($parent, $color) {
+	#{$parent} {
+		color: $color;
+	}
+
+	a#{$parent}:hover {
+		color: darken($color, 10%);
+	}
+}
+
+// Progress bars
+// -------------------------
+@mixin progress-bar-variant($color) {
+	background-color: $color;
+	.progress-striped & {
+		@include gradient-striped();
+	}
+}
+
+// Responsive utilities
+// -------------------------
+@mixin responsive-visibility($parent) {
+	#{$parent} {
+		display: block !important;
+	}
+
+	table#{$parent}  {
+		display: table;
+	}
+
+	tr#{$parent}     {
+		display: table-row !important;
+	}
+
+	th#{$parent},
+	td#{$parent}     {
+		display: table-cell !important;
+	}
+}
+
+@mixin responsive-invisibility($parent) {
+	#{$parent} {
+		display: none !important;
+	}
+}
+
+
+// Grid System
+// -----------
+
+// Centered container element
+@mixin container-fixed() {
+	@include clearfix();
+	margin-right: auto;
+	margin-left: auto;
+	padding-left:  ($grid-gutter-width / 2);
+	padding-right: ($grid-gutter-width / 2);
+}
+
+// Creates a wrapper for a series of columns
+@mixin make-row($gutter: $grid-gutter-width) {
+	@include clearfix();
+	margin-left:  ($gutter / -2);
+	margin-right: ($gutter / -2);
+}
+
+// Generate the extra small columns
+@mixin make-xs-column($columns, $gutter: $grid-gutter-width) {
+	position: relative;
+	float: left;
+	width: percentage(($columns / $grid-columns));
+	min-height: 1px;
+	padding-left:  ($gutter / 2);
+	padding-right: ($gutter / 2);
+}
+
+@mixin make-xs-column-offset($columns) {
+	margin-left: percentage(($columns / $grid-columns));
+}
+
+@mixin make-xs-column-push($columns) {
+	left: percentage(($columns / $grid-columns));
+}
+
+@mixin make-xs-column-pull($columns) {
+	right: percentage(($columns / $grid-columns));
+}
+
+// Generate the small columns
+@mixin make-sm-column($columns, $gutter: $grid-gutter-width) {
+	position: relative;
+	min-height: 1px;
+	padding-left:  ($gutter / 2);
+	padding-right: ($gutter / 2);
+
+	@media (min-width: $screen-sm-min) {
+		float: left;
+		width: percentage(($columns / $grid-columns));
+	}
+}
+
+@mixin make-sm-column-offset($columns) {
+	@media (min-width: $screen-sm-min) {
+		margin-left: percentage(($columns / $grid-columns));
+	}
+}
+
+@mixin make-sm-column-push($columns) {
+	@media (min-width: $screen-sm-min) {
+		left: percentage(($columns / $grid-columns));
+	}
+}
+
+@mixin make-sm-column-pull($columns) {
+	@media (min-width: $screen-sm-min) {
+		right: percentage(($columns / $grid-columns));
+	}
+}
+
+// Generate the medium columns
+@mixin make-md-column($columns, $gutter: $grid-gutter-width) {
+	min-height: 1px;
+	padding-left:  ($gutter / 2);
+	padding-right: ($gutter / 2);
+	position: relative;
+
+	@media (min-width: $screen-md-min) {
+		float: left;
+		width: percentage(($columns / $grid-columns));
+	}
+}
+
+@mixin make-md-column-offset($columns) {
+	@media (min-width: $screen-md-min) {
+		margin-left: percentage(($columns / $grid-columns));
+	}
+}
+
+@mixin make-md-column-push($columns) {
+	@media (min-width: $screen-md-min) {
+		left: percentage(($columns / $grid-columns));
+	}
+}
+
+@mixin make-md-column-pull($columns) {
+	@media (min-width: $screen-md-min) {
+		right: percentage(($columns / $grid-columns));
+	}
+}
+
+// Generate the large columns
+@mixin make-lg-column($columns, $gutter: $grid-gutter-width) {
+	min-height: 1px;
+	padding-left:  ($gutter / 2);
+	padding-right: ($gutter / 2);
+	position: relative;
+
+	@media (min-width: $screen-lg-min) {
+		float: left;
+		width: percentage(($columns / $grid-columns));
+	}
+}
+
+@mixin make-lg-column-offset($columns) {
+	@media (min-width: $screen-lg-min) {
+		margin-left: percentage(($columns / $grid-columns));
+	}
+}
+
+@mixin make-lg-column-push($columns) {
+	@media (min-width: $screen-lg-min) {
+		left: percentage(($columns / $grid-columns));
+	}
+}
+
+@mixin make-lg-column-pull($columns) {
+	@media (min-width: $screen-lg-min) {
+		right: percentage(($columns / $grid-columns));
+	}
+}
+
+
+// Framework grid generation
+//
+@mixin make-grid-columns() {
+	$list: '';
+	$i: 1;
+	$list: ".col-xs-#{$i}, .col-sm-#{$i}, .col-md-#{$i}, .col-lg-#{$i}";
+	@for $i from (1 + 1) through $grid-columns {
+		$list: "#{$list}, .col-xs-#{$i}, .col-sm-#{$i}, .col-md-#{$i}, .col-lg-#{$i}";
+	}
+	#{$list} {
+		min-height: 1px;
+		padding-left:  ($grid-gutter-width / 2);
+		padding-right: ($grid-gutter-width / 2);
+		position: relative;
+	}
+}
+
+@mixin float-grid-columns($class) {
+	$list: '';
+	$i: 1;
+	$list: ".col-#{$class}-#{$i}";
+	@for $i from (1 + 1) through $grid-columns {
+		$list: "#{$list}, .col-#{$class}-#{$i}";
+	}
+	#{$list} {
+		float: left;
+	}
+}
+
+@mixin calc-grid-column($index, $class, $type) {
+	@if ($type == width) and ($index > 0) {
+		.col-#{$class}-#{$index} {
+			width: percentage(($index / $grid-columns));
+		}
+	}
+	@if ($type == push) {
+		.col-#{$class}-push-#{$index} {
+			left: percentage(($index / $grid-columns));
+		}
+	}
+	@if ($type == pull) {
+		.col-#{$class}-pull-#{$index} {
+			right: percentage(($index / $grid-columns));
+		}
+	}
+	@if ($type == offset) {
+		.col-#{$class}-offset-#{$index} {
+			margin-left: percentage(($index / $grid-columns));
+		}
+	}
+}
+
+@mixin loop-grid-columns($columns, $class, $type) {
+	@for $i from 0 through $columns {
+		@include calc-grid-column($i, $class, $type);
+	}
+}
+
+// Create grid for specific class
+@mixin make-grid($class) {
+	@include float-grid-columns($class);
+	@include loop-grid-columns($grid-columns, $class, width);
+	@include loop-grid-columns($grid-columns, $class, pull);
+	@include loop-grid-columns($grid-columns, $class, push);
+	@include loop-grid-columns($grid-columns, $class, offset);
+}
+
+
+// Utilities
+// ---------
+@mixin _position($position, $args) {
+  @each $o in top right bottom left {
+		$i: index($args, $o);
+		@if $i
+		and $i + 1 <= length($args)
+		and type-of( nth($args, $i + 1) ) == number {
+			#{$o}: nth($args, $i + 1);
+		}
+	}
+	position: $position;
+}
+
+@mixin absolute($args) {
+  @include _position(absolute, $args);
+}
+
+// Change antialiasing
+@mixin font-smoothing-off() {
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+}
+
+@mixin font-smoothing-on() {
+	-moz-osx-font-smoothing: auto;
+	-webkit-font-smoothing: subpixel-antialiased;
+}
+
+// Media query breakpoint
+@mixin breakpoint($point) {
+	@if $point == lg {
+		@media (min-width: $screen-lg-min) { @content; }
+	}
+	@else if $point == md {
+		@media (min-width: $screen-md-min) { @content; }
+	}
+	@else if $point == sm {
+		@media (min-width: $screen-sm-min)  { @content; }
+	}
+}
+
+// Triangle mixin
+@mixin triangle($direction, $position, $color, $size: 1em) {
+	@include absolute($position);
+	border: $size transparent solid;
+
+	@if ($direction == "top") {
+		border-bottom-color: $color;
+	}
+	@else if ($direction == "right") {
+		border-left-color: $color;
+	}
+	@else if ($direction == "bottom") {
+		border-top-color: $color;
+	}
+	@else if ($direction == "left") {
+		border-right-color: $color;
+	}
+
+	content: '';
+	height: 0;
+	width: 0;
+	z-index: 2;
+}
+
+// Margins and paddings
+@mixin make-margins() {
+  @each $i in (5, 10, 15, 30, 60) {
+    .marginB#{$i} { margin-bottom: #{$i}px; }
+    .marginL#{$i} { margin-left: #{$i}px; }
+    .marginR#{$i} { margin-right: #{$i}px; }
+    .marginT#{$i} { margin-top: #{$i}px; }
+  }
+}
+@mixin make-paddings() {
+  @each $i in (15, 30) {
+    .padding#{$i} { padding: #{$i}px; }
+    .paddingB#{$i} { padding-bottom: #{$i}px; }
+    .paddingL#{$i} { padding-left: #{$i}px; }
+    .paddingR#{$i} { padding-right: #{$i}px; }
+    .paddingT#{$i} { padding-top: #{$i}px; }
+  }
+}

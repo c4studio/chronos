@@ -1,0 +1,90 @@
+//
+// Pagination (multiple pages)
+// --------------------------------------------------
+.pagination {
+	border-radius: 3px;
+	display: inline-block;
+	margin-bottom: 30px;
+	padding-left: 0;
+
+	& > li {
+		display: inline;
+
+		& > a,
+		& > span {
+			background-color: #ffffff;
+			border: 1px solid $gray-light;
+			color: $brand-primary;
+			cursor: pointer;
+			float: left;
+			font-size: 12px;
+			line-height: 10px;
+			margin-left: -1px;
+			padding: 8px 12px;
+			position: relative;
+			text-decoration: none;
+		}
+
+		& > span {
+			font-size: 16px;
+		}
+
+		&:first-child {
+			& > a,
+			& > span {
+				@include border-left-radius(3px);
+				margin-left: 0;
+			}
+		}
+
+		&:last-child {
+			& > a,
+			& > span {
+				@include border-right-radius(3px);
+			}
+		}
+
+		&.prev,
+		&.next {
+			& > a {
+				font-size: 14px;
+				padding: 8px 7px 6px 8px;
+			}
+		}
+	}
+
+	& > li > a,
+	& > li > span {
+		&:hover,
+		&:focus {
+			background-color: $gray-lighter;
+		}
+	}
+
+	& > .active > a,
+	& > .active > span {
+		&,
+		&:hover,
+		&:focus {
+			background-color: $brand-primary;
+			border-color: $brand-primary;
+			color: #ffffff;
+			cursor: default;
+			z-index: 2;
+		}
+	}
+
+	& > .disabled {
+		& > span,
+		& > span:hover,
+		& > span:focus,
+		& > a,
+		& > a:hover,
+		& > a:focus {
+			background-color: #ffffff;
+			border-color: $gray-light;
+			color: $gray-light;
+			cursor: not-allowed;
+		}
+	}
+}
