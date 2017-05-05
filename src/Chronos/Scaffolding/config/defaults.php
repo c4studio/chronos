@@ -2,7 +2,7 @@
 
 return [
 
-    'version' => '2.0 RC',
+    'version' => '2.0',
 
 
     'alerts' => [
