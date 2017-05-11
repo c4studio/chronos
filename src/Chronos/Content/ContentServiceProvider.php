@@ -2,7 +2,6 @@
 
 namespace Chronos\Content;
 
-use Chronos\Content\Models\ContentType;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -81,8 +80,8 @@ class ContentServiceProvider extends ServiceProvider {
             ->prepend('<span class="icon c4icon-pencil-3"></span>')
             ->data('order', 100)->data('permissions', ['view_content_types', 'view_media']);
 
-        if (Schema::hasTable('content_types')) {
-            $types = ContentType::orderBy('name')->get();
+        if (class_exists('Chronos\Content\Models\ContentType') && Schema::hasTable('content_types')) {
+            $types = \Chronos\Content\Models\ContentType::orderBy('name')->get();
             if ($types) {
                 foreach ($types as $k => $type) {
                     $content_menu->add($type->name, ['route' => ['chronos.content', 'type' => $type->id]])

@@ -680,6 +680,7 @@ h1 {
 	left: -300px;
 	margin: 0 15px 0 -15px;
 	min-height: 600px;
+	overflow: hidden;
 	padding-left: 15px;
 	position: fixed;
 	top: 50px;
@@ -694,7 +695,14 @@ h1 {
 /* APP NAV */
 .app-nav {
 	@include font-smoothing-off();
+	bottom: 0;
 	clear: both;
+	height: calc(100% - 30px);
+	overflow-y: scroll;
+	padding-right: 7px;
+	position: absolute;
+	top: 0;
+	width: 100%;
 
 	& > ul {
 		list-style: none;
