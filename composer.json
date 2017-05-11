@@ -14,7 +14,7 @@
     "laravel/framework": "^5.3",
     "laravel/passport": "^2.0",
     "laravelcollective/html": "^5.3",
-    "lavary/laravel-menu": "dev-master"
+    "lavary/laravel-menu": "^1.6"
   },
   "replace": {
     "chronos/scaffolding": "self.version"
@@ -23,6 +23,5 @@
     "psr-4": {
       "Chronos\\": "src/Chronos"
     }
-  },
-  "minimum-stability": "dev"
+  }
 }
