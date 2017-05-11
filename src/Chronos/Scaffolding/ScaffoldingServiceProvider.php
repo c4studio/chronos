@@ -84,7 +84,7 @@ class ScaffoldingServiceProvider extends ServiceProvider {
     protected function registerGates($gate)
     {
         if (class_exists('Chronos\Scaffolding\Models\Permission') && Schema::hasTable('roles')) {
-            $permissions = Chronos\Scaffolding\Models\Permission::all();
+            $permissions = \Chronos\Scaffolding\Models\Permission::all();
             foreach ($permissions as $permission) {
                 $gate->define($permission->name, function ($user) use ($permission) {
                     return $user->hasPermission($permission->name);
