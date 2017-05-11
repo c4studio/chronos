@@ -10,7 +10,7 @@
     <link rel="shortcut icon" href="{{ asset('chronos/favicon.png') }}" type="image/png">
     <link rel="icon" href="{{ asset('chronos/favicon.png') }}" type="image/png">
 
-    <link href="{{ asset('chronos/css/admin.css?v=' . time()) }}" rel="stylesheet" /> <!-- @TODO remove cache-busting -->
+    <link href="{{ asset('chronos/css/admin.css?v=' . Config::get('chronos.version')) }}" rel="stylesheet" />
     @stack('styles')
 </head>
 <body>
@@ -58,7 +58,7 @@
 
 
 <!-- Load vue.js, components and app specific scripts -->
-<script src="https://unpkg.com/vue/dist/vue.js"></script> <!-- @TODO include minified version -->
+<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
 <script src="https://unpkg.com/vue-resource/dist/vue-resource.min.js"></script>
 <script>
     Vue.http.interceptors.push(function(request, next) {
@@ -67,13 +67,13 @@
     });
 </script>
 @stack('scripts-pre')
-<script src="{{ asset('chronos/js/utils.js?v=' . time()) }}"></script> <!-- @TODO remove cache-busting, include minified version -->
+<script src="{{ asset('chronos/js/utils.min.js?v=' . Config::get('chronos.version')) }}"></script>
 @include('chronos::components.ajax_upload')
 @include('chronos::components.alert')
 @include('chronos::components.autocomplete')
 @stack('scripts-components')
-<script src="{{ asset('chronos/js/admin.js?v=' . time()) }}"></script> <!-- @TODO remove cache-busting, include minified version -->
-<script src="{{ asset('chronos/js/bootstrap-native.min.js?v=' . time()) }}"></script> <!-- @TODO remove cache-busting -->
+<script src="{{ asset('chronos/js/admin.min.js?v=' . Config::get('chronos.version')) }}"></script>
+<script src="{{ asset('chronos/js/bootstrap-native.min.js') }}"></script>
 @stack('scripts-post')
 
 </body>

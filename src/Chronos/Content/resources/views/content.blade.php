@@ -1,7 +1,7 @@
 @extends('chronos::admin')
 
 @push('styles')
-<link href="{{ asset('chronos/css/content.css?v=' . time()) }}" rel="stylesheet" /> <!-- @TODO remove cache-busting -->
+<link href="{{ asset('chronos/css/content.css?v=' . Config::get('chronos.version')) }}" rel="stylesheet" />
 @endpush
 
 @push('content-modals')

@@ -16,7 +16,7 @@ class ImageStylesController extends Controller
 
     public function index(Request $request)
     {
-        $items_per_page = Config::get('chronos.items_per_page');
+        $itemsPerPage = Config::get('chronos.items_per_page');
 
         $q = ImageStyle::uncloaked();
 
@@ -54,7 +54,7 @@ class ImageStylesController extends Controller
             $q->orderBy('name', 'ASC');
 
         // pagination
-        $data = $q->paginate($items_per_page);
+        $data = $q->paginate($itemsPerPage);
 
         return response()->json($data, 200);
     }

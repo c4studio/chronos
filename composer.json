@@ -14,15 +14,18 @@
     "laravel/framework": "^5.3",
     "laravel/passport": "^2.0",
     "laravelcollective/html": "^5.3",
-    "lavary/laravel-menu": "dev-master"
+    "lavary/laravel-menu": "^1.6"
   },
   "replace": {
     "chronos/scaffolding": "self.version"
   },
   "autoload": {
+    "files": [
+        "src/Chronos/Content/app/Helpers/helpers.php",
+        "src/Chronos/Scaffolding/app/Helpers/helpers.php"
+    ],
     "psr-4": {
       "Chronos\\": "src/Chronos"
     }
-  },
-  "minimum-stability": "dev"
+  }
 }

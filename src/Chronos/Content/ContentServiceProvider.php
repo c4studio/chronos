@@ -26,6 +26,11 @@ class ContentServiceProvider extends ServiceProvider {
             });
         }
 
+        // publish config
+        $this->publishes([
+            __DIR__ . '/config/languages.php' => config_path('languages.php'),
+        ], 'config');
+
         // load migrations
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
 
@@ -49,6 +54,19 @@ class ContentServiceProvider extends ServiceProvider {
         $this->updateMenu();
     }
 
+    /**
+     * Register bindings in the container.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        // default package configuration
+        $this->mergeConfigFrom(
+            __DIR__ . '/config/languages.php', 'languages'
+        );
+    }
+
 
 
     /**
@@ -57,7 +75,9 @@ class ContentServiceProvider extends ServiceProvider {
     protected function updateMenu()
     {
         $menu = \Menu::get('ChronosMenu');
-        $submenu = $menu->add(trans('chronos.content::menu.Content'), null)
+
+        // Content tab
+        $content_menu = $menu->add(trans('chronos.content::menu.Content'), null)
             ->prepend('<span class="icon c4icon-pencil-3"></span>')
             ->data('order', 100)->data('permissions', ['view_content_types', 'view_media']);
 
@@ -65,15 +85,25 @@ class ContentServiceProvider extends ServiceProvider {
             $types = ContentType::orderBy('name')->get();
             if ($types) {
                 foreach ($types as $k => $type) {
-                    $submenu->add($type->name, ['route' => ['chronos.content', 'type' => $type->id]])
+                    $content_menu->add($type->name, ['route' => ['chronos.content', 'type' => $type->id]])
                         ->data('order', 100 + $k * 5)->data('permissions', ['view_content_type_' . $type->id]);
                 }
             }
         }
-        $submenu->add(trans('chronos.content::menu.Media'), ['route' => 'chronos.content.media'])
+        $content_menu->add(trans('chronos.content::menu.Media'), ['route' => 'chronos.content.media'])
                 ->data('order', 800)->data('permissions', ['view_media']);
-        $submenu->add(trans('chronos.content::menu.Content types'), ['route' => 'chronos.content.types'])
+        $content_menu->add(trans('chronos.content::menu.Content types'), ['route' => 'chronos.content.types'])
                 ->data('order', 900)->data('permissions', ['view_content_types']);
+
+        // Settings tab
+        if (class_exists('Chronos\Scaffolding\Models\Setting') && settings('is_multilanguage')) {
+            $settings_menu = $menu->get(camel_case(trans('chronos.scaffolding::menu.Settings')));
+            $settings_permissions = $settings_menu->permissions;
+            $settings_permissions[] = 'edit_languages';
+            $settings_menu->data('permissions', $settings_permissions);
+            $settings_menu->add(trans('chronos.content::menu.Languages'), ['route' => 'chronos.settings.languages'])
+                ->data('order', 920)->data('permissions', ['edit_languages']);
+        }
     }
 
 }

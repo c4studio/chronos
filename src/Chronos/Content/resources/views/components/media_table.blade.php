@@ -13,11 +13,11 @@
                         </div>
                     </div>
                     @if (Auth::user()->can('upload_media') && Route::currentRouteName() !== 'chronos.content.media')
-                    <div class="main-action create marginT15 pull-right">
-                        <ajax-upload action="{{ route('api.content.media.store') }}" v-bind:multiple="true">
-                            <a data-placement="left" data-tooltip="tooltip" title="{!! trans('chronos.content::interface.Upload media') !!}">{!! trans('chronos.content::interface.Upload media') !!}</a>
-                        </ajax-upload>
-                    </div>
+                        <div class="main-action create marginT15 pull-right">
+                            <ajax-upload action="{{ route('api.content.media.store') }}" v-bind:multiple="true">
+                                <a data-placement="left" data-tooltip="tooltip" title="{!! trans('chronos.content::interface.Upload media') !!}">{!! trans('chronos.content::interface.Upload media') !!}</a>
+                            </ajax-upload>
+                        </div>
                     @endif
                     <div class="clearfix"></div>
                 </div>
@@ -62,7 +62,7 @@
                                 </table>
                                 <a class="marginR15" v-bind:href="data[lastSelected].file" target="_blank">{!! trans('chronos.content::interface.Download file') !!}</a>
                                 @can ('delete_media')
-                                    <a class="text-danger" data-toggle="modal" data-target="#delete-file-dialog" v-on:click="setdeleteURL(data[lastSelected].endpoints.destroy, $event)">{!! trans('chronos.content::interface.Delete file') !!}</a><br />
+                                <a class="text-danger" data-toggle="modal" data-target="#delete-file-dialog" v-on:click="setdeleteURL(data[lastSelected].endpoints.destroy, $event)">{!! trans('chronos.content::interface.Delete file') !!}</a><br />
                                 @endcan
 
                                 <a class="btn btn-action marginT15" v-on:click="selectFile(data[lastSelected])" v-if="selectable">{!! trans('chronos.content::interface.Select file') !!}</a>

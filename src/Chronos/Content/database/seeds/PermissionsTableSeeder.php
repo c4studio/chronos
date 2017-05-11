@@ -61,6 +61,12 @@ class PermissionsTableSeeder extends Seeder {
             'label' => trans('chronos.content::permissions.Delete media'),
             'order' => 10
         ]);
+
+        Permission::create([
+            'name' => 'edit_languages',
+            'label' => trans('chronos.content::permissions.Edit language settings'),
+            'order' => 10
+        ]);
     }
 
 }

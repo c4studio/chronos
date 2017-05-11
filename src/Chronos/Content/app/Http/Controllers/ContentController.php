@@ -5,7 +5,10 @@ namespace Chronos\Content\Http\Controllers;
 use App\Http\Controllers\Controller;
 
 use Chronos\Content\Models\Content;
+use Chronos\Content\Models\ContentFieldData;
 use Chronos\Content\Models\ContentType;
+use Chronos\Content\Models\Language;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ContentController extends Controller
@@ -17,7 +20,10 @@ class ContentController extends Controller
             abort(403);
         }
 
-        return view('chronos::content.manage.index')->with('type', $type);
+        return view('chronos::content.manage.index')->with([
+            'languages' => Language::active()->get(),
+            'type' => $type
+        ]);
     }
 
     public function create(ContentType $type)
@@ -37,6 +43,7 @@ class ContentController extends Controller
 
         return view('chronos::content.manage.edit')->with([
             'content' => $content,
+            'languages' => Language::active()->get(),
             'type' => $type
         ]);
     }

@@ -6,7 +6,6 @@ return [
     'Edit content types' => 'Content/Edit content types',
     'Edit content type fieldsets' => 'Content/Edit content type fieldsets',
     'Delete content types' => 'Content/Delete content types',
-    'welcome' => 'Welcome, :name',
 
     'View :name' => 'Content/View :name',
     'Add :name' => 'Content/Add :name',
@@ -17,5 +16,7 @@ return [
 
     'View media' => 'Content/View media',
     'Upload media' => 'Content/Upload media',
-    'Delete media' => 'Content/Delete media'
+    'Delete media' => 'Content/Delete media',
+
+    'Edit language settings' => 'Settings/Edit language settings'
 ];

@@ -16,6 +16,23 @@ if ( ! function_exists('decode'))
     }
 }
 
+if ( ! function_exists('settings'))
+{
+    function settings($key)
+    {
+        static $settings;
+
+        if (is_null($settings))
+        {
+            $settings = \Illuminate\Support\Facades\Cache::remember('settings', 24*60, function() {
+                return array_pluck(\Chronos\Scaffolding\Models\Setting::all()->toArray(), 'value', 'key');
+            });
+        }
+
+        return array_key_exists($key, $settings) ? $settings[$key] : null;
+    }
+}
+
 if ( ! function_exists('transliterate'))
 {
     function transliterate($string)

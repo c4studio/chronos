@@ -4,6 +4,9 @@ namespace Chronos\Content\Api\Controllers;
 
 use App\Http\Controllers\Controller;
 use Chronos\Content\Models\Content;
+use Chronos\Content\Models\ContentField;
+use Chronos\Content\Models\ContentFieldData;
+use Chronos\Content\Models\ContentFieldset;
 use Chronos\Content\Models\ContentType;
 use Chronos\Content\Traits\ContentManagement;
 use Chronos\Content\Traits\FieldsetManagement;
@@ -18,8 +21,8 @@ class ContentController extends Controller
     public function index(Request $request, ContentType $type)
     {
         $itemsPerPage = $request->has('perPage')
-                            ? $request->get('perPage') == 0 ? Content::query()->count() : $request->get('perPage')
-                            : Config::get('chronos.items_per_page');
+            ? $request->get('perPage') == 0 ? Content::query()->count() : $request->get('perPage')
+            : Config::get('chronos.items_per_page');
 
         $q = Content::where('type_id', $type->id);
 
@@ -66,7 +69,7 @@ class ContentController extends Controller
 
         // withInactive
         if (!$request->has('withInactive') || !$request->get('withInactive'))
-            $q->where('status', 1);
+            $q->active();
 
         // pagination
         $data = $q->paginate($itemsPerPage);
@@ -138,13 +141,14 @@ class ContentController extends Controller
 
         // handle store
         $content = Content::create([
-            'type_id' => $type->id,
+            'author_id' => $request->get('author_id'),
+            'language' => $request->has('language') ? $request->get('language') : \Config::get('app.locale'),
+            'lock_delete' => $request->has('lock_delete'),
             'parent_id' => $request->has('parent_id') && $request->get('parent_id') != 0 ? $request->get('parent_id') : null,
             'slug' => $request->get('slug'),
-            'title' => $request->get('title'),
             'status' => $request->get('status'),
-            'lock_delete' => $request->has('lock_delete'),
-            'author_id' => $request->get('author_id')
+            'title' => $request->get('title'),
+            'type_id' => $type->id
         ]);
 
         $this->insertFieldData($request, $content);
@@ -160,6 +164,52 @@ class ContentController extends Controller
             'content' => $content,
             'status' => 200
         ], 200);
+    }
+
+    public function translate(Request $request, ContentType $type, Content $content)
+    {
+        // duplicate content
+        $translation = $content->replicate();
+        $translation->language = $request->get('language');
+        $translation->translation_id = $content->translation_id == null ? $content->id : $content->translation_id;
+        $translation->push();
+
+        // duplicate content fieldset
+        $fieldsets = ContentFieldset::where('parent_id', $content->id)->where('parent_type', 'Chronos\Content\Models\Content')->get();
+        foreach ($fieldsets as $fieldset) {
+            $translation_fieldset = $fieldset->replicate();
+            $translation_fieldset->parent_id = $translation->id;
+            $translation_fieldset->push();
+
+            $fields = ContentField::where('fieldset_id', $fieldset->id)->get();
+            foreach ($fields as $field) {
+                $translation_field = $field->replicate();
+                $translation_field->fieldset_id = $translation_fieldset->id;
+                $translation_field->push();
+
+                $fields_data = ContentFieldData::where('field_id', $field->id)->get();
+                foreach ($fields_data as $field_data) {
+                    $translation_field_data = $field_data->replicate();
+                    $translation_field_data->content_id = $translation->id;
+                    $translation_field_data->field_id = $translation_field->id;
+                    $translation_field_data->push();
+                }
+            }
+        }
+
+        // duplicate content fields data
+        $fields_data = ContentFieldData::whereHas('field', function($q1) {
+            $q1->whereHas('fieldset', function($q2) {
+                $q2->where('parent_type', 'Chronos\Content\Models\ContentType');
+            });
+        })->where('content_id', $content->id)->get();
+        foreach ($fields_data as $field_data) {
+            $translation_field_data = $field_data->replicate();
+            $translation_field_data->content_id = $translation->id;
+            $translation_field_data->push();
+        }
+
+        return redirect($translation->admin_urls['edit']);
     }
 
     public function update(Request $request, ContentType $type, Content $content)

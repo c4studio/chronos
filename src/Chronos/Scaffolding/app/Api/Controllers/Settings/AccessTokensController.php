@@ -14,7 +14,7 @@ class AccessTokensController extends Controller
 
     public function index(Request $request)
     {
-        $items_per_page = Config::get('chronos.items_per_page');
+        $itemsPerPage = Config::get('chronos.items_per_page');
 
         $q = Token::query();
 
@@ -54,7 +54,7 @@ class AccessTokensController extends Controller
             $q->orderBy('name', 'ASC');
 
         // pagination
-        $data = $q->paginate($items_per_page);
+        $data = $q->paginate($itemsPerPage);
 
         //add endpoints and access token value
         if (count($data) > 0) {

@@ -18,7 +18,7 @@ class Content extends Model
      *
      * @var array
      */
-    protected $appends = ['admin_urls', 'endpoints'];
+    protected $appends = ['admin_urls', 'endpoints', 'translation_codes'];
 
     /**
      * The dynamic content values that are appended to the model
@@ -135,23 +135,17 @@ class Content extends Model
     {
         $id = $this->attributes['id'];
         $type = $this->attributes['type_id'];
+
         $urls['edit'] = route('chronos.content.edit', ['type' => $type, 'content' => $id]);
         $urls['edit_fieldsets'] = route('chronos.content.fieldset', ['type' => $type, 'content' => $id]);
 
+        if (settings('is_multilanguage') && ContentType::find($type)->translatable) {
+            foreach ($this->translations as $translation) {
+                $urls['translations'][$translation->language] = route('chronos.content.edit', ['type' => $translation->type, 'content' => $translation->id]);
+            }
+        }
+
         return $urls;
-    }
-
-    /**
-     * Add admin URLs to model.
-     */
-    public function getEndpointsAttribute()
-    {
-        $id = $this->attributes['id'];
-        $type = $this->attributes['type_id'];
-        $endpoints['index'] = route('api.content', ['type' => $type]);
-        $endpoints['destroy'] = route('api.content.destroy', ['type' => $type, 'content' => $id]);
-
-        return $endpoints;
     }
 
     /**
@@ -210,6 +204,30 @@ class Content extends Model
     }
 
     /**
+     * Add endpoints to model.
+     */
+    public function getEndpointsAttribute()
+    {
+        $id = $this->attributes['id'];
+        $type = $this->attributes['type_id'];
+        $endpoints['index'] = route('api.content', ['type' => $type]);
+        $endpoints['destroy'] = route('api.content.destroy', ['type' => $type, 'content' => $id]);
+
+        if (settings('is_multilanguage') && ContentType::find($type)->translatable)
+            $endpoints['translate'] = route('api.content.translate', ['type' => $type, 'content' => $id]);
+
+        return $endpoints;
+    }
+
+    /**
+     * Add language to model.
+     */
+    public function getLanguageNameAttribute()
+    {
+        return array_search($this->language, array_column(\Config::get('languages.list'), 'code', 'name'));
+    }
+
+    /**
      * Get path for item.
      */
     public function getPathAttribute()
@@ -230,6 +248,35 @@ class Content extends Model
         $path .= '/' . $this->slug;
 
         return $path;
+    }
+
+    /**
+     * Get content translations.
+     */
+    public function getTranslationsAttribute()
+    {
+        if (!settings('is_multilanguage') || !ContentType::find($this->type_id)->translatable)
+            return null;
+
+        $parent = $this->translation_id !== null ? Content::where('id', $this->translation_id)->first() : Content::where('id', $this->id)->first();
+        $translations = Content::where('translation_id', $parent->id)->get();
+
+        return $translations->merge([$parent]);
+    }
+
+    /**
+     * Get content translations.
+     */
+    public function getTranslationCodesAttribute()
+    {
+        $translations = $this->translations;
+
+        if (!$translations)
+            return [];
+
+        return $translations->map(function($content) {
+            return $content->language;
+        });
     }
 
     /**

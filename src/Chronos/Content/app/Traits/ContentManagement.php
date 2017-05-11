@@ -64,8 +64,13 @@ trait ContentManagement
         $slug_rule = Rule::unique('content')->where(function($query) use ($type) {
             $query->where('type_id', $type->id);
         });
-        if ($request->isMethod('PATCH') && $content)
+
+        if ($request->isMethod('PATCH') && $content) {
+            $slug_rule->where(function($query) use ($content) {
+                $query->where('language', $content->language);
+            });
             $slug_rule = $slug_rule->ignore($content->id);
+        }
 
         $rules = [
             'title' => 'required',

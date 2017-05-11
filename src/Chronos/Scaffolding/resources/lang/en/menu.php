@@ -1,11 +1,16 @@
 <?php
 
 return [
-    'Access tokens' => 'Access tokens',
+    // Dashboard
     'Dashboard' => 'Dashboard',
-    'Image styles' => 'Image styles',
+
+    // Users
+    'Users' => 'Users',
     'Permissions' => 'Permissions',
     'Roles' => 'Roles',
+
+    // Settings
     'Settings' => 'Settings',
-    'Users' => 'Users'
+    'Access tokens' => 'Access tokens',
+    'Image styles' => 'Image styles',
 ];

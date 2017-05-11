@@ -282,6 +282,11 @@
             }
         },
         created: function() {
+            //get languages
+            if (this.contentId == null) {
+                this.getLanguages();
+            }
+
             // populate data
             this.getData();
         },
@@ -289,6 +294,8 @@
             return {
                 dataLoader: false,
                 fieldsets: [],
+                languages: [],
+                languageSelected: '{{ Config::get('app.locale') }}',
                 lockDelete: 0,
                 order: 0,
                 parentId: 0,
@@ -436,6 +443,24 @@
                     }
                 });
 
+            },
+            getLanguages: function() {
+                this.$http.get('/api/settings/languages').then(function(response) {
+                    this.languages = response.body.data;
+                }, function(response) {
+                    if (response.body.alerts) {
+                        response.body.alerts.forEach(function(alert) {
+                            vm.$emit('add-alert', alert);
+                        }.bind(this));
+                    }
+                    else {
+                        vm.$emit('add-alert', {
+                            type: 'error',
+                            title: 'AJAX error',
+                            message: response.statusText + ' (' + response.status + ')'
+                        });
+                    }
+                });
             },
             saveContent: function(event, update) {
                 vm.$emit('show-loader');

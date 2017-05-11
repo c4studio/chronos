@@ -39,6 +39,7 @@ return [
     'Repeatable?' => 'Repeatable?',
     'Save' => 'Save',
     'Select file' => 'Select file',
+    'Select language' => 'Select language',
     'Slug' => 'Slug',
     'Specifies whether this content type will be available in multiple languages.' => 'Specifies whether this content type will be available in multiple languages.',
     'Step' => 'Step',

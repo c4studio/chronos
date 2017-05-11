@@ -14,7 +14,10 @@
   "autoload": {
     "classmap": [
       "database"
-    ]
+    ],
+    "psr-4": {
+      "Chronos\\Scaffolding\\": ""
+    }
   },
   "minimum-stability": "dev"
 }

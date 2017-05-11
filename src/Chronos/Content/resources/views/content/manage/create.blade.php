@@ -66,14 +66,24 @@
                             </div>
                         </div>
                         <div class="col-xs-12 col-md-4">
-                            <div class="panel panel-actions" data-spy="affix" data-offset-top="100">
-                                <input name="author_id" type="hidden" value="{{ Auth::user()->id }}" />
-                                <button class="btn btn-primary" name="process" type="submit" value="1">{!! trans('chronos.content::forms.Save') !!}</button>
-                                <a class="btn btn-cancel" href="{{ route('chronos.content', ['type' => $type]) }}">{!! trans('chronos.content::forms.Cancel') !!}</a>
+                            <div class="content-sidebar" data-spy="affix" data-offset-top="100">
+                                @if (settings('is_multilanguage'))
+                                    <div class="panel">
+                                        <h2 class="panel-title">{{ trans('chronos.content::interface.Language') }}</h2>
+                                        <select class="form-control" id="language" name="language" v-model="languageSelected">
+                                            <option v-for="language in languages" v-bind:value="language.code" v-html="language.name"></option>
+                                        </select>
+                                    </div>
+                                @endif
+                                <div class="panel panel-actions">
+                                    <input name="author_id" type="hidden" value="{{ Auth::user()->id }}" />
+                                    <button class="btn btn-primary" name="process" type="submit" value="1">{!! trans('chronos.content::forms.Save') !!}</button>
+                                    <a class="btn btn-cancel" href="{{ route('chronos.content', ['type' => $type]) }}">{!! trans('chronos.content::forms.Cancel') !!}</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    {!! Form::close(); !!}
+                    {!! Form::close() !!}
                 </content-editor>
             </div>
         </div><!--/.content -->
@@ -83,5 +93,5 @@
 
 
 @push('scripts-components')
-    @include('chronos::components.content_editor')
+@include('chronos::components.content_editor')
 @endpush

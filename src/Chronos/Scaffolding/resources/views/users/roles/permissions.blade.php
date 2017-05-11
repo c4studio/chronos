@@ -18,7 +18,7 @@
                             @if (count($roles) > 0)
                                 <permissions-editor inline-template>
                                     {!! Form::open(['route' => 'api.users.permissions.update', 'method' => 'PATCH', 'v-on:submit.prevent' => 'saveForm', 'novalidate' => 'novalidate']) !!}
-                                    <table class="table permissions">
+                                    <table class="table permissions-table">
                                         <thead>
                                             <tr>
                                                 <th></th>

@@ -15,4 +15,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     /* MEDIA */
     Route::get('content/media', ['uses' => 'MediaController@index', 'as' => 'chronos.content.media']);
+
+    /* SETTINGS */
+    Route::get('settings/languages', ['uses' => 'Settings\LanguagesController@index', 'as' => 'chronos.settings.languages']);
 });

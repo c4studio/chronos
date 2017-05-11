@@ -27,9 +27,9 @@
                                         <span class="help-block" v-html="store.formErrors['title'][0]" v-if="Object.hasKey(store.formErrors, 'title')"></span>
                                     </div>
                                     @if ($type->name == 'Gallery')
-                                    <div class="form-group">
-                                        ID: <span v-html="contentId"></span> <code>[gallery id="<span v-html="contentId"></span>"]</code>
-                                    </div>
+                                        <div class="form-group">
+                                            ID: <span v-html="contentId"></span> <code>[gallery id="<span v-html="contentId"></span>"]</code>
+                                        </div>
                                     @endif
                                     <div class="slug form-group" v-bind:class="{ 'has-error': Object.hasKey(store.formErrors, 'slug') }" v-show="(slug != '' && !slugChanged) || slugChanged || Object.hasKey(store.formErrors, 'slug')">
                                         <label class="control-label" for="slug">{!! trans('chronos.content::forms.Slug') !!}</label>
@@ -76,14 +76,38 @@
                             </div>
                         </div>
                         <div class="col-xs-12 col-md-4">
-                            <div class="panel panel-actions" data-spy="affix" data-offset-top="100">
-                                <input name="author_id" type="hidden" value="{{ Auth::user()->id }}" />
-                                <button class="btn btn-primary" name="process" type="submit" value="1">{!! trans('chronos.content::forms.Save') !!}</button>
-                                <a class="btn btn-cancel" href="{{ route('chronos.content', ['type' => $type]) }}">{!! trans('chronos.content::forms.Cancel') !!}</a>
+                            <div class="content-sidebar" data-spy="affix" data-offset-top="100">
+                                @if (settings('is_multilanguage'))
+                                    <div class="panel">
+                                        <h2 class="panel-title">{{ trans('chronos.content::interface.Languages') }}</h2>
+                                        <p class="paddingB15"><strong>{!! trans('chronos.content::interface.The language of this :type is <em>:language</em>.', ['type' => strtolower($type->name), 'language' => $content->languageName]) !!}</strong></p>
+                                        <table class="table table-condensed">
+                                            @foreach($languages as $language)
+                                                @if ($content->language != $language->code)
+                                                    <tr>
+                                                        <td>{{ $language->name }}</td>
+                                                        <td class="text-right">
+                                                            @if ($content->translation_codes->search($language->code) !== false)
+                                                                <a class="icon c4icon-pencil-3 c4icon-lg" href="{{ $content->admin_urls['translations'][$language->code] }}"></a>
+                                                            @else
+                                                                <a class="icon c4icon-plus-2 c4icon-lg" href="{{ $content->endpoints['translate'] }}?language={{ $language->code }}"></a>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endif
+                                            @endforeach
+                                        </table>
+                                    </div>
+                                @endif
+                                <div class="panel panel-actions">
+                                    <input name="author_id" type="hidden" value="{{ Auth::user()->id }}" />
+                                    <button class="btn btn-primary" name="process" type="submit" value="1">{!! trans('chronos.content::forms.Save') !!}</button>
+                                    <a class="btn btn-cancel" href="{{ route('chronos.content', ['type' => $type]) }}">{!! trans('chronos.content::forms.Cancel') !!}</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    {!! Form::close(); !!}
+                    {!! Form::close() !!}
                 </content-editor>
             </div>
         </div><!--/.content -->
@@ -93,5 +117,5 @@
 
 
 @push('scripts-components')
-    @include('chronos::components.content_editor')
+@include('chronos::components.content_editor')
 @endpush

@@ -22,6 +22,9 @@ return [
     'File successfully deleted.' => 'File successfully deleted.',
     ':file successfully uploaded.' => ':file successfully uploaded.',
     'Invalid sortBy argument: :arg.' => 'Invalid sortBy argument: :arg.',
+    'Language successfully activated.' => 'Language successfully activated.',
+    'Language successfully added.' => 'Language successfully added.',
+    'Language successfully deactivated.' => 'Language successfully deactivated.',
     'No files to upload.' => 'No files to upload.',
     'Success.' => 'Success.',
     ':type deletion unsuccessful.' => ':type deletion unsuccessful.',
@@ -29,4 +32,6 @@ return [
     ':type successfully deleted.' => ':type successfully deleted.',
     ':type successfully updated.' => ':type successfully updated.',
     'Warning.' => 'Warning.',
+    'You have already added this language.' => 'You have already added this language.',
+    'You must select a language.' => 'You must select a language.',
 ];

@@ -2,10 +2,8 @@
 
 namespace Chronos\Scaffolding;
 
-use Chronos\Scaffolding\Models\Permission;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -85,8 +83,8 @@ class ScaffoldingServiceProvider extends ServiceProvider {
      */
     protected function registerGates($gate)
     {
-        if (Schema::hasTable('roles')) {
-            $permissions = Permission::all();
+        if (class_exists('Chronos\Scaffolding\Models\Permission') && Schema::hasTable('roles')) {
+            $permissions = \Chronos\Scaffolding\Models\Permission::all();
             foreach ($permissions as $permission) {
                 $gate->define($permission->name, function ($user) use ($permission) {
                     return $user->hasPermission($permission->name);
@@ -105,6 +103,8 @@ class ScaffoldingServiceProvider extends ServiceProvider {
 //                ->prepend('<span class="icon c4icon-dashboard"></span>')
 //                ->data('order', 1)->data('permissions', ['view_dashboard']);
 
+
+            // Users tab
             $users_menu = $menu->add(trans('chronos.scaffolding::menu.Users'), null)
                 ->prepend('<span class="icon c4icon-user-3"></span>')
                 ->data('order', 800)->data('permissions', ['view_roles', 'edit_permissions']);
@@ -113,7 +113,7 @@ class ScaffoldingServiceProvider extends ServiceProvider {
             $users_menu->add(trans('chronos.scaffolding::menu.Permissions'), ['route' => 'chronos.users.permissions'])
                 ->data('order', 820)->data('permissions', ['edit_permissions']);
 
-
+            // Settings tab
             $settings_menu = $menu->add(trans('chronos.scaffolding::menu.Settings'), null)
                 ->prepend('<span class="icon c4icon-sliders-1"></span>')
                 ->data('order', 900)->data('permissions', ['edit_settings', 'edit_access_tokens', 'edit_image_styles']);
