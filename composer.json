@@ -20,6 +20,10 @@
     "chronos/scaffolding": "self.version"
   },
   "autoload": {
+    "files": [
+        "src/Chronos/Content/app/Helpers/helpers.php",
+        "src/Chronos/Scaffolding/app/Helpers/helpers.php"
+    ],
     "psr-4": {
       "Chronos\\": "src/Chronos"
     }
