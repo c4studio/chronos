@@ -2,10 +2,8 @@
 
 namespace Chronos\Scaffolding;
 
-use Chronos\Scaffolding\Models\Permission;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -85,8 +83,8 @@ class ScaffoldingServiceProvider extends ServiceProvider {
      */
     protected function registerGates($gate)
     {
-        if (Schema::hasTable('roles')) {
-            $permissions = Permission::all();
+        if (class_exists('Chronos\Scaffolding\Models\Permission') && Schema::hasTable('roles')) {
+            $permissions = Chronos\Scaffolding\Models\Permission::all();
             foreach ($permissions as $permission) {
                 $gate->define($permission->name, function ($user) use ($permission) {
                     return $user->hasPermission($permission->name);
