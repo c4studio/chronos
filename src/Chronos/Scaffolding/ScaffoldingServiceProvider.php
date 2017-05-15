@@ -65,10 +65,12 @@ class ScaffoldingServiceProvider extends ServiceProvider {
     public function register()
     {
         // register custom ExceptionHandler
-        $this->app->singleton(
-            \Illuminate\Contracts\Debug\ExceptionHandler::class,
-            \Chronos\Scaffolding\App\Exceptions\Handler::class
-        );
+        if (class_exists('Chronos\Scaffolding\App\Exceptions\Handler')) {
+            $this->app->singleton(
+                \Illuminate\Contracts\Debug\ExceptionHandler::class,
+                \Chronos\Scaffolding\App\Exceptions\Handler::class
+            );
+        }
 
         // default package configuration
         $this->mergeConfigFrom(
