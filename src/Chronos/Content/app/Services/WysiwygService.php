@@ -168,7 +168,7 @@ class WysiwygService
                 'text' => $attrs['text'],
                 'url' => $attrs['url']
             ])->render();
-            $text = preg_replace('/\[link(.*?)\]/', $replace_tpl, $text);
+            $text = preg_replace($matches[0], $replace_tpl, $text);
         }
 
         // handle media
