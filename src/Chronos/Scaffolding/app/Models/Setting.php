@@ -16,6 +16,13 @@ class Setting extends Model
     ];
 
     /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = null;
+
+    /**
      * Indicates that the model should not be timestamped
      *
      * @var bool
