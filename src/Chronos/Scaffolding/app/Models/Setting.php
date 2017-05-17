@@ -16,11 +16,18 @@ class Setting extends Model
     ];
 
     /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = null;
+    protected $primaryKey = 'key';
 
     /**
      * Indicates that the model should not be timestamped
