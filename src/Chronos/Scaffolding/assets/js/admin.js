@@ -96,8 +96,12 @@ Vue.component('data-table', {
 		}
 	},
 	methods: {
-		ajaxGet: function(src) {
-			vm.$emit('ajax-get', src);
+		ajaxGet: function(src, reload) {
+
+			if (reload === true)
+				vm.$emit('ajax-get', src, this.getData);
+			else
+				vm.$emit('ajax-get', src);
 		},
 		clearSearch: function() {
 			this.filters.search = '';
@@ -162,7 +166,7 @@ Vue.component('data-table', {
 				this.pagination.items = response.body.total;
 
 				this.dataLoader = false;
-			}, function(response) {
+			}.bind(this), function(response) {
 				this.dataLoader = false;
 
 				vm.$emit('add-alert', {
@@ -170,7 +174,7 @@ Vue.component('data-table', {
 					title: 'AJAX error',
 					message: response.statusText + ' (' + response.status + ')'
 				});
-			});
+			}.bind(this));
 		},
 		highlight: function(text, phrase) {
 			if (phrase && this.searchOn)
@@ -247,7 +251,7 @@ var vm = new Vue({
 	el: '#chronos',
 	created: function() {
 		// check for alerts in session
-		if (sessionStorage.getItem('alerts')) {
+		if (sessionStorage.getItem('alerts') && sessionStorage.getItem('alerts') !== 'undefined') {
 			this.alerts = JSON.parse(sessionStorage.getItem('alerts'));
 			sessionStorage.removeItem('alerts');
 		}
@@ -268,7 +272,7 @@ var vm = new Vue({
 		addAlert: function(alert) {
 			this.alerts.push(alert)
 		},
-		ajaxGet: function(src) {
+		ajaxGet: function(src, callback) {
 			vm.$emit('show-loader');
 
 			this.$http.get(src).then(function(response) {
@@ -278,6 +282,10 @@ var vm = new Vue({
 					response.body.alerts.forEach(function(alert) {
 						vm.$emit('add-alert', alert);
 					}.bind(this));
+				}
+
+				if (typeof callback === 'function') {
+					callback();
 				}
 
 			}, function(response) {

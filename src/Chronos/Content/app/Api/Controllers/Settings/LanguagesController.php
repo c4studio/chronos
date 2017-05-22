@@ -5,7 +5,7 @@ namespace Chronos\Content\Api\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use Chronos\Content\Models\Language;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Config;
 
 class LanguagesController extends Controller
@@ -134,7 +134,7 @@ class LanguagesController extends Controller
             }
         }
 
-        $data = new Paginator($languages, $itemsPerPage, $request->has('page') ? $request->get('page') : 1);
+        $data = new LengthAwarePaginator($languages->forPage($request->has('page') ? $request->get('page') : 1, $itemsPerPage), $languages->count(), $itemsPerPage, $request->has('page') ? $request->get('page') : 1);
 
         return response()->json($data, 200);
     }
@@ -174,7 +174,7 @@ class LanguagesController extends Controller
             'code' => $request->get('code'),
             'name' => $lang
         ]);
-        
+
         return response()->json([
             'alerts' => [
                 (object) [
