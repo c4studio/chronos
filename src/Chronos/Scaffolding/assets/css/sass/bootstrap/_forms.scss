@@ -498,24 +498,56 @@ input[type="checkbox"],
 }
 
 
-// Info group
+// Toggle input
 //
-.info-group {
-	@extend .form-group;
-}
+.input-toggle {
+	@include transition(all .5s ease-out);
+	background-color: $gray-light;
+	border-radius: 30px;
+	color: #ffffff !important;
+	cursor: pointer;
+	display: inline-block;
+	font-weight: 700;
+	height: 30px;
+	line-height: 30px;
+	position: relative;
+	vertical-align: middle;
+	text-decoration: none;
+	text-transform: uppercase;
+	width: 60px;
 
-.info-label {
-	@extend .control-label;
-	display: block;
-}
-
-.info-value {
-	a {
-		color: $gray-darker;
+	&:hover {
 		text-decoration: none;
+	}
 
-		&:hover {
-			color: darken($brand-action, 10%);
+	&:after {
+		@include transition(all .5s ease-out);
+		background-color: #ffffff;
+		border-radius: 100%;
+		content: '';
+		display: block;
+		height: 26px;
+		left: 2px;
+		position: absolute;
+		top: 2px;
+		width: 26px;
+	}
+
+	span {
+		@include transition(all .5s ease-out);
+		left: calc(100% - 25px);
+		position: absolute;
+	}
+
+	&.active {
+		background-color: $brand-action;
+
+		&:after {
+			left: calc(100% - 28px);
+		}
+
+		span {
+			left: 5px;
 		}
 	}
 }

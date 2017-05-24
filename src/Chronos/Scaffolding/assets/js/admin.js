@@ -64,6 +64,7 @@ Vue.component('data-table', {
 
 		// add listeners
 		this.$parent.$on('deleted-model-from-dialog', this.deleteModel);
+		this.$parent.$on('perform-bulk-action', this.performBulkAction);
 	},
 	components: {
 		sortable: {
@@ -91,8 +92,10 @@ Vue.component('data-table', {
 			},
 			pagination: {},
 			searchOn: false,
+			selected: [],
 			sortDesc: false,
-			sortField: null
+			sortField: null,
+			toggleOn: {}
 		}
 	},
 	methods: {
@@ -187,11 +190,71 @@ Vue.component('data-table', {
 
 			this.getData();
 		},
+		performBulkAction: function(url, method, e) {
+			vm.$emit('show-loader');
+
+			// close modal
+			var target = e.target.closest('.modal');
+			if (target) {
+				var dialog = new Modal(target);
+				dialog.close();
+			}
+
+			// close dropdown
+			var dropdown = e.target.closest('.bulk-actions');
+			dropdown.classList.remove('open');
+
+			this.$http({
+				method: method,
+				params: {
+					members: this.selected
+				},
+				url: url
+			}).then(function(response) {
+				vm.$emit('hide-loader');
+
+				if (response.body.alerts) {
+					response.body.alerts.forEach(function(alert) {
+						vm.$emit('add-alert', alert);
+					}.bind(this));
+				}
+
+				this.getData();
+
+				this.selected = [];
+			}, function(response) {
+				vm.$emit('hide-loader');
+
+				if (response.body.alerts) {
+					response.body.alerts.forEach(function(alert) {
+						vm.$emit('add-alert', alert);
+					}.bind(this));
+				}
+				else {
+					vm.$emit('add-alert', {
+						type: 'error',
+						title: 'AJAX error',
+						message: response.statusText + ' (' + response.status + ')'
+					});
+				}
+			});
+		},
 		search: debounce(function() {
 			this.getData();
 
 			this.searchOn = true;
 		}, 500),
+		selectAll: function() {
+			if (this.selected.length != this.pagination.items) {
+				this.selected = [];
+				this.data.forEach(function(item) {
+					this.selected.push(item.id);
+				}.bind(this));
+			} else {
+				this.selected = [];
+			}
+
+		},
 		setdeleteURL: function(deleteURL) {
 			this.deleteURL = deleteURL;
 		},
@@ -208,6 +271,12 @@ Vue.component('data-table', {
 			if (this.sortField == field)
 				this.sortDesc = !this.sortDesc;
 			this.sortField = field;
+
+			this.getData();
+		},
+		toggleFilter: function(filter) {
+			this.toggleOn[filter] = !this.toggleOn[filter];
+			this.filters[filter] = this.toggleOn[filter];
 
 			this.getData();
 		}
@@ -316,6 +385,9 @@ var vm = new Vue({
 		},
 		isOffcanvasOpen: function(active) {
 			return this.offcanvasOpen == active;
+		},
+		performBulkAction: function(url, method, e) {
+			this.$emit('perform-bulk-action', url, method, e);
 		},
 		showLoader: function() {
 			this.loader = true;

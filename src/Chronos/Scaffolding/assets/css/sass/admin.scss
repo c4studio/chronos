@@ -133,110 +133,218 @@ h1 {
 
 
 
-/* PROFILE PICTURE */
-.profile-picture {
-	border: 3px solid $gray-light;
-	border-radius: 75px;
-	display: block;
-	height: 150px;
-	margin: 0 auto;
-	overflow: hidden;
+/*
+ * BULK ACTIONS
+ */
+.bulk-actions {
+	height: 40px;
+	margin: -20px -10px -10px;
 	position: relative;
-	width: 150px;
+	width: 40px;
 
-	&:hover {
-		&:before,
+	.bulk-actions-toggle {
+		border-radius: 3px;
+		display: block;
+		height: 100%;
+		line-height: 40px;
+		position: relative;
+		width: 100%;
+		z-index: 5;
+
+		&:after {
+			@extend .caret;
+			bottom: auto;
+			color: #000000;
+			display: none;
+			left: auto;
+			line-height: 15px;
+			right: 5px;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+
+		&:focus {
+			outline: none;
+		}
+	}
+
+	&.open .bulk-actions-toggle,
+	.bulk-actions-toggle:hover {
+		background-color: $gray-lighter;
+
 		&:after {
 			display: block;
 		}
 	}
 
-	&:before {
-		background-color: rgba(0, 0, 0, .5);
-		content: '';
-		cursor: pointer;
-		display: none;
-		height: 100%;
-		left: 0;
-		margin: 0 auto;
+	input {
 		position: absolute;
-		top: 0;
-		width: 100%;
+		left: 10px;
+		margin: 0;
+		top: 50%;
+		transform: translateY(-50%);
 		z-index: 10;
 	}
+}
 
-	&:after {
-		background-color: #ffffff;
-		border-radius: 3px;
-		color: $brand-primary;
-		content: 'Edit picture';
-		cursor: pointer;
-		display: none;
-		font-size: 14px;
-		line-height: 1;
-		left: 50%;
-		margin-left: -60px;
-		margin-top: -15px;
-		padding: 8px 15px;
-		position: absolute;
-		text-align: center;
-		top: 50%;
-		width: 120px;
-		z-index: 15;
-	}
+/*
+ * CONTENT
+ */
+.content-wrapper {
+	margin-top: 50px;
+	position: relative;
+}
 
-	img {
-		height: 100%;
-		left: 0;
-		margin: 0 auto;
-		position: absolute;
-		top: 0;
-		width: 100%;
-		z-index: 5;
+.content {
+	@include transition(left .2s ease-out);
+	left: 0;
+	position: relative;
+	width: 100%;
+
+	&.offset {
+		left: 285px;
 	}
 }
 
-/* USER TAG */
-.user-tag {
-	line-height: 42px;
+/*
+ * FILTER BAR
+ */
+.filter-bar {
+	margin: 30px 0 60px;
+	overflow: hidden;
 
-	img {
-		border: 1px solid $gray-light;
-		border-radius: 100%;
-		height: 40px;
-		margin-right: 5px;
-		width: 40px;
+	.filters {
+		float: right;
 	}
 
-	a {
-		color: inherit;
-		text-decoration: none;
+	.filter {
+		display: inline-block;
+		margin-right: 30px;
+
+		&:last-child {
+			margin-right: 0;
+		}
+
+		.form-control {
+			background-color: #ffffff;
+			display: inline-block;
+			width: auto;
+			width: auto;
+		}
+	}
+
+	.search {
+		float: left;
+
+		.input-group {
+			padding-bottom: 5px;
+			position: relative;
+			width: 360px;
+
+			.reset {
+				span {
+					@include transition(all .2s ease);
+					color: $body-bg;
+				}
+
+				&:after {
+					@include transition(all .2s ease);
+					background-color: $body-bg;
+					bottom: 0;
+					content: '';
+					display: block;
+					height: 1px;
+					left: 0;
+					position: absolute;
+					width: 80%;
+				}
+			}
+
+			&:hover {
+				.reset:after {
+					background-color: $gray-darker;
+					width: 100%;
+				}
+			}
+		}
+
+		.input-group-addon {
+			border: none;
+			box-shadow: none;
+
+			&:hover {
+				cursor: pointer;
+			}
+		}
+
+		.form-control {
+			box-shadow: none;
+			color: $gray-darker;
+			font-size: 14px;
+
+			&::-moz-placeholder {
+				@include transition(all .2s ease);
+				color: $body-bg;
+				font-size: 14px;
+			}
+
+			&:-ms-input-placeholder {
+				@include transition(all .2s ease);
+				color: $body-bg;
+				font-size: 14px;
+			}
+
+			&::-webkit-input-placeholder {
+				@include transition(all .2s ease);
+				color: $body-bg;
+				font-size: 14px;
+			}
+
+			&:hover {
+				cursor: pointer;
+
+				&::-moz-placeholder {
+					color: $gray-darker;
+				}
+
+				&:-ms-input-placeholder {
+					color: $gray-darker;
+				}
+
+				&::-webkit-input-placeholder {
+					color: $gray-darker;
+				}
+			}
+
+			&:focus {
+				cursor: text;
+
+				&::-moz-placeholder {
+					color: $gray-darker;
+				}
+
+				&:-ms-input-placeholder {
+					color: $gray-darker;
+				}
+
+				&::-webkit-input-placeholder {
+					color: $gray-darker;
+				}
+
+				& + .reset {
+					span {
+						color: $gray-darker;
+					}
+
+					&:after {
+						background-color: $brand-primary;
+						width: 100%;
+					}
+				}
+			}
+		}
 	}
 }
-
-.user-tag-sm {
-	@extend .user-tag;
-
-	line-height: 32px;
-
-	img {
-		height: 30px;
-		width: 30px;
-	}
-}
-
-.user-tag-lg {
-	@extend .user-tag;
-
-	line-height: 52px;
-
-	img {
-		height: 50px;
-		width: 50px;
-	}
-}
-
-
 
 /*
  * HEADER
@@ -417,205 +525,27 @@ h1 {
 	}
 }
 
-.user-account-dropdown {
-	border: none;
-	border-top: 3px solid $brand-primary;
-	margin-top: 10px;
-	width: 275px;
-
-	&:before {
-		@include triangle(top, top -11px left 10px, $brand-primary, 4px);
-	}
-
-	li {
-		border: 1px solid $gray-light;
-		border-top: none;
-		position: relative;
-
-		&.unread {
-			background-color: #fffde0;
-		}
-
-		a {
-			display: block;
-			height: 50px;
-			line-height: 50px;
-			padding: 0 10px 0 42px;
-			position: relative;
-			white-space: normal;
-
-			&:hover {
-				background-color: transparent;
-				color: $brand-primary;
-			}
-
-			.icon {
-				font-size: 22px;
-				height: 31px;
-				left: 10px;
-				line-height: 31px;
-				position: absolute;
-				top: 10px;
-			}
-		}
-	}
-}
-
-
+.user-account-dropdown
 
 /*
- * CONTENT
+ * IMAGE STYLES
  */
-.content-wrapper {
-	margin-top: 50px;
-	position: relative;
+.crop-factor {
+	width: 70px;
 }
 
-.content {
-	@include transition(left .2s ease-out);
-	left: 0;
-	position: relative;
-	width: 100%;
+.image-anchor-table {
+	width: auto;
 
-	&.offset {
-		left: 285px;
-	}
-}
-
-
-
-/*
- * FILTER BAR
- */
-.filter-bar {
-	margin: 30px 0 60px;
-
-	.search {
-		.input-group {
-			padding-bottom: 5px;
-			position: relative;
-			width: 360px;
-
-			.reset {
-				span {
-					@include transition(all .2s ease);
-					color: $body-bg;
-				}
-
-				&:after {
-					@include transition(all .2s ease);
-					background-color: $body-bg;
-					bottom: 0;
-					content: '';
-					display: block;
-					height: 1px;
-					left: 0;
-					position: absolute;
-					width: 80%;
-				}
-			}
-
-			&:hover {
-				.reset:after {
-					background-color: $gray-darker;
-					width: 100%;
-				}
-			}
-		}
-
-		.input-group-addon {
-			border: none;
-			box-shadow: none;
-
-			&:hover {
-				cursor: pointer;
-			}
-		}
-
-		.form-control {
-			box-shadow: none;
-			color: $gray-darker;
-			font-size: 14px;
-
-			&::-moz-placeholder {
-				@include transition(all .2s ease);
-				color: $body-bg;
-				font-size: 14px;
-			}
-
-			&:-ms-input-placeholder {
-				@include transition(all .2s ease);
-				color: $body-bg;
-				font-size: 14px;
-			}
-
-			&::-webkit-input-placeholder {
-				@include transition(all .2s ease);
-				color: $body-bg;
-				font-size: 14px;
-			}
-
-			&:hover {
-				cursor: pointer;
-
-				&::-moz-placeholder {
-					color: $gray-darker;
-				}
-
-				&:-ms-input-placeholder {
-					color: $gray-darker;
-				}
-
-				&::-webkit-input-placeholder {
-					color: $gray-darker;
-				}
-			}
-
-			&:focus {
-				cursor: text;
-
-				&::-moz-placeholder {
-					color: $gray-darker;
-				}
-
-				&:-ms-input-placeholder {
-					color: $gray-darker;
-				}
-
-				&::-webkit-input-placeholder {
-					color: $gray-darker;
-				}
-
-				& + .reset {
-					span {
-						color: $gray-darker;
-					}
-
-					&:after {
-						background-color: $brand-primary;
-						width: 100%;
-					}
-				}
-			}
-		}
-	}
-
-	.filter {
-		line-height: 40px;
-		margin-right: 30px;
-
-		&:last-child {
-			margin-right: 0;
-		}
-
-		a {
-			color: $text-color;
-			cursor: pointer;
-			text-decoration: none;
+	tbody {
+		td {
+			border: 1px dashed #ddd;
+			height: auto;
+			padding: 2px 0 4px 8px;
+			text-align: center;
 		}
 	}
 }
-
 
 /*
  * MAIN ACTION
@@ -668,7 +598,6 @@ h1 {
 		font-size: 34px;
 	}
 }
-
 
 /*
  * OFFCANVAS
@@ -829,7 +758,107 @@ h1 {
 	}
 }
 
+/* PROFILE PICTURE */
+.profile-picture {
+	border: 3px solid $gray-light;
+	border-radius: 75px;
+	display: block;
+	height: 150px;
+	margin: 0 auto;
+	overflow: hidden;
+	position: relative;
+	width: 150px;
 
+	&:hover {
+		&:before,
+		&:after {
+			display: block;
+		}
+	}
+
+	&:before {
+		background-color: rgba(0, 0, 0, .5);
+		content: '';
+		cursor: pointer;
+		display: none;
+		height: 100%;
+		left: 0;
+		margin: 0 auto;
+		position: absolute;
+		top: 0;
+		width: 100%;
+		z-index: 10;
+	}
+
+	&:after {
+		background-color: #ffffff;
+		border-radius: 3px;
+		color: $brand-primary;
+		content: 'Edit picture';
+		cursor: pointer;
+		display: none;
+		font-size: 14px;
+		line-height: 1;
+		left: 50%;
+		margin-left: -60px;
+		margin-top: -15px;
+		padding: 8px 15px;
+		position: absolute;
+		text-align: center;
+		top: 50%;
+		width: 120px;
+		z-index: 15;
+	}
+
+	img {
+		height: 100%;
+		left: 0;
+		margin: 0 auto;
+		position: absolute;
+		top: 0;
+		width: 100%;
+		z-index: 5;
+	}
+}
+
+/*
+ * PERMISSIONS
+ */
+.permissions-table {
+
+	thead {
+		tr {
+			th {
+				border: none;
+				text-transform: none;
+				height: 90px;
+
+				.rotate {
+					display: inline-block;
+					transform: rotate(-45deg);
+					transform-origin: left;
+				}
+			}
+		}
+	}
+
+	tbody {
+		tr {
+			td {
+				border: none;
+				height: auto;
+				padding: 5px;
+			}
+
+			&.group {
+				td {
+					background-color: $gray-lighter;
+					font-weight: bold;
+				}
+			}
+		}
+	}
+}
 
 /*
  * SUBHEADER
@@ -944,65 +973,42 @@ h1 {
 	}
 }
 
-/*
- * PERMISSIONS
- *
- * TODO: refactor
- */
-table.permissions {
+/* USER TAG */
+.user-tag {
+	line-height: 42px;
 
-	thead {
-		tr {
-			th {
-				border: none;
-				text-transform: none;
-				height: 90px;
-
-				.rotate {
-					display: inline-block;
-					transform: rotate(-45deg);
-					transform-origin: left;
-				}
-			}
-		}
+	img {
+		border: 1px solid $gray-light;
+		border-radius: 100%;
+		height: 40px;
+		margin-right: 5px;
+		width: 40px;
 	}
 
-	tbody {
-		tr {
-			td {
-				border: none;
-				height: auto;
-				padding: 5px;
-			}
-
-			&.group {
-				td {
-					background-color: $gray-lighter;
-					font-weight: bold;
-				}
-			}
-		}
+	a {
+		color: inherit;
+		text-decoration: none;
 	}
 }
 
-/*
- * IMAGE STYLES
- *
- * TODO: refactor
- */
-.crop-factor {
-	width: 70px;
+.user-tag-sm {
+	@extend .user-tag;
+
+	line-height: 32px;
+
+	img {
+		height: 30px;
+		width: 30px;
+	}
 }
 
-table.image-anchor {
-	width: auto;
+.user-tag-lg {
+	@extend .user-tag;
 
-	tbody {
-		td {
-			border: 1px dashed #ddd;
-			height: auto;
-			padding: 2px 0 4px 8px;
-			text-align: center;
-		}
+	line-height: 52px;
+
+	img {
+		height: 50px;
+		width: 50px;
 	}
 }
