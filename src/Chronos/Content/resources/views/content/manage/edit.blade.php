@@ -77,7 +77,7 @@
                         </div>
                         <div class="col-xs-12 col-md-4">
                             <div class="content-sidebar" data-spy="affix" data-offset-top="100">
-                                @if (settings('is_multilanguage'))
+                                @if (settings('is_multilanguage') && $type->translatable)
                                     <div class="panel">
                                         <h2 class="panel-title">{{ trans('chronos.content::interface.Languages') }}</h2>
                                         <p class="paddingB15"><strong>{!! trans('chronos.content::interface.The language of this :type is <em>:language</em>.', ['type' => strtolower($type->name), 'language' => $content->languageName]) !!}</strong></p>

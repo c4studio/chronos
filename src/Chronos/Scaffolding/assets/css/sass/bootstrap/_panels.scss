@@ -183,24 +183,65 @@
 // Collapsable panels (aka, accordion)
 //
 .panel-group {
+	background-color: #ffffff;
+	border: 1px solid $gray-light;
 	margin-bottom: 30px;
 
 	.panel {
-		border: 1px solid $gray-light;
-		border-radius: 3px;
+		border: none;
+		border-bottom: 1px solid $gray-light;
+		border-radius: 0;
 		margin-bottom: 0;
 		overflow: hidden;
+		padding: 0;
 
-		& + .panel {
-			margin-top: 5px;
+		&:before {
+			content: none;
+		}
+
+		&:last-child {
+			border-bottom: none;
 		}
 	}
 
 	.panel-heading {
 		border-bottom: 0;
+		cursor: pointer;
+		padding: 0;
+		position: relative;
+
+		&:after {
+			content: '\e1d1';
+			font-family: icon;
+			font-size: 20px;
+			position: absolute;
+			right: 15px;
+			top: 50%;
+			transform: translateY(-50%);
+		}
 
 		& + .panel-collapse .panel-body {
 			border-top: 1px solid $gray-lighter;
+		}
+
+		.panel-title {
+			height: auto;
+			padding-right: 35px;
+
+			a {
+				display: block;
+				padding: 15px;
+			}
+		}
+
+		&.active {
+			&:after {
+				content: '\e1c4';
+			}
+		}
+
+		&:hover {
+			color: darken($brand-action, 10%);
 		}
 	}
 

@@ -1,4 +1,4 @@
-/* LOAD BOOTSTAP */
+/* LOAD BOOTSTRAP */
 @import "variables";
 @import "mixins";
 @import "bootstrap";
@@ -525,7 +525,49 @@ h1 {
 	}
 }
 
-.user-account-dropdown
+.user-account-dropdown {
+	border: none;
+	border-top: 3px solid $brand-primary;
+	margin-top: 10px;
+	width: 275px;
+
+	&:before {
+		@include triangle(top, top -11px left 10px, $brand-primary, 4px);
+	}
+
+	li {
+		border: 1px solid $gray-light;
+		border-top: none;
+		position: relative;
+
+		&.unread {
+			background-color: #fffde0;
+		}
+
+		a {
+			display: block;
+			height: 50px;
+			line-height: 50px;
+			padding: 0 10px 0 42px;
+			position: relative;
+			white-space: normal;
+
+			&:hover {
+				background-color: transparent;
+				color: $brand-primary;
+			}
+
+			.icon {
+				font-size: 22px;
+				height: 31px;
+				left: 10px;
+				line-height: 31px;
+				position: absolute;
+				top: 10px;
+			}
+		}
+	}
+}
 
 /*
  * IMAGE STYLES
