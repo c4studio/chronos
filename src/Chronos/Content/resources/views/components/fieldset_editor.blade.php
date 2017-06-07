@@ -425,13 +425,13 @@
                                 this.dragCounter++;
 
                                 if (this.dragCounter === 1)
-                                    event.target.classList.add('dragover');
+                                    event.target.closest('.field').classList.add('dragover');
                             },
                             dragLeave: function(event) {
                                 this.dragCounter--;
 
                                 if (this.dragCounter === 0)
-                                    event.target.classList.remove('dragover');
+                                    event.target.closest('.field').classList.remove('dragover');
                             },
                             dragOver: function(event) {
                                 event.preventDefault();
@@ -619,13 +619,13 @@
                         this.dragCounter++;
 
                         if (this.dragCounter === 1)
-                            event.target.classList.add('dragover');
+                            event.target.closest('.fieldset').classList.add('dragover');
                     },
                     dragLeave: function(event) {
                         this.dragCounter--;
 
                         if (this.dragCounter === 0)
-                            event.target.classList.remove('dragover');
+                            event.target.closest('.fieldset').classList.remove('dragover');
                     },
                     dragOver: function(event) {
                         event.preventDefault();

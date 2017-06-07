@@ -95,7 +95,7 @@ class ContentServiceProvider extends ServiceProvider {
                 ->data('order', 900)->data('permissions', ['view_content_types']);
 
         // Settings tab
-        if (class_exists('Chronos\Scaffolding\Models\Setting') && settings('is_multilanguage')) {
+        if (class_exists('Chronos\Scaffolding\Models\Setting') && \Schema::hasTable('settings') && settings('is_multilanguage')) {
             $settings_menu = $menu->get(camel_case(trans('chronos.scaffolding::menu.Settings')));
             $settings_permissions = $settings_menu->permissions;
             $settings_permissions[] = 'edit_languages';
