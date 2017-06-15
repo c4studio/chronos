@@ -32,6 +32,9 @@ class ContentController extends Controller
 
             if (isset($filters['search']) && $filters['search'] != '')
                 $q->where('title', 'like', '%' . $filters['search'] . '%');
+
+            if (isset($filters['language']) && $filters['language'] != '')
+                $q->where('language', $filters['language']);
         }
 
         // hierarchy
