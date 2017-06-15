@@ -76,6 +76,12 @@ class ScaffoldingServiceProvider extends ServiceProvider {
         $this->mergeConfigFrom(
             __DIR__ . '/config/defaults.php', 'chronos'
         );
+
+        // register RouteMap facade
+        $this->app->singleton('routeMap', function($app) {
+            return new RouteMapService();
+        });
+        $this->app->alias('routeMap', 'Chronos\Scaffolding\App\Services\RouteMapService');
     }
 
 
