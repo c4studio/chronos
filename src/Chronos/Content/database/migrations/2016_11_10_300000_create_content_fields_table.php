@@ -22,8 +22,8 @@ class CreateContentFieldsTable extends Migration
             $table->string('widget');
             $table->string('default')->nullable();
             $table->boolean('repeatable')->default(0);
-            $table->text('help_text');
-            $table->string('rules');
+            $table->text('help_text')->nullable();
+            $table->string('rules')->nullable();
             $table->binary('data')->nullable();
             $table->integer('order')->unsigned()->default(0);
             $table->timestamps();

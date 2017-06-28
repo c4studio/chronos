@@ -18,7 +18,7 @@ class CreateContentFieldsetsTable extends Migration
             $table->string('parent_type');
             $table->string('name');
             $table->string('machine_name');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->boolean('repeatable')->default(0);
             $table->integer('order')->unsigned()->default(0);
             $table->timestamps();

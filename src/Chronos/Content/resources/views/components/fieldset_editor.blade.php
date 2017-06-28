@@ -378,13 +378,13 @@
                             },
                             deleteField: function(confirmed) {
                                 if (this.id === null) {
-                                    editorEventHub.$emit('delete-field', this.order);
+                                    editorEventHub.$emit('delete-field', this.fieldset.order, this.order);
                                 } else {
                                     var modal = document.querySelector('#delete-field-dialog-' + this.id);
                                     var dialog = new Modal(modal);
 
                                     if (confirmed === true) {
-                                        editorEventHub.$emit('delete-field', this.order, this.id);
+                                        editorEventHub.$emit('delete-field', this.fieldset.order, this.order, this.id);
                                         dialog.close();
                                     } else {
                                         dialog.open();
@@ -502,7 +502,6 @@
                     dragFieldEventHub.$on('reorder-elements', this.reorderElements);
                     dragFieldEventHub.$on('set-drag-element', this.setDragElement);
 
-                    editorEventHub.$off('delete-field');
                     editorEventHub.$on('delete-field', this.deleteField);
                 },
                 data: function() {
@@ -535,7 +534,10 @@
                             document.getElementById(target).focus();
                         }, 100);
                     },
-                    deleteField: function(order, id) {
+                    deleteField: function(fieldset, order, id) {
+                        if (this.order != fieldset)
+                            return;
+
                         for (var key in this.fields) {
                             if (this.fields[key].order == order) {
                                 if (Number.isInteger(id)) {

@@ -17,7 +17,7 @@ class CreateContentTypesTable extends Migration
             $table->string('name')->unique();
             $table->string('title_label')->default(trans('chronos.content::interface.Title'));
             $table->boolean('translatable')->default(1);
-            $table->text('notes');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

@@ -75,6 +75,7 @@ class ContentTypesController extends Controller
         Permission::where('name','edit_content_type_' . $type->id)->first()->delete();
         Permission::where('name','edit_content_type_fieldsets_' . $type->id)->first()->delete();
         Permission::where('name','delete_content_type_' . $type->id)->first()->delete();
+        Permission::where('name','lock_content_type_delete_' . $type->id)->first()->delete();
 
         if ($type->delete())
             return response()->json([
