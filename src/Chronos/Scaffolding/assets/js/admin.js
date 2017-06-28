@@ -421,6 +421,9 @@ var vm = new Vue({
 
 
 Vue.filter('strLimit', function(str, limit) {
+	if (!str)
+		return str;
+
 	return str.limit(limit);
 });
 Vue.filter('strSlug', function(str, limit) {
