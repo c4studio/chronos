@@ -314,6 +314,20 @@ Vue.component('data-table', {
 
 
 /*
+ *  FLATPICKR
+ */
+Vue.directive('flatpickr', {
+	bind: function(el, binding) {
+		el._flatpickr = flatpickr(el, binding.value);
+	},
+	unbind: function(el) {
+		el._flatpickr.destroy()
+	}
+});
+
+
+
+/*
  *  VUE INSTANCE
  */
 var vm = new Vue({

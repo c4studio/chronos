@@ -23,7 +23,7 @@
 <script type="text/x-template" id="field-template">
     <div class="field">
         <div class="form-group">
-            <label class="control-label" for="" v-html="name"></label>
+            <label class="control-label" for="'fields.' + fieldset.id + '.' + fieldsetKey + '.' + id + '.0'" v-html="name"></label>
             <span class="help-block" v-if="helpText">@{{ helpText }}</span>
             <div class="field-repetition" v-for="(repetition, key) in repetitions">
                 <!-- Autocomplete list -->
@@ -282,7 +282,7 @@
             }
         },
         created: function() {
-            //get languages
+            // get languages
             if (this.contentId == null) {
                 this.getLanguages();
             }

@@ -448,6 +448,7 @@
 	}
 
 	.media-list {
+		align-items: flex-start;
 		display: flex;
 		flex-flow: row wrap;
 		justify-content: flex-start;
@@ -486,7 +487,7 @@
 
 			&:before {
 				content: '';
-				float: left;
+				display: table;
 				padding-top: 100%;
 			}
 

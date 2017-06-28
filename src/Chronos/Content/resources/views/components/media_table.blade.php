@@ -233,3 +233,27 @@
         template: '#media-table-template'
     });
 </script>
+
+
+
+@push('content-modals')
+<div class="modal fade" id="delete-file-dialog" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content modal-danger">
+            <form v-on:submit.prevent="deleteModelFromDialog">
+                <div class="modal-header">
+                    <button type="button" class="modal-close" data-dismiss="modal"><span class="icon c4icon-cross-2"></span></button>
+                    <h4 class="modal-title">{!! trans('chronos.content::interface.Delete file') !!}</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="marginT15 text-center"><strong>{!! trans('chronos.content::interface.WARNING! This action is irreversible.') !!}</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal">{!! trans('chronos.content::interface.Close') !!}</button>
+                    <button class="btn btn-danger" name="process" type="submit" value="1">{!! trans('chronos.content::interface.Delete') !!}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endpush

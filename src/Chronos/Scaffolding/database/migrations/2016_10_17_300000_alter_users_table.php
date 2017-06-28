@@ -14,7 +14,8 @@ class AlterUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('name');
+            if (Schema::hasColumn('users', 'name'))
+                $table->dropColumn('name');
             $table->integer('role_id')->unsigned()->nullable();
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->string('firstname')->default('');

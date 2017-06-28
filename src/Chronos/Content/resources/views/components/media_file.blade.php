@@ -120,15 +120,17 @@
         template: '#media-file-template',
         watch: {
             defaultValue: function() {
-                if (this.defaultValue.media_id && !this.src) {
-                    this.value = this.defaultValue.media_id;
-                    this.getData();
-                }
+                if (this.value != null) {
+                    if (this.defaultValue.media_id && !this.src) {
+                        this.value = this.defaultValue.media_id;
+                        this.getData();
+                    }
 
-                if (this.defaultValue.alt)
-                    this.alt = this.defaultValue.alt;
-                if (this.defaultValue.title)
-                    this.title = this.defaultValue.title;
+                    if (this.defaultValue.alt)
+                        this.alt = this.defaultValue.alt;
+                    if (this.defaultValue.title)
+                        this.title = this.defaultValue.title;
+                }
             }
         }
     });

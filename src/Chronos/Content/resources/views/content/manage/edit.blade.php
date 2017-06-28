@@ -23,7 +23,7 @@
                                     <h2 class="panel-title">{!! trans('chronos.content::forms.:type info', ['type' => $type->name]) !!}</h2>
                                     <div class="form-group" v-bind:class="{ 'has-error': Object.hasKey(store.formErrors, 'title') }">
                                         <label class="control-label" for="title">{{ $type->title_label }}</label>
-                                        <input class="form-control input-lg" name="title" placeholder="{!! trans('Start typing&hellip;') !!}" type="text" v-model="title" v-on:blur="updateSlug" />
+                                        <input class="form-control input-lg" id="title" name="title" placeholder="{!! trans('Start typing&hellip;') !!}" type="text" v-model="title" v-on:blur="updateSlug" />
                                         <span class="help-block" v-html="store.formErrors['title'][0]" v-if="Object.hasKey(store.formErrors, 'title')"></span>
                                     </div>
                                     @if ($type->name == 'Gallery')

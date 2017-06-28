@@ -813,7 +813,7 @@
 
 // Margins and paddings
 @mixin make-margins() {
-  @each $i in (5, 10, 15, 30, 60) {
+  @each $i in (0, 5, 10, 15, 30, 60) {
     .marginB#{$i} { margin-bottom: #{$i}px; }
     .marginL#{$i} { margin-left: #{$i}px; }
     .marginR#{$i} { margin-right: #{$i}px; }
@@ -821,7 +821,7 @@
   }
 }
 @mixin make-paddings() {
-  @each $i in (15, 30) {
+  @each $i in (0, 15, 30) {
     .padding#{$i} { padding: #{$i}px; }
     .paddingB#{$i} { padding-bottom: #{$i}px; }
     .paddingL#{$i} { padding-left: #{$i}px; }

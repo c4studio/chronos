@@ -78,7 +78,8 @@
 	@include button-variant(#ffffff, $brand-danger);
 }
 // Cancel appears as gray
-.btn-cancel {
+.btn-cancel,
+.btn-default {
 	@include button-variant($gray, darken($gray-lighter, 2%));
 }
 
