@@ -215,7 +215,7 @@
 
                 // open modal - we need this because modal triggers don't work on dynamically created events
                 var target = event.target.getAttribute('data-target') && event.target.getAttribute('data-target').replace('#', '');
-                console.log(target);
+
                 var modal = document.getElementById(target);
                 var dialog = new Modal(modal);
                 dialog.open();

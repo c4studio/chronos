@@ -120,7 +120,7 @@
         template: '#media-file-template',
         watch: {
             defaultValue: function() {
-                if (this.value != null) {
+                if (this.value != this.defaultValue.media_id) {
                     if (this.defaultValue.media_id && !this.src) {
                         this.value = this.defaultValue.media_id;
                         this.getData();
