@@ -20,7 +20,7 @@ class CreateContentFieldsDataTable extends Migration
             $table->integer('field_id')->unsigned()->index();
             $table->foreign('field_id')->references('id')->on('content_fields')->onDelete('cascade');
             $table->integer('field_repetition_key')->unsigned()->default(0);
-            $table->longText('value');
+            $table->longText('value')->nullable();
             $table->timestamps();
         });
     }

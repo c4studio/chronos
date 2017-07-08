@@ -58,6 +58,7 @@
 
 
 <!-- Load vue.js, components and app specific scripts -->
+<script src="https://unpkg.com/flatpickr/dist/flatpickr.js"></script>
 <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
 <script src="https://unpkg.com/vue-resource/dist/vue-resource.min.js"></script>
 <script>
