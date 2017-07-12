@@ -250,10 +250,8 @@
                                         });
                                     });
 
-                                    if (entityTypes['userRoles'].length > 0) {
-                                        fieldsetEditorStore.state.entityTypes = entityTypes;
-                                        this.entityTypes = fieldsetEditorStore.state.entityTypes;
-                                    }
+                                    fieldsetEditorStore.state.entityTypes = entityTypes;
+                                    this.entityTypes = fieldsetEditorStore.state.entityTypes;
                                 }.bind(this), function(response) {
                                     if (response.body.alerts) {
                                         response.body.alerts.forEach(function(alert) {
@@ -281,10 +279,8 @@
                                         });
                                     });
 
-                                    if (entityTypes['contentTypes'].length > 0) {
-                                        fieldsetEditorStore.state.entityTypes = entityTypes;
-                                        this.entityTypes = fieldsetEditorStore.state.entityTypes;
-                                    }
+                                    fieldsetEditorStore.state.entityTypes = entityTypes;
+                                    this.entityTypes = fieldsetEditorStore.state.entityTypes;
                                 }.bind(this), function(response) {
                                     if (response.body.alerts) {
                                         response.body.alerts.forEach(function(alert) {
@@ -656,8 +652,9 @@
 
                         this.fields.move(this.dragElement, dropElement);
 
-                        this.fields[dropElement].order = dropElement + 1;
-                        this.fields[this.dragElement].order = this.dragElement + 1;
+                        this.fields.forEach(function(field, key) {
+                            field.order = key + 1;
+                        });
 
                         this.dragElement = null;
                     },
@@ -800,8 +797,9 @@
             reorderElements: function(dropElement) {
                 this.fieldsets.move(this.dragElement, dropElement);
 
-                this.fieldsets[dropElement].order = dropElement + 1;
-                this.fieldsets[this.dragElement].order = this.dragElement + 1;
+                this.fieldsets.forEach(function(fieldset, key) {
+                    fieldset.order = key + 1;
+                });
 
                 this.dragElement = null;
             },

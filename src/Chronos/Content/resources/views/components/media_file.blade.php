@@ -82,7 +82,7 @@
                 this.basename = '';
                 this.src = '';
                 this.title = '';
-                this.value = null;
+                this.value = '';
             },
             selectFileFromMediaDialog: function(file, name) {
                 if (this.name != name)
@@ -120,7 +120,7 @@
         template: '#media-file-template',
         watch: {
             defaultValue: function() {
-                if (this.value != this.defaultValue.media_id) {
+                if (this.value != this.defaultValue.media_id && this.value !== '') {
                     if (this.defaultValue.media_id && !this.src) {
                         this.value = this.defaultValue.media_id;
                         this.getData();

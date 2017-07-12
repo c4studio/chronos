@@ -89,6 +89,7 @@
                 }.bind(this);
 
                 // set up cropper
+                var self = this;
                 reader.onloadend = function () {
                     // initialize dialog
                     if (!this.dialog) {

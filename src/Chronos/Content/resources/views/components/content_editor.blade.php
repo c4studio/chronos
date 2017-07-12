@@ -500,6 +500,13 @@
                             vm.$emit('add-alert', alert);
                         }.bind(this));
                     }
+                    else {
+                        vm.$emit('add-alert', {
+                            type: 'error',
+                            title: 'AJAX error',
+                            message: response.statusText + ' (' + response.status + ')'
+                        });
+                    }
 
                     vm.$emit('hide-loader');
                 });

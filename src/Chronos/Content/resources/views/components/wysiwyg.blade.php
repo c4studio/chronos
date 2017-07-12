@@ -8,12 +8,13 @@
         </div>
         <div class="editor" v-show="editing">
             <div class="editor-toolbar">
-                <a class="editor-btn btn-strong" v-on:click="toggleStrong">Bold</a>
+                <a class="editor-btn btn-strong" v-on:click="toggleStrong" data-toggle="tooltip" title="Bold">Bold</a>
                 <a class="editor-btn btn-em" v-on:click="toggleEm">Italic</a>
                 <div class="editor-dropdown" v-bind:class="{ open: dropdownOpen }" v-click-outside="closeOtherStylesDropdown">
                     <a v-on:click="toggleOtherStylesDropdown">Other styles <span class="caret"></span></a>
                     <ul class="editor-dropdown-menu">
                         <li><a v-on:click="toggleIns">Underline</a></li>
+                        <li><a v-on:click="toggleHeading">Heading</a></li>
                         <li><a v-on:click="toggleDel">Strikethrough</a></li>
                         <li><a v-on:click="toggleSup">Superscript</a></li>
                         <li><a v-on:click="toggleSub">Subscript</a></li>
@@ -112,6 +113,11 @@
 
                 // handle em
                 parsedValue = parsedValue.replace(/(^|\s|[`\-_\+\*~\^>])_([^\s](?:.*?)[^\s])_(\s|[`\-_\+\*~\^<]|$)/g, "$1<em>$2</em>$3");
+
+                // handle headings
+                parsedValue = parsedValue.replace(/^H\. (.*)<\/p>/gm, "<h3>$1</h3></p>");
+                parsedValue = parsedValue.replace(/^H\. (.*)(\n|$)/gm, "<h3>$1</h3>");
+                parsedValue = parsedValue.replace(/<p>H\. (.*)(\n|$)/gm, "<p><h3>$1</h3>");
 
                 // handle ins
                 parsedValue = parsedValue.replace(/(^|\s|[`\-_\+\*~\^>])\+([^\s](?:.*?)[^\s])\+(\s|[`\-_\+\*~\^<]|$)/g, "$1<ins>$2</ins>$3");
@@ -360,6 +366,14 @@
                     this.wrapSelection(wrapChar);
                 else
                     this.unwrapSelection(wrapChar);
+            },
+            toggleHeading: function() {
+                var wrapString = 'H. ';
+
+                if (!this.paragraphPreceeded(wrapString))
+                    this.prependParagraph(wrapString);
+                else
+                    this.unprependParagraph(wrapString);
             },
             toggleIns: function() {
                 var wrapChar = '+';

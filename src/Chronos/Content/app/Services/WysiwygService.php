@@ -67,6 +67,13 @@ class WysiwygService
         // handle em
         $text = preg_replace('/(^|\s|[`\-_\+\*~\^>])_([^\s](?:.*?)[^\s])_(\s|[`\-_\+\*~\^<]|$)/', '$1<em>$2</em>$3', $text);
 
+        // handle headings
+        $heading_tpl = \Illuminate\Support\Facades\View::make('chronos::wysiwyg.heading')->with('content', '$1')->render();
+        $text = preg_replace('/^H\, (.*)<\/p>/m', '<heading>$1</heading></p>', $text);
+        $text = preg_replace('/^H\. (.*)(\n|$)/m', '<heading>$1</heading>', $text);
+        $text = preg_replace('/<p>H\. (.*)(\n|$)/m', '<p><heading>$1</heading>', $text);
+        $text = preg_replace('/<heading>(.*)<\/heading>(\n)*/', '</p>' . $heading_tpl . '<p>', $text);
+
         // handle ins
         $text = preg_replace('/(^|\s|[`\-_\+\*~\^>])\+([^\s](?:.*?)[^\s])\+(\s|[`\-_\+\*~\^<]|$)/', '$1<ins>$2</ins>$3', $text);
 

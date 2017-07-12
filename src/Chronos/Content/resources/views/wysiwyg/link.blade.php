@@ -1,6 +1,6 @@
 <?php
 /**
- * Replacement template for [media] shortcode
+ * Replacement template for [link] shortcode
  *
  * \Chronos\Content\Models\Media $media
  * string $alt
