@@ -45,6 +45,12 @@ class PermissionsTableSeeder extends Seeder {
         ]);
 
         Permission::create([
+            'name' => 'export_content_types',
+            'label' => trans('chronos.content::permissions.Export content types'),
+            'order' => 10
+        ]);
+
+        Permission::create([
             'name' => 'view_media',
             'label' => trans('chronos.content::permissions.View media'),
             'order' => 10

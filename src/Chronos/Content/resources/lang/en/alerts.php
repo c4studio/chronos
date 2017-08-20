@@ -1,6 +1,8 @@
 <?php
 
 return [
+    ':count items deleted.' => ':count item deleted.|:count items deleted.',
+    ':count types deleted.' => ':count type deleted.|:count types deleted.',
     'Content deletion was successful.' => 'Content deletion was successful.',
     'Content deletion was unsuccessful.' => 'Content deletion was unsuccessful.',
     'Content type deletion was successful.' => 'Content type deletion was successful.',

@@ -8,8 +8,11 @@ use Chronos\Content\Models\ContentField;
 use Chronos\Content\Models\ContentFieldData;
 use Chronos\Content\Models\ContentFieldset;
 use Chronos\Content\Models\ContentType;
+use Chronos\Content\Models\Media;
 use Chronos\Content\Traits\ContentManagement;
 use Chronos\Content\Traits\FieldsetManagement;
+use Chronos\Scaffolding\Generators\SeedGenerator;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 
@@ -104,6 +107,330 @@ class ContentController extends Controller
                 ],
                 'status' => 500
             ], 500);
+    }
+
+    public function destroy_bulk(Request $request, ContentType $type)
+    {
+        $deleted_content_count = 0;
+
+        if ($request->has('content')) {
+            foreach ($request->get('content') as $type_id) {
+                $content = Content::find($type_id);
+
+                if (!$content->lock_delete && $content->delete())
+                    $deleted_content_count++;
+            }
+        }
+
+        if ($deleted_content_count > 0) {
+            return response()->json([
+                'alerts' => [
+                    (object)[
+                        'type' => 'success',
+                        'title' => trans('chronos.content::alerts.Success.'),
+                        'message' => trans_choice('chronos.content::alerts.:count items deleted.', $deleted_content_count, ['count' => $deleted_content_count])
+                    ]
+                ],
+                'status' => 200
+            ], 200);
+        } else {
+            return response()->json([
+                'alerts' => [
+                    (object)[
+                        'type' => 'warning',
+                        'title' => trans('chronos.content::alerts.Warning.'),
+                        'message' => trans_choice('chronos.content::alerts.:count items deleted.', $deleted_content_count, ['count' => $deleted_content_count])
+                    ]
+                ],
+                'status' => 200
+            ], 200);
+        }
+    }
+
+    public function export(Request $request, ContentType $type)
+    {
+        if (!$request->has('content'))
+            $content = Content::all();
+        else
+            $content = Content::whereIn('id', $request->get('content'))->get();
+
+        $generator = new SeedGenerator();
+        $generator->setFilename(ucfirst($type->name) . 'ContentTableSeeder.php');
+        $generator->setClassName(ucfirst($type->name) . 'ContentTableSeeder');
+
+        $generator->addUses('Chronos\Content\Models\Content');
+        $generator->addUses('Chronos\Content\Models\ContentField');
+        $generator->addUses('Chronos\Content\Models\ContentFieldData');
+        $generator->addUses('Chronos\Content\Models\ContentFieldset');
+        $generator->addUses('Chronos\Content\Models\Media');
+
+        foreach ($content as $key => $item) {
+            // create content
+            $generator->addIndent(2);
+            $generator->addContent('/*');
+            $generator->addNewLines();
+            $generator->addIndent(2);
+            $generator->addContent(' * ' . $item->title);
+            $generator->addNewLines();
+            $generator->addIndent(2);
+            $generator->addContent(' * /' . $item->slug);
+            $generator->addNewLines();
+            $generator->addIndent(2);
+            $generator->addContent(' */');
+            $generator->addNewLines();
+
+            if ($item->translation_id) {
+                $translation = Content::find($item->translation_id);
+                $generator->addIndent(2);
+                $generator->addContent('$translation = Content::where(\'slug\', \'' . $translation->slug . '\')->where(\'type_id\', ' . $translation->type_id . ')->first();');
+                $generator->addNewLines();
+            }
+
+            $generator->addIndent(2);
+            $generator->addContent('$content = Content::create([');
+            $generator->addNewLines();
+
+            $except = ['translation_id'];
+            foreach ($item->getFillable() as $attribute) {
+                if (!in_array($attribute, $except)) {
+                    $value = is_string($item->{$attribute}) ? '"' . normalize_newline($item->{$attribute}) . '"' :
+                        (is_null($item->{$attribute}) ? 'null' : $item->{$attribute});
+                    $generator->addIndent(3);
+                    $generator->addContent('\'' . $attribute . '\' => ' . $value . ',');
+                    $generator->addNewLines();
+                }
+            }
+
+            if ($item->translation_id) {
+                $generator->addIndent(3);
+                $generator->addContent('\'translation_id\' => $translation ? $translation->id : null,');
+                $generator->addNewLines();
+            }
+
+            $generator->addIndent(2);
+            $generator->addContent(']);');
+            $generator->addNewLines(2);
+
+            // create private fieldsets
+            $fieldsets = ContentFieldset::where('parent_type', 'Chronos\Content\Models\Content')->where('parent_id', $item->id)->get();
+
+            foreach ($fieldsets as $fieldset) {
+                $generator->addIndent(2);
+                $generator->addContent('$fieldset = ContentFieldset::create([');
+                $generator->addNewLines();
+
+                $generator->addIndent(3);
+                $generator->addContent('\'parent_id\' => $content->id,');
+                $generator->addNewLines();
+
+                $except = ['parent_id'];
+                foreach ($fieldset->getFillable() as $attribute) {
+                    if (!in_array($attribute, $except)) {
+                        $value = is_string($fieldset->{$attribute}) ? '"' . normalize_newline($fieldset->{$attribute}) . '"' :
+                            (is_null($fieldset->{$attribute}) ? 'null' : $fieldset->{$attribute});
+                        $generator->addIndent(3);
+                        $generator->addContent('\'' . $attribute . '\' => ' . $value . ',');
+                        $generator->addNewLines();
+                    }
+                }
+
+                $generator->addIndent(2);
+                $generator->addContent(']);');
+                $generator->addNewLines(2);
+
+                // create fields
+                $fields = ContentField::where('fieldset_id', $fieldset->id)->get();
+
+                foreach ($fields as $field) {
+                    $generator->addIndent(2);
+                    $generator->addContent('ContentField::create([');
+                    $generator->addNewLines();
+
+                    $generator->addIndent(3);
+                    $generator->addContent('\'fieldset_id\' => $fieldset->id,');
+                    $generator->addNewLines();
+
+                    $except = ['fieldset_id'];
+                    foreach ($field->getFillable() as $attribute) {
+                        if (!in_array($attribute, $except)) {
+                            $value = is_string($field->{$attribute}) ? '"' . normalize_newline($field->{$attribute}) . '"' :
+                                (is_null($field->{$attribute}) ? 'null' : $field->{$attribute});
+                            $generator->addIndent(3);
+                            $generator->addContent('\'' . $attribute . '\' => ' . $value . ',');
+                            $generator->addNewLines();
+                        }
+                    }
+
+                    $generator->addIndent(2);
+                    $generator->addContent(']);');
+                    $generator->addNewLines(2);
+                }
+            }
+
+            // add content data
+            foreach ($item->all_fieldsets as $fieldset) {
+                foreach ($fieldset->fields as $field) {
+                    $generator->addIndent(2);
+                    if ($fieldset->parent_type == 'Chronos\Content\Models\ContentType') {
+                        $parent = ContentType::find($fieldset->parent_id);
+                        $generator->addContent('$parent_id = ' . $fieldset->parent_type . '::where(\'name\', \'' . $parent->name . '\')->first()->id;');
+                    }
+                    else {
+                        $parent = Content::find($fieldset->parent_id);
+                        $generator->addContent('$parent_id = ' . $fieldset->parent_type . '::where(\'slug\', \'' . $parent->slug . '\')->first()->id;');
+                    }
+                    $generator->addNewLines();
+                    $generator->addIndent(2);
+                    $generator->addContent('$field_id = ContentField::where(\'machine_name\', \'' . $field->machine_name . '\')->whereHas(\'fieldset\', function($q) use ($parent_id) {');
+                    $generator->addNewLines();
+                    $generator->addIndent(3);
+                    $generator->addContent('$q->where(\'parent_id\', $parent_id)->where(\'parent_type\', \'' . $fieldset->parent_type .'\')->where(\'machine_name\', \'' . $fieldset->machine_name . '\');');
+                    $generator->addNewLines();
+                    $generator->addIndent(2);
+                    $generator->addContent('})->first()->id;');
+                    $generator->addNewLines(2);
+
+                    $content_data = ContentFieldData::where('content_id', $item->id)->where('field_id', $field->id)->get();
+
+                    foreach ($content_data as $data) {
+                        // check if media
+                        if ($field->widget == 'media') {
+                            $media = Media::find(unserialize($data->value)['media_id']);
+                            $generator->addIndent(2);
+                            $generator->addContent('$media = Media::where(\'basename\', \'' . $media->basename . '\')->first();');
+                            $generator->addNewLines();
+
+                            $generator->addIndent(2);
+                            $generator->addContent('if ($media) {');
+                            $generator->addNewLines();
+
+                            $generator->addIndent(3);
+                            $generator->addContent('ContentFieldData::create([');
+                            $generator->addNewLines();
+
+                            $generator->addIndent(4);
+                            $generator->addContent('\'content_id\' => $content->id,');
+                            $generator->addNewLines();
+                            $generator->addIndent(4);
+                            $generator->addContent('\'fieldset_repetition_key\' => ' . $data->fieldset_repetition_key . ',');
+                            $generator->addNewLines();
+                            $generator->addIndent(4);
+                            $generator->addContent('\'field_id\' => $field_id,');
+                            $generator->addNewLines();
+                            $generator->addIndent(4);
+                            $generator->addContent('\'field_repetition_key\' => ' . $data->field_repetition_key . ',');
+                            $generator->addNewLines();
+                            $generator->addIndent(4);
+                            $generator->addContent('\'value\' => preg_replace(\'/((?:.*)s:8:"media_id";s:(?:[0-9]):")([0-9]+)("(?:.*))/\', \'$01\' . $media->id . \'$03\', \'' . $data->value . '\')');
+                            $generator->addNewLines();
+
+                            $generator->addIndent(3);
+                            $generator->addContent(']);');
+                            $generator->addNewLines();
+
+                            $generator->addIndent(2);
+                            $generator->addContent('}');
+                            $generator->addNewLines(2);
+                        }
+                        // check if entity
+                        elseif ($field->type == 'entity') {
+                            $entity_data = unserialize($field->data);
+                            $ids = is_numeric($data->value) ? [$data->value] : unserialize($data->value);
+
+                            if (!is_array($ids))
+                                $ids = [];
+
+                            if ($entity_data['entity_type'] == Config::get('auth.providers.users.model')) {
+                                $entities = User::whereIn('id', $ids)->get()->pluck('email')->toArray();
+
+                                $generator->addIndent(2);
+                                $generator->addContent('$entities = ' . Config::get('auth.providers.users.model') . '::whereIn(\'email\', [\'' . implode('\', \'', $entities) . '\'])->get();');
+                                $generator->addNewLines();
+                            }
+                            else {
+                                $entities = Content::whereIn('id', $ids)->get()->pluck('slug')->toArray();
+                                list($type_model, $type_id) = explode(':', $entity_data['entity_type']);
+
+                                $generator->addIndent(2);
+                                $generator->addContent('$entities = Content::where(\'type_id\', ' . $type_id . ')->whereIn(\'slug\', [\'' . implode('\', \'', $entities) . '\'])->get();');
+                                $generator->addNewLines();
+                            }
+
+                            $generator->addIndent(2);
+                            $generator->addContent('if ($entities->count()) {');
+                            $generator->addNewLines();
+
+                            $generator->addIndent(3);
+                            $generator->addContent('ContentFieldData::create([');
+                            $generator->addNewLines();
+
+                            $generator->addIndent(4);
+                            $generator->addContent('\'content_id\' => $content->id,');
+                            $generator->addNewLines();
+                            $generator->addIndent(4);
+                            $generator->addContent('\'fieldset_repetition_key\' => ' . $data->fieldset_repetition_key . ',');
+                            $generator->addNewLines();
+                            $generator->addIndent(4);
+                            $generator->addContent('\'field_id\' => $field_id,');
+                            $generator->addNewLines();
+                            $generator->addIndent(4);
+                            $generator->addContent('\'field_repetition_key\' => ' . $data->field_repetition_key . ',');
+                            $generator->addNewLines();
+                            if ($field->widget == 'autocomplete') {
+                                $generator->addIndent(4);
+                                $generator->addContent('\'value\' => $entities[0]->id');
+                                $generator->addNewLines();
+                            }
+                            else {
+                                $generator->addIndent(4);
+                                $generator->addContent('\'value\' => serialize($entities->pluck(\'id\')->toArray())');
+                                $generator->addNewLines();
+                            }
+
+                            $generator->addIndent(3);
+                            $generator->addContent(']);');
+                            $generator->addNewLines();
+
+                            $generator->addIndent(2);
+                            $generator->addContent('}');
+                            $generator->addNewLines(2);
+                        }
+                        // default behaviour
+                        else {
+                            $generator->addIndent(2);
+                            $generator->addContent('ContentFieldData::create([');
+                            $generator->addNewLines();
+
+                            $generator->addIndent(3);
+                            $generator->addContent('\'content_id\' => $content->id,');
+                            $generator->addNewLines();
+                            $generator->addIndent(3);
+                            $generator->addContent('\'fieldset_repetition_key\' => ' . $data->fieldset_repetition_key . ',');
+                            $generator->addNewLines();
+                            $generator->addIndent(3);
+                            $generator->addContent('\'field_id\' => $field_id,');
+                            $generator->addNewLines();
+                            $generator->addIndent(3);
+                            $generator->addContent('\'field_repetition_key\' => ' . $data->field_repetition_key . ',');
+                            $generator->addNewLines();
+                            $generator->addIndent(3);
+                            $generator->addContent('\'value\' => \'' . $data->value . '\'');
+                            $generator->addNewLines();
+
+                            $generator->addIndent(2);
+                            $generator->addContent(']);');
+                            $generator->addNewLines(2);
+                        }
+                    }
+                }
+            }
+
+            if ($key < count($content) - 1)
+                $generator->addNewLines(3);
+        }
+
+        $generator->generateFile();
+        $generator->downloadFile();
     }
 
     public function fieldset(Request $request, ContentType $type, Content $content)

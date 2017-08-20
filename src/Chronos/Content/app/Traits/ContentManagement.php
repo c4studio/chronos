@@ -31,7 +31,7 @@ trait ContentManagement
                                     $value = serialize([
                                         'media_id' => $field_value['media_id'],
                                         'alt' => $field_model->enable_alt && isset($field_value['alt']) ? $field_value['alt'] : null,
-                                        'title' => $field_model->enable_alt && isset($field_value['title']) ? $field_value['title'] : null
+                                        'title' => $field_model->enable_title && isset($field_value['title']) ? $field_value['title'] : null
                                     ]);
                                     break;
                                 default:
@@ -66,8 +66,10 @@ trait ContentManagement
         });
 
         if ($request->isMethod('PATCH') && $content) {
-            $slug_rule->where(function($query) use ($content) {
+            $slug_rule = $slug_rule->where(function($query) use ($content) {
                 $query->where('language', $content->language);
+            })->where(function($query) use ($type) {
+                $query->where('type_id', $type->id);
             });
             $slug_rule = $slug_rule->ignore($content->id);
         }

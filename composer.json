@@ -11,8 +11,8 @@
   "require": {
     "php": ">=5.6.4",
     "intervention/image": "^2.3",
-    "laravel/framework": "^5.3",
-    "laravel/passport": "^2.0",
+    "laravel/framework": "^5.4",
+    "laravel/passport": "^3.0",
     "laravelcollective/html": "^5.3",
     "lavary/laravel-menu": "^1.6"
   },

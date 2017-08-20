@@ -84,6 +84,7 @@ Vue.component('data-table', {
 	},
 	data: function() {
 		return {
+			bulkSelector: false,
 			data: null,
 			dataLoader: false,
 			deleteURL: null,
@@ -151,6 +152,7 @@ Vue.component('data-table', {
 
 			var params = {
 				filters: this.filters,
+				perPage: this.pagination.per_page,
 				page: this.pagination.current,
 				sortBy: this.sortField,
 				sortOrder: this.sortDesc
@@ -190,54 +192,72 @@ Vue.component('data-table', {
 
 			this.getData();
 		},
-		performBulkAction: function(url, method, e) {
+		performBulkAction: function(url, method, arrayName, e) {
 			vm.$emit('show-loader');
 
 			// close modal
-			var target = e.target.closest('.modal');
-			if (target) {
-				var dialog = new Modal(target);
-				dialog.close();
+			if (e) {
+				var target = e.target.closest('.modal');
+				if (target) {
+					var dialog = new Modal(target);
+					dialog.close();
+				}
+
+				// close dropdown
+				var dropdown = document.querySelector('.bulk-actions');
+				if (dropdown)
+					dropdown.classList.remove('open');
 			}
 
-			// close dropdown
-			var dropdown = e.target.closest('.bulk-actions');
-			dropdown.classList.remove('open');
+			var params;
 
-			this.$http({
-				method: method,
-				params: {
-					members: this.selected
-				},
-				url: url
-			}).then(function(response) {
-				vm.$emit('hide-loader');
+			if (method == 'DOWNLOAD') {
+				params = Object.keys(this.selected).map(function(k) { return encodeURIComponent(arrayName  + '[' + k + ']') + '=' + encodeURIComponent(this.selected[k])}.bind(this)).join('&');
 
-				if (response.body.alerts) {
-					response.body.alerts.forEach(function(alert) {
-						vm.$emit('add-alert', alert);
-					}.bind(this));
-				}
+				window.location.href = url + '?' + params;
 
-				this.getData();
-
+				this.bulkSelector = false;
 				this.selected = [];
-			}, function(response) {
-				vm.$emit('hide-loader');
 
-				if (response.body.alerts) {
-					response.body.alerts.forEach(function(alert) {
-						vm.$emit('add-alert', alert);
-					}.bind(this));
-				}
-				else {
-					vm.$emit('add-alert', {
-						type: 'error',
-						title: 'AJAX error',
-						message: response.statusText + ' (' + response.status + ')'
-					});
-				}
-			});
+				vm.$emit('hide-loader');
+			} else {
+				params = {};
+				params[arrayName] = this.selected;
+
+				this.$http({
+					method: method,
+					params: params,
+					url: url
+				}).then(function (response) {
+					vm.$emit('hide-loader');
+
+					if (response.body.alerts) {
+						response.body.alerts.forEach(function (alert) {
+							vm.$emit('add-alert', alert);
+						}.bind(this));
+					}
+
+					this.getData();
+
+					this.bulkSelector = false;
+					this.selected = [];
+				}, function (response) {
+					vm.$emit('hide-loader');
+
+					if (response.body.alerts) {
+						response.body.alerts.forEach(function (alert) {
+							vm.$emit('add-alert', alert);
+						}.bind(this));
+					}
+					else {
+						vm.$emit('add-alert', {
+							type: 'error',
+							title: 'AJAX error',
+							message: response.statusText + ' (' + response.status + ')'
+						});
+					}
+				});
+			}
 		},
 		search: debounce(function() {
 			this.getData();
@@ -266,6 +286,11 @@ Vue.component('data-table', {
 		},
 		setValue: function(target, value) {
 			document.querySelector(target).value = value;
+		},
+		showAll: function() {
+			this.pagination.per_page = 0;
+
+			this.getData();
 		},
 		sort: function(field) {
 			if (this.sortField == field)
@@ -400,8 +425,8 @@ var vm = new Vue({
 		isOffcanvasOpen: function(active) {
 			return this.offcanvasOpen == active;
 		},
-		performBulkAction: function(url, method, e) {
-			this.$emit('perform-bulk-action', url, method, e);
+		performBulkAction: function(url, method, arrayName, e) {
+			this.$emit('perform-bulk-action', url, method, arrayName, e);
 		},
 		showLoader: function() {
 			this.loader = true;

@@ -1,5 +1,13 @@
 <?php
 
+if ( ! function_exists('decode'))
+{
+    function decode($string)
+    {
+        return base64_decode(strtr($string, '-_', '+/'));
+    }
+}
+
 if ( ! function_exists('encode'))
 {
     function encode($string)
@@ -8,11 +16,11 @@ if ( ! function_exists('encode'))
     }
 }
 
-if ( ! function_exists('decode'))
+if ( ! function_exists('normalize_newline'))
 {
-    function decode($string)
+    function normalize_newline($string)
     {
-        return base64_decode(strtr($string, '-_', '+/'));
+        return str_replace(["\n", "\r\n", "\r"], PHP_EOL, $string);
     }
 }
 

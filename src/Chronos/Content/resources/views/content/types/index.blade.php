@@ -39,6 +39,22 @@
                             <table class="table table-condensed" v-cloak>
                                 <thead>
                                     <tr>
+                                        @if (Gate::check('delete_content_types') || Gate::check('export_content_types'))
+                                        <th>
+                                            <div class="bulk-actions">
+                                                <input type="checkbox" v-on:change="selectAll" v-model="bulkSelector" />
+                                                <a class="bulk-actions-toggle" data-toggle="dropdown"></a>
+                                                <ul class="dropdown-menu">
+                                                    @can ('delete_content_types')
+                                                    <li><a data-toggle="modal" data-target="#delete-content-types-dialog">{!! trans('chronos.content::interface.Delete') !!}</a></li>
+                                                    @endcan
+                                                    @can ('export_content_types')
+                                                    <li><a v-on:click="performBulkAction('{{ route('api.content.types.export') }}', 'DOWNLOAD', 'types', $event)">{!! trans('chronos.content::interface.Export') !!}</a></li>
+                                                    @endcan
+                                                </ul>
+                                            </div>
+                                        </th>
+                                        @endif
                                         <th><sortable field="name">{!! trans('chronos.content::interface.Name') !!}</sortable></th>
                                         <th><sortable field="items_count">{!! trans('chronos.content::interface.Items') !!}</sortable></th>
                                         <th>{!! trans('chronos.content::interface.Actions') !!}</th>
@@ -46,6 +62,9 @@
                                 </thead>
                                 <tbody v-show="!dataLoader && data.length !== 0">
                                     <tr v-for="item in data">
+                                        @if (Gate::check('delete_content_types') || Gate::check('export_content_types'))
+                                        <td><input v-bind:value="item.id" type="checkbox" v-model="selected" /></td>
+                                        @endif
                                         <td><em v-html="highlight(item.name, filters.search)"></em><small v-if="item.notes != ''">@{{ item.notes|strLimit(50) }}</small></td>
                                         <td>@{{ item.items_count }}</td>
                                         <td>
@@ -128,6 +147,25 @@
                     </div>
                     <div class="modal-body">
                         <p class="marginT15 text-center"><strong>{!! trans('chronos.content::interface.WARNING! All content of this type will be deleted as well. This action is irreversible.') !!}</strong></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-default" type="button" data-dismiss="modal">{!! trans('chronos.content::interface.Close') !!}</button>
+                        <button class="btn btn-danger" name="process" type="submit" value="1">{!! trans('chronos.content::interface.Delete') !!}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="delete-content-types-dialog" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content modal-danger">
+                <form v-on:submit.prevent="performBulkAction('{{ route('api.content.types.destroy_bulk') }}', 'DELETE', 'types', $event)">
+                    <div class="modal-header">
+                        <button type="button" class="modal-close" data-dismiss="modal"><span class="icon c4icon-cross-2"></span></button>
+                        <h4 class="modal-title">{!! trans('chronos.content::interface.Delete content types') !!}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="marginT15 text-center"><strong>{!! trans('chronos.content::interface.WARNING! This action is irreversible.') !!}</strong></p>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-default" type="button" data-dismiss="modal">{!! trans('chronos.content::interface.Close') !!}</button>

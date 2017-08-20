@@ -14,7 +14,7 @@ function debounce(func, wait, immediate) {
         timeout = setTimeout(later, wait);
         if (callNow) func.apply(context, args);
     };
-};
+}
 
 function serialize(form) {
     if (!form || form.nodeName !== "FORM") {

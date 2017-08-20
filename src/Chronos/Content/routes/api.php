@@ -2,7 +2,9 @@
 
 /* CONTENT */
 Route::get('content/manage/{type}', ['uses' => 'ContentController@index', 'as' => 'api.content']);
+Route::get('content/manage/{type}/export', ['uses' => 'ContentController@export', 'as' => 'api.content.export']);
 Route::delete('content/manage/{type}/{content}', ['uses' => 'ContentController@destroy', 'as' => 'api.content.destroy']);
+Route::delete('content/manage/{type}', ['uses' => 'ContentController@destroy_bulk', 'as' => 'api.content.destroy_bulk']);
 Route::patch('content/manage/{type}/{content}/fieldset', ['uses' => 'ContentController@fieldset', 'as' => 'api.content.fieldset']);
 Route::get('content/manage/{type}/{content}', ['uses' => 'ContentController@show', 'as' => 'api.content.show']);
 Route::get('content/manage/{type}/{content}/translate', ['uses' => 'ContentController@translate', 'as' => 'api.content.translate']);
@@ -10,6 +12,7 @@ Route::post('content/manage/{type}', ['uses' => 'ContentController@store', 'as' 
 Route::patch('content/manage/{type}/{content}', ['uses' => 'ContentController@update', 'as' => 'api.content.update']);
 
 /* CONTENT TYPES */
+Route::get('content/types/export', ['uses' => 'ContentTypesController@export', 'as' => 'api.content.types.export']);
 Route::resource('content/types', 'ContentTypesController', ['except' => ['create', 'edit'], 'names' => [
     'index' => 'api.content.types',
     'destroy' => 'api.content.types.destroy',
@@ -17,6 +20,7 @@ Route::resource('content/types', 'ContentTypesController', ['except' => ['create
     'store' => 'api.content.types.store',
     'update' => 'api.content.types.update'
 ]]);
+Route::delete('content/types', ['uses' => 'ContentTypesController@destroy_bulk', 'as' => 'api.content.types.destroy_bulk']);
 Route::delete('content/types/field/{field}', ['uses' => 'ContentTypesController@destroy_field', 'as' => 'api.content.types.destroy_field']);
 Route::delete('content/types/fieldset/{fieldset}', ['uses' => 'ContentTypesController@destroy_fieldset', 'as' => 'api.content.types.destroy_fieldset']);
 Route::patch('content/types/{type}/fieldset', ['uses' => 'ContentTypesController@fieldset', 'as' => 'api.content.types.fieldset']);

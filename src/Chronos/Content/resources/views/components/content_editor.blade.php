@@ -55,7 +55,7 @@
                 </div>
                 <!-- Media image -->
                 <div class="field-media" v-bind:class="{ 'has-error': Object.hasKey(store.formErrors, 'fields.' + fieldset.id + '.' + fieldsetKey + '.' + id + '.' + key) }" v-if="widget == 'media' && type == 'image'">
-                    <media-file v-bind:name="'fields[' + fieldset.id + '][' + fieldsetKey + '][' + id + '][' + key + ']'" v-bind:default-value="values[key]" v-bind:enableAlt="true" v-bind:enableTitle="true" v-bind:imagesOnly="true"></media-file>
+                    <media-file v-bind:name="'fields[' + fieldset.id + '][' + fieldsetKey + '][' + id + '][' + key + ']'" v-bind:default-value="values[key]" v-bind:enableAlt="fieldData.enable_alt" v-bind:enableTitle="fieldData.enable_title" v-bind:imagesOnly="true"></media-file>
                     <span class="help-block" v-html="store.formErrors['fields'][fieldset.id][fieldsetKey][id][key][0]" v-if="Object.hasKey(store.formErrors, 'fields.' + fieldset.id + '.' + fieldsetKey + '.' + id + '.' + key)"></span>
                 </div>
                 <!-- Number -->
@@ -158,12 +158,23 @@
                                 else
                                     this.entityEndpoint = null;
 
-                                if (this.fieldData.value && this.fieldData.value.length > 0)
-                                    this.values = this.fieldData.value[this.fieldsetKey];
-                                else if (this.fieldData.default)
-                                    this.values = [this.fieldData.default];
-                                else
-                                    this.values = [null];
+                                if (this.widget != 'checkbox') {
+                                    if (this.fieldData.value && this.fieldData.value.length > 0)
+                                        this.values = this.fieldData.value[this.fieldsetKey];
+                                    else if (this.fieldData.default)
+                                        this.values = [this.fieldData.default];
+                                    else
+                                        this.values = [null];
+                                } else {
+                                    this.repetitions.forEach(function(repetition, key) {
+                                        if (this.fieldData.value && this.fieldData.value.length > 0)
+                                            this.values = this.fieldData.value[this.fieldsetKey];
+                                        else if (this.fieldData.default)
+                                            this.values[key] = [this.fieldData.default];
+                                        else
+                                            this.values[key] = [false];
+                                    }.bind(this));
+                                }
                             }
                         },
                         data: function() {
