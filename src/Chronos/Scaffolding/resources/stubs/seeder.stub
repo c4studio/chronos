@@ -1,0 +1,16 @@
+<?php
+
+{{ uses }}
+
+class {{ className }} extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+{{ content }}
+    }
+}
