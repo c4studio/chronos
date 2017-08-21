@@ -53,7 +53,8 @@ Next we need to publish all the assets belonging to Chronos:
 
 	php artisan vendor:publish --tag=public
 
-Note: if you wish to only publish Chronos assets, you might want to use the --provider flag.
+Note 1: if you would like to overwrite existing files, use the --force switch
+Note 2: if you wish to only publish Chronos assets, you might want to use the --provider flag.
 
 
 ### Prepare User model
