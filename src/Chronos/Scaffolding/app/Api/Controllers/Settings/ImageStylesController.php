@@ -85,58 +85,45 @@ class ImageStylesController extends Controller
             ], 500);
     }
 
-    public function regenerate($style = null)
+    public function destroy_styles(ImageStyle $style)
     {
-        $style = ImageStyle::find($style);
+        $media = Media::where('image_style_id', $style->id)->get();
+        $deleted_styles_count = 0;
 
-        // delete old image styles
-        $q = Media::whereIn('type', Media::$image_types)->whereNotNull('parent_id');
-        if ($style)
-            $q->where('image_style_id', $style->id);
-        $old_styles = $q->get();
-
-        foreach ($old_styles as $old_style) {
-            $pathinfo = pathinfo($old_style->file);
+        foreach ($media as $file) {
+            $pathinfo = pathinfo($file->file);
             $path = parse_url($pathinfo['dirname'])['path'];
-
             $upload_path = public_path($path);
-            if (file_exists($upload_path . '/' . $old_style->basename))
-                unlink($upload_path . '/' . $old_style->basename);
 
-            $old_style->delete();
+            if (file_exists($upload_path . '/' . $file->basename)) {
+                unlink($upload_path . '/' . $file->basename);
+                $deleted_styles_count++;
+            }
         }
 
-        // generate image styles
-        $images = Media::whereIn('type', Media::$image_types)->whereNull('parent_id')->get();
-        foreach ($images as $image) {
-            $pathinfo = pathinfo($image->file);
-            $path = parse_url($pathinfo['dirname'])['path'];
-
-            $upload_path = public_path($path); // E.g.: /home/public/uploads/media/{year}/{month}
-            if (!is_dir($upload_path))
-                mkdir($upload_path, 0755, true);
-            $asset_path = asset($path); // E.g.: http://chronos.ro/uploads/media/{year}/{month}
-            $filename = $pathinfo['filename'];
-            $extension = $pathinfo['extension'];
-
-            if (file_exists($upload_path . '/' . $image->basename))
-                if ($style)
-                    ImageStyleService::generate($image->file, $upload_path, $asset_path, $filename, $extension, $image, $style);
-                else
-                    ImageStyleService::generate($image->file, $upload_path, $asset_path, $filename, $extension, $image);
+        if ($deleted_styles_count > 0) {
+            return response()->json([
+                'alerts' => [
+                    (object)[
+                        'type' => 'success',
+                        'title' => trans('chronos.scaffolding::alerts.Success.'),
+                        'message' => trans_choice('chronos.scaffolding::alerts.:count images styles deleted.', $deleted_styles_count, ['count' => $deleted_styles_count])
+                    ]
+                ],
+                'status' => 200
+            ], 200);
+        } else {
+            return response()->json([
+                'alerts' => [
+                    (object)[
+                        'type' => 'warning',
+                        'title' => trans('chronos.scaffolding::alerts.Warning.'),
+                        'message' => trans_choice('chronos.scaffolding::alerts.:count image styles deleted.', $deleted_styles_count, ['count' => $deleted_styles_count])
+                    ]
+                ],
+                'status' => 200
+            ], 200);
         }
-
-        return response()->json([
-            'alerts' => [
-                (object) [
-                    'type' => 'success',
-                    'title' => trans('chronos.scaffolding::alerts.Success.'),
-                    'message' => trans('chronos.scaffolding::alerts.Image styles successfully regenerated.'),
-                ]
-            ],
-            'status' => 200
-        ], 200);
-
     }
 
     public function show(ImageStyle $style)

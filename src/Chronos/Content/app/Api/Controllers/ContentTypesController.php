@@ -216,9 +216,8 @@ class ContentTypesController extends Controller
             $generator->addIndent(2);
             $generator->addContent('$type = ContentType::create([');
             $generator->addNewLines();
-
             foreach ($type->getFillable() as $attribute) {
-                $value = is_string($type->{$attribute}) ? '"' . normalize_newline($type->{$attribute}) . '"' :
+                $value = is_string($type->{$attribute}) ? '"' . addslashes(normalize_newline($type->{$attribute})) . '"' :
                         (is_null($type->{$attribute}) ? 'null' : $type->{$attribute});
                 $generator->addIndent(3);
                 $generator->addContent('\'' . $attribute . '\' => ' . $value . ',');
@@ -244,7 +243,7 @@ class ContentTypesController extends Controller
                 $except = ['parent_id'];
                 foreach ($fieldset->getFillable() as $attribute) {
                     if (!in_array($attribute, $except)) {
-                        $value = is_string($fieldset->{$attribute}) ? '"' . normalize_newline($fieldset->{$attribute}) . '"' :
+                        $value = is_string($fieldset->{$attribute}) ? '"' . addslashes(normalize_newline($fieldset->{$attribute})) . '"' :
                                 (is_null($fieldset->{$attribute}) ? 'null' : $fieldset->{$attribute});
                         $generator->addIndent(3);
                         $generator->addContent('\'' . $attribute . '\' => ' . $value . ',');
@@ -271,7 +270,7 @@ class ContentTypesController extends Controller
                     $except = ['fieldset_id'];
                     foreach ($field->getFillable() as $attribute) {
                         if (!in_array($attribute, $except)) {
-                            $value = is_string($field->{$attribute}) ? '"' . normalize_newline($field->{$attribute}) . '"' :
+                            $value = is_string($field->{$attribute}) ? '"' . addslashes(normalize_newline($field->{$attribute})) . '"' :
                                     (is_null($field->{$attribute}) ? 'null' : $field->{$attribute});
                             $generator->addIndent(3);
                             $generator->addContent('\'' . $attribute . '\' => ' . $value . ',');
@@ -365,7 +364,7 @@ class ContentTypesController extends Controller
         Permission::create(['name' => 'edit_content_type_' . $type->id, 'label' => trans('chronos.content::permissions.Edit :name' , ['name' => str_plural(strtolower($type->name))]), 'order' => 10]);
         Permission::create(['name' => 'edit_content_type_fieldsets_' . $type->id, 'label' => trans('chronos.content::permissions.Edit :name fieldsets' , ['name' => str_plural(strtolower($type->name))]), 'order' => 10]);
         Permission::create(['name' => 'delete_content_type_' . $type->id, 'label' => trans('chronos.content::permissions.Delete :name' , ['name' => str_plural(strtolower($type->name))]), 'order' => 10]);
-        Permission::create(['name' => 'export_content_type_' . $type->id, 'label' => trans('chronos.content::permissions.Delete :name' , ['name' => str_plural(strtolower($type->name))]), 'order' => 10]);
+        Permission::create(['name' => 'export_content_type_' . $type->id, 'label' => trans('chronos.content::permissions.Export :name' , ['name' => str_plural(strtolower($type->name))]), 'order' => 10]);
         Permission::create(['name' => 'lock_content_type_delete_' . $type->id, 'label' => trans('chronos.content::permissions.Lock :name delete' , ['name' => str_plural(strtolower($type->name))]), 'order' => 10]);
 
         return response()->json([

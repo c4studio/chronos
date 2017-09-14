@@ -155,13 +155,14 @@ class ContentController extends Controller
             $content = Content::whereIn('id', $request->get('content'))->get();
 
         $generator = new SeedGenerator();
-        $generator->setFilename(ucfirst($type->name) . 'ContentTableSeeder.php');
-        $generator->setClassName(ucfirst($type->name) . 'ContentTableSeeder');
+        $generator->setFilename(studly_case($type->name) . 'ContentTableSeeder.php');
+        $generator->setClassName(studly_case($type->name) . 'ContentTableSeeder');
 
         $generator->addUses('Chronos\Content\Models\Content');
         $generator->addUses('Chronos\Content\Models\ContentField');
         $generator->addUses('Chronos\Content\Models\ContentFieldData');
         $generator->addUses('Chronos\Content\Models\ContentFieldset');
+        $generator->addUses('Chronos\Content\Models\ContentType');
         $generator->addUses('Chronos\Content\Models\Media');
 
         foreach ($content as $key => $item) {
@@ -179,6 +180,10 @@ class ContentController extends Controller
             $generator->addContent(' */');
             $generator->addNewLines();
 
+            $generator->addIndent(2);
+            $generator->addContent('$type = ContentType::where(\'name\', \'' . $item->type->name . '\')->first();');
+            $generator->addNewLines();
+
             if ($item->translation_id) {
                 $translation = Content::find($item->translation_id);
                 $generator->addIndent(2);
@@ -190,10 +195,14 @@ class ContentController extends Controller
             $generator->addContent('$content = Content::create([');
             $generator->addNewLines();
 
-            $except = ['translation_id'];
+            $generator->addIndent(3);
+            $generator->addContent('\'type_id\' => $type->id,');
+            $generator->addNewLines();
+
+            $except = ['translation_id', 'type_id'];
             foreach ($item->getFillable() as $attribute) {
                 if (!in_array($attribute, $except)) {
-                    $value = is_string($item->{$attribute}) ? '"' . normalize_newline($item->{$attribute}) . '"' :
+                    $value = is_string($item->{$attribute}) ? '"' . addslashes(normalize_newline($item->{$attribute})) . '"' :
                         (is_null($item->{$attribute}) ? 'null' : $item->{$attribute});
                     $generator->addIndent(3);
                     $generator->addContent('\'' . $attribute . '\' => ' . $value . ',');
@@ -226,7 +235,7 @@ class ContentController extends Controller
                 $except = ['parent_id'];
                 foreach ($fieldset->getFillable() as $attribute) {
                     if (!in_array($attribute, $except)) {
-                        $value = is_string($fieldset->{$attribute}) ? '"' . normalize_newline($fieldset->{$attribute}) . '"' :
+                        $value = is_string($fieldset->{$attribute}) ? '"' . addslashes(normalize_newline($fieldset->{$attribute})) . '"' :
                             (is_null($fieldset->{$attribute}) ? 'null' : $fieldset->{$attribute});
                         $generator->addIndent(3);
                         $generator->addContent('\'' . $attribute . '\' => ' . $value . ',');
@@ -253,7 +262,7 @@ class ContentController extends Controller
                     $except = ['fieldset_id'];
                     foreach ($field->getFillable() as $attribute) {
                         if (!in_array($attribute, $except)) {
-                            $value = is_string($field->{$attribute}) ? '"' . normalize_newline($field->{$attribute}) . '"' :
+                            $value = is_string($field->{$attribute}) ? '"' . addslashes(normalize_newline($field->{$attribute})) . '"' :
                                 (is_null($field->{$attribute}) ? 'null' : $field->{$attribute});
                             $generator->addIndent(3);
                             $generator->addContent('\'' . $attribute . '\' => ' . $value . ',');
@@ -296,41 +305,43 @@ class ContentController extends Controller
                         // check if media
                         if ($field->widget == 'media') {
                             $media = Media::find(unserialize($data->value)['media_id']);
-                            $generator->addIndent(2);
-                            $generator->addContent('$media = Media::where(\'basename\', \'' . $media->basename . '\')->first();');
-                            $generator->addNewLines();
+                            if ($media) {
+                                $generator->addIndent(2);
+                                $generator->addContent('$media = Media::where(\'basename\', \'' . $media->basename . '\')->first();');
+                                $generator->addNewLines();
 
-                            $generator->addIndent(2);
-                            $generator->addContent('if ($media) {');
-                            $generator->addNewLines();
+                                $generator->addIndent(2);
+                                $generator->addContent('if ($media) {');
+                                $generator->addNewLines();
 
-                            $generator->addIndent(3);
-                            $generator->addContent('ContentFieldData::create([');
-                            $generator->addNewLines();
+                                $generator->addIndent(3);
+                                $generator->addContent('ContentFieldData::create([');
+                                $generator->addNewLines();
 
-                            $generator->addIndent(4);
-                            $generator->addContent('\'content_id\' => $content->id,');
-                            $generator->addNewLines();
-                            $generator->addIndent(4);
-                            $generator->addContent('\'fieldset_repetition_key\' => ' . $data->fieldset_repetition_key . ',');
-                            $generator->addNewLines();
-                            $generator->addIndent(4);
-                            $generator->addContent('\'field_id\' => $field_id,');
-                            $generator->addNewLines();
-                            $generator->addIndent(4);
-                            $generator->addContent('\'field_repetition_key\' => ' . $data->field_repetition_key . ',');
-                            $generator->addNewLines();
-                            $generator->addIndent(4);
-                            $generator->addContent('\'value\' => preg_replace(\'/((?:.*)s:8:"media_id";s:(?:[0-9]):")([0-9]+)("(?:.*))/\', \'$01\' . $media->id . \'$03\', \'' . $data->value . '\')');
-                            $generator->addNewLines();
+                                $generator->addIndent(4);
+                                $generator->addContent('\'content_id\' => $content->id,');
+                                $generator->addNewLines();
+                                $generator->addIndent(4);
+                                $generator->addContent('\'fieldset_repetition_key\' => ' . $data->fieldset_repetition_key . ',');
+                                $generator->addNewLines();
+                                $generator->addIndent(4);
+                                $generator->addContent('\'field_id\' => $field_id,');
+                                $generator->addNewLines();
+                                $generator->addIndent(4);
+                                $generator->addContent('\'field_repetition_key\' => ' . $data->field_repetition_key . ',');
+                                $generator->addNewLines();
+                                $generator->addIndent(4);
+                                $generator->addContent('\'value\' => preg_replace(\'/((?:.*)s:8:"media_id";s:(?:[0-9]):")([0-9]+)("(?:.*))/\', \'$01\' . $media->id . \'$03\', \'' . $data->value . '\')');
+                                $generator->addNewLines();
 
-                            $generator->addIndent(3);
-                            $generator->addContent(']);');
-                            $generator->addNewLines();
+                                $generator->addIndent(3);
+                                $generator->addContent(']);');
+                                $generator->addNewLines();
 
-                            $generator->addIndent(2);
-                            $generator->addContent('}');
-                            $generator->addNewLines(2);
+                                $generator->addIndent(2);
+                                $generator->addContent('}');
+                                $generator->addNewLines(2);
+                            }
                         }
                         // check if entity
                         elseif ($field->type == 'entity') {

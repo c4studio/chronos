@@ -32,15 +32,15 @@
 
                         <div class="media-table">
                             <ul class="media-list" v-if="!dataLoader && data.length > 0">
-                                <li v-bind:class="{ active: key == lastSelected }" v-for="(item, key) in data" v-on:click="select(key)">
+                                <li v-bind:class="{ active: selected.indexOf(key) !== -1 }" v-for="(item, key) in data" v-on:click="select(key, $event)">
                                     <img v-bind:src="item.thumb" v-bind:alt="item.basename" v-if="item.thumb" />
                                     <span class="icon c4icon-5x c4icon-file-2" v-else></span>
                                     <span class="media-title" v-html="item.basename"></span>
                                     <a class="media-delete" data-toggle="modal" data-target="#delete-file-dialog" v-on:click="setdeleteURL(data[lastSelected].endpoints.destroy, $event)"></a>
                                 </li>
                             </ul>
-                            <div class="media-overview" v-if="!dataLoader && lastSelected != null">
-                                <h4>File overview</h4>
+                            <div class="media-overview" v-if="!dataLoader && selected.length == 1">
+                                <h4>{!! trans('chronos.content::interface.File overview') !!}</h4>
                                 <img v-bind:src="data[lastSelected].thumb" v-bind:alt="data[lastSelected].basename" v-if="data[lastSelected].thumb" />
                                 <span class="icon c4icon-5x c4icon-file-2" v-else></span>
                                 <table class="table table-condensed">
@@ -62,10 +62,17 @@
                                 </table>
                                 <a class="marginR15" v-bind:href="data[lastSelected].file" target="_blank">{!! trans('chronos.content::interface.Download file') !!}</a>
                                 @can ('delete_media')
-                                <a class="text-danger" data-toggle="modal" data-target="#delete-file-dialog" v-on:click="setdeleteURL(data[lastSelected].endpoints.destroy, $event)">{!! trans('chronos.content::interface.Delete file') !!}</a><br />
+                                <a class="text-danger" data-toggle="modal" data-target="#delete-file-dialog" v-on:click="setdeleteURL(data[lastSelected].endpoints.destroy, $event)">{!! trans('chronos.content::interface.Delete file') !!}</a>
                                 @endcan
+                            </div>
+                            <div class="media-overview" v-if="!dataLoader && selected.length > 1">
+                                <h4><span v-html="selected.length"></span> {!! trans('chronos.content::interface.files selected') !!}</h4>
 
-                                <a class="btn btn-action marginT15" v-on:click="selectFile(data[lastSelected])" v-if="selectable">{!! trans('chronos.content::interface.Select file') !!}</a>
+                                <span class="icon c4icon-5x c4icon-files-2"></span>
+
+                                @can ('delete_media')
+                                <a class="display-block text-danger" data-toggle="modal" data-target="#delete-files-dialog" v-on:click="setdeleteURL('', $event)">{!! trans('chronos.content::interface.Delete files') !!}</a>
+                                @endcan
                             </div>
                         </div>
 
@@ -92,6 +99,7 @@
             mediaEventHub.$on('open-media-dialog', this.openMediaDialog);
             uploadEventHub.$on('upload-finished', this.getData);
             this.$parent.$on('deleted-model-from-dialog', this.deleteMedia);
+            this.$parent.$on('perform-bulk-action', this.deleteBulkMedia);
         },
         data: function() {
             return {
@@ -105,7 +113,8 @@
                     search: ''
                 },
                 lastSelected: null,
-                searchOn: false
+                searchOn: false,
+                selected: []
             }
         },
         methods: {
@@ -122,6 +131,64 @@
 
                     this.dialog = null;
                     this.dialogData = null;
+                }
+            },
+            deleteBulkMedia: function(url, method, arrayName, e) {
+                vm.$emit('show-loader');
+
+                // close modal
+                if (e) {
+                    var target = e.target.closest('.modal');
+                    if (target) {
+                        var dialog = new Modal(target);
+                        dialog.close();
+                    }
+
+                    // close dropdown
+                    var dropdown = document.querySelector('.bulk-actions');
+                    if (dropdown)
+                        dropdown.classList.remove('open');
+                }
+
+                if (this.selected.length > 1) {
+                    var params = {};
+                    params[arrayName] = [];
+                    this.selected.forEach(function (key) {
+                        params[arrayName].push(this.data[key].id);
+                    }.bind(this));
+
+                    this.$http({
+                        method: method,
+                        params: params,
+                        url: url
+                    }).then(function (response) {
+                        vm.$emit('hide-loader');
+
+                        if (response.body.alerts) {
+                            response.body.alerts.forEach(function (alert) {
+                                vm.$emit('add-alert', alert);
+                            }.bind(this));
+                        }
+
+                        this.getData();
+
+                        this.selected = [];
+                    }, function (response) {
+                        vm.$emit('hide-loader');
+
+                        if (response.body.alerts) {
+                            response.body.alerts.forEach(function (alert) {
+                                vm.$emit('add-alert', alert);
+                            }.bind(this));
+                        }
+                        else {
+                            vm.$emit('add-alert', {
+                                type: 'error',
+                                title: 'AJAX error',
+                                message: response.statusText + ' (' + response.status + ')'
+                            });
+                        }
+                    });
                 }
             },
             deleteMedia: function(target) {
@@ -160,6 +227,7 @@
             getData: function() {
                 this.dataLoader = true;
                 this.lastSelected = null;
+                this.selected = [];
 
                 this.$http.get('/api/content/media', {params: {
                     filters: this.filters,
@@ -201,8 +269,15 @@
 
                 this.searchOn = true;
             }, 500),
-            select: function(key) {
+            select: function(key, event) {
+                if (!event.ctrlKey && !event.metaKey)
+                    this.selected = [];
+
                 this.lastSelected = key;
+                if (this.selected.indexOf(key) == -1)
+                    this.selected.push(key);
+                else
+                    this.selected.splice(this.selected.indexOf(key), 1);
             },
             selectFile: function(file) {
                 if (file)
@@ -238,23 +313,42 @@
 
 
 @push('content-modals')
-<div class="modal fade" id="delete-file-dialog" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content modal-danger">
-            <form v-on:submit.prevent="deleteModelFromDialog">
-                <div class="modal-header">
-                    <button type="button" class="modal-close" data-dismiss="modal"><span class="icon c4icon-cross-2"></span></button>
-                    <h4 class="modal-title">{!! trans('chronos.content::interface.Delete file') !!}</h4>
-                </div>
-                <div class="modal-body">
-                    <p class="marginT15 text-center"><strong>{!! trans('chronos.content::interface.WARNING! This action is irreversible.') !!}</strong></p>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-default" type="button" data-dismiss="modal">{!! trans('chronos.content::interface.Close') !!}</button>
-                    <button class="btn btn-danger" name="process" type="submit" value="1">{!! trans('chronos.content::interface.Delete') !!}</button>
-                </div>
-            </form>
+    <div class="modal fade" id="delete-file-dialog" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content modal-danger">
+                <form v-on:submit.prevent="deleteModelFromDialog">
+                    <div class="modal-header">
+                        <button type="button" class="modal-close" data-dismiss="modal"><span class="icon c4icon-cross-2"></span></button>
+                        <h4 class="modal-title">{!! trans('chronos.content::interface.Delete file') !!}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="marginT15 text-center"><strong>{!! trans('chronos.content::interface.WARNING! This action is irreversible.') !!}</strong></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-default" type="button" data-dismiss="modal">{!! trans('chronos.content::interface.Close') !!}</button>
+                        <button class="btn btn-danger" name="process" type="submit" value="1">{!! trans('chronos.content::interface.Delete') !!}</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+    <div class="modal fade" id="delete-files-dialog" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content modal-danger">
+                <form v-on:submit.prevent="performBulkAction('{{ route('api.content.media.destroy_bulk') }}', 'DELETE', 'media', $event)">
+                    <div class="modal-header">
+                        <button type="button" class="modal-close" data-dismiss="modal"><span class="icon c4icon-cross-2"></span></button>
+                        <h4 class="modal-title">{!! trans('chronos.content::interface.Delete files') !!}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="marginT15 text-center"><strong>{!! trans('chronos.content::interface.WARNING! This action is irreversible.') !!}</strong></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-default" type="button" data-dismiss="modal">{!! trans('chronos.content::interface.Close') !!}</button>
+                        <button class="btn btn-danger" name="process" type="submit" value="1">{!! trans('chronos.content::interface.Delete') !!}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endpush

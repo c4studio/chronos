@@ -44,7 +44,7 @@ class ImageStyle extends Model {
         $endpoints['index'] = route('api.settings.image_styles');
         $endpoints['update'] = route('api.settings.image_styles.update', ['style' => $id]);
         $endpoints['destroy'] = route('api.settings.image_styles.destroy', ['style' => $id]);
-        $endpoints['regenerate'] = route('api.settings.image_styles.regenerate', ['style' => $id]);
+        $endpoints['destroy_styles'] = route('api.settings.image_styles.destroy_styles', ['style' => $id]);
 
         return $endpoints;
     }

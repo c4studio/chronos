@@ -5,6 +5,7 @@ namespace Chronos\Content\Api\Controllers;
 use App\Http\Controllers\Controller;
 use Chronos\Content\Models\Media;
 use Chronos\Content\Services\ImageStyleService;
+use Chronos\Scaffolding\Models\ImageStyle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Intervention\Image\Facades\Image;
@@ -47,10 +48,22 @@ class MediaController extends Controller
 
     public function destroy(Media $media)
     {
-        if ($media->delete())
+        $pathinfo = pathinfo($media->file);
+        $path = parse_url($pathinfo['dirname'])['path'];
+        $upload_path = public_path($path);
+
+        foreach ($media->image_styles as $style) {
+            if (file_exists($upload_path . '/' . $style->basename))
+                unlink($upload_path . '/' . $style->basename);
+        }
+
+        if ($media->delete()) {
+            if (file_exists($upload_path . '/' . $media->basename))
+                unlink($upload_path . '/' . $media->basename);
+
             return response()->json([
                 'alerts' => [
-                    (object) [
+                    (object)[
                         'type' => 'success',
                         'title' => trans('chronos.content::alerts.Success.'),
                         'message' => trans('chronos.content::alerts.File successfully deleted.'),
@@ -58,10 +71,11 @@ class MediaController extends Controller
                 ],
                 'status' => 200
             ], 200);
-        else
+        }
+        else {
             return response()->json([
                 'alerts' => [
-                    (object) [
+                    (object)[
                         'type' => 'error',
                         'title' => trans('chronos.content::alerts.Error.'),
                         'message' => trans('chronos.content::alerts.File deletion was unsuccessful.'),
@@ -69,6 +83,58 @@ class MediaController extends Controller
                 ],
                 'status' => 500
             ], 500);
+        }
+    }
+
+    public function destroy_bulk(Request $request)
+    {
+        $deleted_media_count = 0;
+
+        if ($request->has('media')) {
+            foreach ($request->get('media') as $media_id) {
+                $media = Media::find($media_id);
+
+                $pathinfo = pathinfo($media->file);
+                $path = parse_url($pathinfo['dirname'])['path'];
+                $upload_path = public_path($path);
+
+                foreach ($media->image_styles as $style) {
+                    if (file_exists($upload_path . '/' . $style->basename))
+                        unlink($upload_path . '/' . $style->basename);
+                }
+
+                if ($media->delete()) {
+                    if (file_exists($upload_path . '/' . $media->basename))
+                        unlink($upload_path . '/' . $media->basename);
+
+                    $deleted_media_count++;
+                }
+            }
+        }
+
+        if ($deleted_media_count > 0) {
+            return response()->json([
+                'alerts' => [
+                    (object)[
+                        'type' => 'success',
+                        'title' => trans('chronos.content::alerts.Success.'),
+                        'message' => trans_choice('chronos.content::alerts.:count items deleted.', $deleted_media_count, ['count' => $deleted_media_count])
+                    ]
+                ],
+                'status' => 200
+            ], 200);
+        } else {
+            return response()->json([
+                'alerts' => [
+                    (object)[
+                        'type' => 'warning',
+                        'title' => trans('chronos.content::alerts.Warning.'),
+                        'message' => trans_choice('chronos.content::alerts.:count items deleted.', $deleted_media_count, ['count' => $deleted_media_count])
+                    ]
+                ],
+                'status' => 200
+            ], 200);
+        }
     }
 
     public function show(Media $media)
@@ -147,8 +213,8 @@ class MediaController extends Controller
                         'image_width' => $image->width(),
                     ]);
 
-                    // generate image styles
-                    ImageStyleService::generate($file, $upload_path, $asset_path, $filename, $extension, $media);
+                    // generate styles
+                    ImageStyleService::make($asset_path, $filename, $extension, $media);
                 }
 
                 // set alert for this file

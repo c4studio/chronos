@@ -1,6 +1,7 @@
 <?php
 
 return [
+    ':count image styles deleted.' => ':count image style deleted.|:count image styles deleted.',
     'Access token deletion was successful.' => 'Access token deletion was successful.',
     'Access token deletion was unsuccessful.' => 'Access token deletion was unsuccessful.',
     'Access token successfully created.' => 'Access token successfully created.',
@@ -9,7 +10,6 @@ return [
     'Image style deletion was unsuccessful.' => 'Image style deletion was unsuccessful.',
     'Image style successfully created.' => 'Image style successfully created.',
     'Image style successfully updated.' => 'Image style successfully updated.',
-    'Image styles successfully regenerated.' => 'Image styles successfully regenerated.',
     'Incorrect email' => 'Incorrect email',
     'Incorrect email or password' => 'Incorrect email or password',
     'Incorrect password' => 'Incorrect password',

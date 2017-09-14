@@ -17,7 +17,7 @@ Route::post('settings/access-tokens', ['uses' => 'Settings\AccessTokensControlle
 
 Route::get('settings/image-styles', ['uses' => 'Settings\ImageStylesController@index', 'as' => 'api.settings.image_styles']);
 Route::delete('settings/image-styles/{style}', ['uses' => 'Settings\ImageStylesController@destroy', 'as' => 'api.settings.image_styles.destroy']);
-Route::get('settings/image-styles/regenerate/{style?}', ['uses' => 'Settings\ImageStylesController@regenerate', 'as' => 'api.settings.image_styles.regenerate']);
+Route::delete('settings/image-styles/destroy_styles/{style}', ['uses' => 'Settings\ImageStylesController@destroy_styles', 'as' => 'api.settings.image_styles.destroy_styles']);
 Route::get('settings/image-styles/{style}', ['uses' => 'Settings\ImageStylesController@show', 'as' => 'api.settings.image_styles.show']);
 Route::post('settings/image-styles', ['uses' => 'Settings\ImageStylesController@store', 'as' => 'api.settings.image_styles.store']);
 Route::patch('settings/image-styles/{style}', ['uses' => 'Settings\ImageStylesController@update', 'as' => 'api.settings.image_styles.update']);

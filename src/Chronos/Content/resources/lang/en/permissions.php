@@ -6,12 +6,14 @@ return [
     'Edit content types' => 'Content/Edit content types',
     'Edit content type fieldsets' => 'Content/Edit content type fieldsets',
     'Delete content types' => 'Content/Delete content types',
+    'Export content types' => 'Content/Export content types',
 
     'View :name' => 'Content/View :name',
     'Add :name' => 'Content/Add :name',
+    'Delete :name' => 'Content/Delete :name',
     'Edit :name' => 'Content/Edit :name',
     'Edit :name fieldsets' => 'Content/Edit :name fieldsets',
-    'Delete :name' => 'Content/Delete :name',
+    'Export :name' => 'Content/Export :name',
     'Lock :name delete' => 'Content/Lock :name delete',
 
     'View media' => 'Content/View media',

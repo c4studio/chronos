@@ -3,10 +3,12 @@
 namespace Chronos\Scaffolding\App\Exceptions;
 
 use App\Exceptions\Handler as BaseHandler;
+use Chronos\Content\Services\ImageStyleService;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Http\Exception\HttpResponseException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends BaseHandler
@@ -44,9 +46,31 @@ class Handler extends BaseHandler
     protected function renderHttpException(HttpException $e)
     {
         $status = $e->getStatusCode();
+        $request = \Route::getCurrentRequest();
+
+        // check if 404 response is returned because of inexistent image style
+        if ($status == 404 && $request && ($request->is('uploads/media/*'))) {
+            $basename = basename(request()->path());
+
+            // check if it is a generatable image style
+            if (ImageStyleService::checkIfGeneratableImageStyle($basename)) {
+                $path = 'uploads/media/' . date('Y') . '/' . date('m');
+                $upload_path = public_path($path); // E.g.: /home/public/uploads/media/{year}/{month}
+                if (!is_dir($upload_path))
+                    mkdir($upload_path, 0755, true);
+                $asset_path = asset($path); // E.g.: http://chronos.ro/uploads/media/{year}/{month}
+
+                // generate and return image style
+                if (ImageStyleService::generate($upload_path, $asset_path, $basename)) {
+                    $mimeGuesser = MimeTypeGuesser::getInstance();
+                    $mime = $mimeGuesser->guess($upload_path . '/' . $basename);
+
+                    return response(file_get_contents($upload_path . '/' . $basename), 200)->header('Content-Type', $mime);
+                }
+            }
+        }
 
         // check if API, Chronos path or app
-        $request = \Route::getCurrentRequest();
         if ($request && ($request->is('api') || $request->is('api/*')))
             return response()->json([
                 'message' => $e->getMessage(),

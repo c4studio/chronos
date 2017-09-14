@@ -20,7 +20,7 @@ class CreateMediaTable extends Migration
             $table->string('filename');
             $table->string('basename');
             $table->string('type', 5);
-            $table->bigInteger('size')->unsigned();
+            $table->bigInteger('size')->unsigned()->nullable();
             $table->smallInteger('image_height')->unsigned()->nullable();
             $table->smallInteger('image_width')->unsigned()->nullable();
             $table->integer('image_style_id')->unsigned()->nullable()->index();

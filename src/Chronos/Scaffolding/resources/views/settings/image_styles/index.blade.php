@@ -7,12 +7,8 @@
             <li><span class="icon c4icon-pencil-3"></span></li>
             <li class="active">{!! trans('chronos.scaffolding::interface.Image styles') !!}</li>
         </ul>
-        <div class="main-action dropdown">
-            <a data-placement="left" data-tooltip="tooltip" title="{!! trans('chronos.scaffolding::interface.Select action') !!}" data-toggle="dropdown">{!! trans('chronos.scaffolding::interface.Create image style') !!}</a>
-            <ul class="dropdown-menu dropdown-menu-right">
-                <li><a href="{{ route('chronos.settings.image_styles.create') }}">{!! trans('chronos.scaffolding::interface.Create image style') !!}</a></li>
-                <li><a v-on:click="ajaxGet('{{ route('api.settings.image_styles.regenerate') }}')">{!! trans('chronos.scaffolding::interface.Regenerate image styles') !!}</a></li>
-            </ul>
+        <div class="main-action create">
+            <a href="{{ route('chronos.settings.image_styles.create') }}" title="{!! trans('chronos.scaffolding::interface.Create image style') !!}">{!! trans('chronos.scaffolding::interface.Create image style') !!}</a>
         </div>
     </header><!--/.subheader -->
 
@@ -51,7 +47,7 @@
                                     <td>
                                         @can('edit_image_styles')<a class="marginR15" v-bind:href="item.admin_urls.edit">{!! trans('chronos.scaffolding::interface.Edit') !!}</a>@endcan
                                         @can('delete_image_styles')<a class="marginR15" data-toggle="modal" data-target="#delete-image-style-dialog" v-on:click="setdeleteURL(item.endpoints.destroy)">{!! trans('chronos.scaffolding::interface.Delete') !!}</a>@endcan
-                                        <a v-on:click="ajaxGet(item.endpoints.regenerate)">{!! trans('chronos.scaffolding::interface.Regenerate styles') !!}</a>
+                                        <a data-toggle="modal" data-target="#delete-image-styles-dialog" v-on:click="setdeleteURL(item.endpoints.destroy_styles)">{!! trans('chronos.scaffolding::interface.Delete image styles') !!}</a>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -82,6 +78,25 @@
                     </div>
                     <div class="modal-body">
                         <p class="marginT15 text-center"><strong>{!! trans('chronos.scaffolding::interface.WARNING! This action is irreversible.') !!}</strong></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-default" type="button" data-dismiss="modal">{!! trans('chronos.scaffolding::interface.Close') !!}</button>
+                        <button class="btn btn-danger" name="process" type="submit" value="1">{!! trans('chronos.scaffolding::interface.Delete') !!}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="delete-image-styles-dialog" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content modal-danger">
+                <form v-on:submit.prevent="deleteModelFromDialog">
+                    <div class="modal-header">
+                        <button type="button" class="modal-close" data-dismiss="modal"><span class="icon c4icon-cross-2"></span></button>
+                        <h4 class="modal-title">{!! trans('chronos.scaffolding::interface.Delete image styles') !!}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="marginT15 text-center"><strong>{!! trans('chronos.scaffolding::interface.Image styles will be regenerated on first view.') !!}</strong></p>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-default" type="button" data-dismiss="modal">{!! trans('chronos.scaffolding::interface.Close') !!}</button>
