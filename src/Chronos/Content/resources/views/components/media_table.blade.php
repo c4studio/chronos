@@ -62,8 +62,9 @@
                                 </table>
                                 <a class="marginR15" v-bind:href="data[lastSelected].file" target="_blank">{!! trans('chronos.content::interface.Download file') !!}</a>
                                 @can ('delete_media')
-                                <a class="text-danger" data-toggle="modal" data-target="#delete-file-dialog" v-on:click="setdeleteURL(data[lastSelected].endpoints.destroy, $event)">{!! trans('chronos.content::interface.Delete file') !!}</a>
+                                <a class="text-danger" data-toggle="modal" data-target="#delete-file-dialog" v-on:click="setdeleteURL(data[lastSelected].endpoints.destroy, $event)">{!! trans('chronos.content::interface.Delete file') !!}</a><br />
                                 @endcan
+                                <a class="btn btn-action marginT15" v-on:click="selectFile(data[lastSelected])" v-if="selectable">{!! trans('chronos.content::interface.Select file') !!}</a>
                             </div>
                             <div class="media-overview" v-if="!dataLoader && selected.length > 1">
                                 <h4><span v-html="selected.length"></span> {!! trans('chronos.content::interface.files selected') !!}</h4>
