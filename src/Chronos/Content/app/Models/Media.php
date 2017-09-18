@@ -2,6 +2,7 @@
 
 namespace Chronos\Content\Models;
 
+use Chronos\Scaffolding\Models\ImageStyle;
 use Illuminate\Database\Eloquent\Model;
 
 class Media extends Model
@@ -96,7 +97,8 @@ class Media extends Model
         if (!$this->isImage)
             return null;
 
-        $thumb = $this->image_styles()->where('image_style_id', 1)->first();
+        $thumb_style = ImageStyle::where('name', 'Chronos Thumbnail')->first()->id;
+        $thumb = $this->image_styles()->where('image_style_id', $thumb_style)->first();
 
         if ($thumb)
             return $thumb->file;
