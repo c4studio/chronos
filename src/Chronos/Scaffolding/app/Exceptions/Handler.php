@@ -54,7 +54,7 @@ class Handler extends BaseHandler
 
             // check if it is a generatable image style
             if (ImageStyleService::checkIfGeneratableImageStyle($basename)) {
-                $path = 'uploads/media/' . date('Y') . '/' . date('m');
+                $path = dirname(request()->path());
                 $upload_path = public_path($path); // E.g.: /home/public/uploads/media/{year}/{month}
                 if (!is_dir($upload_path))
                     mkdir($upload_path, 0755, true);
