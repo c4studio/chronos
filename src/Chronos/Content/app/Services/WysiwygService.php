@@ -258,7 +258,7 @@ class WysiwygService
 
 
     private static function context_aware_match($regex, $text, &$matches) {
-        return preg_match('/<br \/>' . $regex . '<br \/>/', $text, $matches) || preg_match('/<br \/>' . $regex . '<\/p>/', $text, $matches) || preg_match('/<p>' . $regex . '<br \/>/', $text, $matches) || preg_match('/<p>' . $regex . '<\/p>/', $text, $matches);
+        return preg_match('/(?:<br \/>|<p>)(' . $regex . ')(?:<br \/>|<\/p>)/', $text, $matches);
     }
 
     private static function context_aware_replace_1($regex, $replace, &$text) {
