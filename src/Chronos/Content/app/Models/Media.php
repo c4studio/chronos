@@ -35,7 +35,7 @@ class Media extends Model
      *
      * @var array
      */
-    public static $image_types = ['gif', 'jpeg', 'jpg', 'png'];
+    public static $image_types = ['gif', 'jpeg', 'jpg', 'png', 'svg'];
 
 
 

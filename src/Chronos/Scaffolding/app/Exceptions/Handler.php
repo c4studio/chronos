@@ -48,24 +48,35 @@ class Handler extends BaseHandler
         $status = $e->getStatusCode();
         $request = \Route::getCurrentRequest();
 
-        // check if 404 response is returned because of inexistent image style
-        if ($status == 404 && $request && ($request->is('uploads/media/*'))) {
-            $basename = basename(request()->path());
+        // check if 404 response
+        if ($status == 404 && $request) {
 
-            // check if it is a generatable image style
-            if (ImageStyleService::checkIfGeneratableImageStyle($basename)) {
-                $path = dirname(request()->path());
-                $upload_path = public_path($path); // E.g.: /home/public/uploads/media/{year}/{month}
-                if (!is_dir($upload_path))
-                    mkdir($upload_path, 0755, true);
-                $asset_path = asset($path); // E.g.: http://chronos.ro/uploads/media/{year}/{month}
+            // loop through available upload paths and determine if current path is one of them
+            $paths = \Config::get('content.upload_paths');
+            foreach ($paths as $path) {
+                $check_path = trim(parse_url($path['asset_path'])['path'], '/') . '/*';
+                if ($request->is($check_path)) {
 
-                // generate and return image style
-                if (ImageStyleService::generate($upload_path, $asset_path, $basename)) {
-                    $mimeGuesser = MimeTypeGuesser::getInstance();
-                    $mime = $mimeGuesser->guess($upload_path . '/' . $basename);
+                    // check if it is a generatable image style
+                    $basename = basename($request->path());
+                    if (ImageStyleService::checkIfGeneratableImageStyle($basename)) {
 
-                    return response(file_get_contents($upload_path . '/' . $basename), 200)->header('Content-Type', $mime);
+                        // set up paths
+                        $upload_path = $path['upload_path'];
+                        if (!is_dir($upload_path))
+                            mkdir($upload_path, 0755, true);
+                        $asset_path = $path['asset_path'];
+
+                        // generate and return image style
+                        if (ImageStyleService::generate($upload_path, $asset_path, $basename)) {
+                            $mimeGuesser = MimeTypeGuesser::getInstance();
+                            $mime = $mimeGuesser->guess($upload_path . '/' . $basename);
+
+                            return response(file_get_contents($upload_path . '/' . $basename), 200)->header('Content-Type', $mime);
+                        }
+                    }
+
+                    break;
                 }
             }
         }

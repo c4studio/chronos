@@ -27,6 +27,9 @@ class ContentServiceProvider extends ServiceProvider {
 
         // publish config
         $this->publishes([
+            __DIR__ . '/config/content.php' => config_path('content.php'),
+        ], 'config');
+        $this->publishes([
             __DIR__ . '/config/languages.php' => config_path('languages.php'),
         ], 'config');
 
@@ -61,6 +64,9 @@ class ContentServiceProvider extends ServiceProvider {
     public function register()
     {
         // default package configuration
+        $this->mergeConfigFrom(
+            __DIR__ . '/config/defaults.php', 'content'
+        );
         $this->mergeConfigFrom(
             __DIR__ . '/config/languages.php', 'languages'
         );

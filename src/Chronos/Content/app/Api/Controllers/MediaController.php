@@ -5,7 +5,6 @@ namespace Chronos\Content\Api\Controllers;
 use App\Http\Controllers\Controller;
 use Chronos\Content\Models\Media;
 use Chronos\Content\Services\ImageStyleService;
-use Chronos\Scaffolding\Models\ImageStyle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Intervention\Image\Facades\Image;
@@ -162,11 +161,13 @@ class MediaController extends Controller
                 $data = str_replace('base64,', '', $data);
                 $data = base64_decode($data);
 
-                $path = 'uploads/media/' . date('Y') . '/' . date('m');
-                $upload_path = public_path($path); // E.g.: /home/public/uploads/media/{year}/{month}
+                // set up paths and filenames
+                $paths = Config::get('content.upload_paths');
+                $path = $paths[mt_rand(0, count($paths) - 1)]; // get a random upload path
+                $upload_path = $path['upload_path'];
                 if (!is_dir($upload_path))
                     mkdir($upload_path, 0755, true);
-                $asset_path = asset($path); // E.g.: http://chronos.ro/uploads/media/{year}/{month}
+                $asset_path = $path['asset_path'];
 
                 $filename = $request->has('fileNames') ? pathinfo($request->get('fileNames')[$key])['filename'] : str_random(12);
                 $filename = transliterate(str_slug($filename, '_'));
@@ -205,7 +206,7 @@ class MediaController extends Controller
                 ]);
 
                 // if image, generate styles
-                if (in_array($extension, Media::$image_types)) {
+                if (in_array($extension, Media::$image_types) && $extension != 'svg') {
                     // update media model
                     $image = Image::make($file);
                     $media->update([

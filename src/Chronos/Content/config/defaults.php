@@ -2,6 +2,8 @@
 
 return [
 
+    'system_content_types' => ['Gallery'],
+
     'upload_paths' => [
         [
             // E.g.: http://chronos.ro/uploads/media/{year}/{month}

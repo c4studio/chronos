@@ -50,10 +50,16 @@ class ContentController extends Controller
             $sortOrder = $request->get('sortOrder');
 
             switch ($sortBy) {
+                case 'created_at':
+                    $q->orderBy($sortBy, (isset($sortOrder) && $sortOrder === 'true') ? 'ASC' : 'DESC');
+                    break;
                 case 'status':
                     $q->orderBy($sortBy, (isset($sortOrder) && $sortOrder === 'true') ? 'DESC' : 'ASC');
                     break;
                 case 'title':
+                    $q->orderBy($sortBy, (isset($sortOrder) && $sortOrder === 'true') ? 'ASC' : 'DESC');
+                    break;
+                case 'updated_at':
                     $q->orderBy($sortBy, (isset($sortOrder) && $sortOrder === 'true') ? 'ASC' : 'DESC');
                     break;
 
