@@ -399,11 +399,14 @@
                             this.title = content.title;
                             this.slugChanged = true;
                             this.order = content.order;
+                            this.statusScheduled = content.status_scheduled
                             this.status = content.status;
                             this.lockDelete = content.lock_delete;
 
                             // convert statusSchedule to browser timezone
-                            this.statusScheduled = moment(content.status_scheduled).add(new Date().getTimezoneOffset(), 'minutes').format('YYYY-MM-D H:mm');
+                            if (this.statusScheduled !== null) {
+                                this.statusScheduled = moment(content.status_scheduled).add(new Date().getTimezoneOffset(), 'minutes').format('YYYY-MM-D H:mm');
+                            }
 
                             if (content.allFieldsets)
                                 content.allFieldsets.forEach(function(fieldset) {
