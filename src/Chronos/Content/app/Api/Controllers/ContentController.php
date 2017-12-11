@@ -3,6 +3,7 @@
 namespace Chronos\Content\Api\Controllers;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Chronos\Content\Models\Content;
 use Chronos\Content\Models\ContentField;
 use Chronos\Content\Models\ContentFieldData;
@@ -486,6 +487,11 @@ class ContentController extends Controller
 
         $this->validateContentRequest($request, $type);
 
+        $status_scheduled =
+            $request->has('status_scheduled') ?
+            Carbon::parse($request->get('status_scheduled'), new \DateTimeZone($request->get('status_scheduled_timezone_offset') / 60))->timestamp :
+            null;
+
         // handle store
         $content = Content::create([
             'author_id' => $request->get('author_id'),
@@ -494,6 +500,7 @@ class ContentController extends Controller
             'parent_id' => $request->has('parent_id') && $request->get('parent_id') != 0 ? $request->get('parent_id') : null,
             'slug' => $request->get('slug'),
             'status' => $request->get('status'),
+            'status_scheduled' => $status_scheduled,
             'title' => $request->get('title'),
             'type_id' => $type->id
         ]);
@@ -565,6 +572,11 @@ class ContentController extends Controller
 
         $this->validateContentRequest($request, $type, $content);
 
+        $status_scheduled =
+            $request->has('status_scheduled') ?
+            Carbon::parse($request->get('status_scheduled'), new \DateTimeZone($request->get('status_scheduled_timezone_offset') / 60))->timestamp :
+            null;
+
         // handle update
         $content->update([
             'parent_id' => $request->has('parent_id') && $request->get('parent_id') != 0 ? $request->get('parent_id') : null,
@@ -572,6 +584,7 @@ class ContentController extends Controller
             'title' => $request->get('title'),
             'order' => $request->get('order'),
             'status' => $request->get('status'),
+            'status_scheduled' => $status_scheduled,
             'lock_delete' => $request->has('lock_delete')
         ]);
 

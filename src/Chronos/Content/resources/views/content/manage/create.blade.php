@@ -40,7 +40,7 @@
                             </div>
                             <div class="form-group" v-bind:class="{ 'has-error': Object.hasKey(store.formErrors, 'status') }">
                                 <label class="control-label" for="status">{!! trans('chronos.content::forms.:type status', ['type' => $type->name]) !!}</label>
-                                <select class="form-control" id="status" name="status" v-model="status">
+                                <select class="form-control" id="status" name="status" v-on:change="setScheduledStatus(0)" v-model="status">
                                     <option value="1">{!! trans('chronos.content::forms.Active') !!}</option>
                                     <option value="0">{!! trans('chronos.content::forms.Inactive') !!}</option>
                                 </select>
@@ -64,13 +64,21 @@
                     </div>
                 </div>
                 <div class="col-xs-12 col-md-4">
-                    <div class="content-sidebar" data-spy="affix" data-offset-top="100">
+                    <div class="content-sidebar" data-spy="affix" data-offset-top="100" v-if="!dataLoader">
                         @if (settings('is_multilanguage'))
                             <div class="panel">
                                 <h2 class="panel-title">{{ trans('chronos.content::interface.Language') }}</h2>
                                 <select class="form-control" id="language" name="language" v-model="languageSelected">
                                     <option v-for="language in languages" v-bind:value="language.code" v-html="language.name"></option>
                                 </select>
+                            </div>
+                        @endif
+                        @if (settings('is_content_schedulable'))
+                            <div class="panel">
+                                <h2 class="panel-title">{{ trans('chronos.content::interface.Schedule activation') }}</h2>
+                                <p>{!! trans('chronos.content::interface.Activate this content on:') !!}</p>
+                                <input class="form-control" name="status_scheduled" v-flatpickr="{ defaultDate: null, enableTime: true, minDate: new Date(), onValueUpdate: setScheduledStatus(1), time_24hr: true }" v-model="statusScheduled" />
+                                <input name="status_scheduled_timezone_offset" type="hidden" v-bind:value="new Date().getTimezoneOffset()" />
                             </div>
                         @endif
                         <div class="panel panel-actions">

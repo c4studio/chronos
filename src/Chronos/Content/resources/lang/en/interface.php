@@ -3,6 +3,7 @@
 return [
     'Actions' => 'Actions',
     'Activate' => 'Activate',
+    'Activate this content on:' => 'Activate this content on:',
     'Active' => 'Active',
     'Add language' => 'Add language',
     'ALL' => 'ALL',
@@ -39,6 +40,7 @@ return [
     'Media' => 'Media',
     'Multilanguage support is deactivated.' => 'Multilanguage support is deactivated.',
     'Name' => 'Name',
+    'Schedule activation' => 'Schedule activation',
     'Search' => 'Search',
     'Select action' => 'Select action',
     'Select file' => 'Select file',

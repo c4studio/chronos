@@ -2,6 +2,8 @@
 
 namespace Chronos\Content;
 
+use Chronos\Content\Console\Kernel;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -70,8 +72,23 @@ class ContentServiceProvider extends ServiceProvider {
         $this->mergeConfigFrom(
             __DIR__ . '/config/languages.php', 'languages'
         );
+
+        // register package kernels
+        $this->registerKernels();
     }
 
+    /**
+     * Registers package kernels
+     */
+    public function registerKernels()
+    {
+        $this->app->singleton('chronos.content.console.kernel', function($app) {
+            $dispatcher = $app->make(Dispatcher::class);
+            return new Kernel($app, $dispatcher);
+        });
+
+        $this->app->make('chronos.content.console.kernel');
+    }
 
 
     /**

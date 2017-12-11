@@ -28,11 +28,18 @@ class Content extends Model
     protected $custom_attributes = [];
 
     /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['status_scheduled'];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['type_id', 'slug', 'title', 'author_id', 'language', 'translation_id', 'parent_id', 'order', 'status', 'lock_delete'];
+    protected $fillable = ['type_id', 'slug', 'title', 'author_id', 'language', 'translation_id', 'parent_id', 'order', 'status', 'status_scheduled', 'lock_delete'];
 
     /**
      * The relations to eager load on every query.

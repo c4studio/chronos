@@ -2,7 +2,7 @@
 
 ---
 
-A developer friendly CMS built by C4studio
+A developer friendly headless CMS built by [C4studio](http://c4studio.ro).
 
 ---
 
@@ -100,6 +100,13 @@ protected $appends = ['endpoints', 'name'];
 ```
 
 
+### Set APP_URL
+
+Chronos requires you to set APP_URL in your .env file
+
+	APP_URL=https://chronos.ro
+
+
 ### Run migrations
 
 Almost done. We need to run the migrations and seed our database:
@@ -109,6 +116,14 @@ php artisan migrate
 php artisan db:seed --class=\\Chronos\\Scaffolding\\Seeds\\DatabaseSeeder
 php artisan db:seed --class=\\Chronos\\Content\\Seeds\\DatabaseSeeder
 ```
+
+
+### Set up task scheduling
+
+Chronos runs a couple of tasks in the background, so you will need to set up task scheduling by adding the following to your Cron entries on your server:
+
+	* * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
+
 
 ### Run Passport install script
 

@@ -313,6 +313,7 @@
                 slug: '',
                 slugChanged: false,
                 status: 1,
+                statusScheduled: null,
                 store: vueStore.state,
                 title: '',
                 typeHierarchy: null
@@ -400,6 +401,9 @@
                             this.order = content.order;
                             this.status = content.status;
                             this.lockDelete = content.lock_delete;
+
+                            // convert statusSchedule to browser timezone
+                            this.statusScheduled = moment(content.status_scheduled).add(new Date().getTimezoneOffset(), 'minutes').format('YYYY-MM-D H:mm');
 
                             if (content.allFieldsets)
                                 content.allFieldsets.forEach(function(fieldset) {
@@ -521,6 +525,16 @@
 
                     vm.$emit('hide-loader');
                 });
+            },
+            setScheduledStatus: function(action) {
+                // scheduled date has been set, set status to inactive
+                if (action === 1 && this.statusScheduled !== null) {
+                    this.status = 0;
+                }
+                // status was set to active, set scheduled date to null
+                else {
+                    this.statusScheduled = null;
+                }
             },
             updateSlug: function() {
                 if (this.slugChanged)
