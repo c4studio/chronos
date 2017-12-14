@@ -17,7 +17,7 @@
                     <div id="content-editor-wrapper">
                         <p class="text-center" v-show="dataLoader"><span class="loader-small"></span></p>
 
-                        <div class="panel" v-if="!dataLoader">
+                        <div class="panel" v-show="!dataLoader">
                             <h2 class="panel-title">{!! trans('chronos.content::forms.:type info', ['type' => $type->name]) !!}</h2>
                             <div class="form-group" v-bind:class="{ 'has-error': Object.hasKey(store.formErrors, 'title') }">
                                 <label class="control-label" for="title">{{ $type->title_label }}</label>
@@ -68,13 +68,13 @@
                             @endcan
                         </div>
 
-                        <div class="fieldset-list" v-if="!dataLoader">
+                        <div class="fieldset-list" v-show="!dataLoader">
                             <set v-for="fieldset in fieldsets" v-bind:fieldset-data="fieldset"></set>
                         </div>
                     </div>
                 </div>
                 <div class="col-xs-12 col-md-4">
-                    <div class="content-sidebar" data-spy="affix" data-offset-top="100" v-if="!dataLoader">
+                    <div class="content-sidebar" data-spy="affix" data-offset-top="100" v-show="!dataLoader">
                         @if (settings('is_multilanguage') && $type->translatable)
                             <div class="panel">
                                 <h2 class="panel-title">{{ trans('chronos.content::interface.Languages') }}</h2>

@@ -702,10 +702,12 @@
             editorEventHub.$off('delete-fieldset');
             editorEventHub.$on('delete-fieldset', this.deleteFieldset);
             editorEventHub.$on('set-fieldsets', this.setFieldsets);
+            editorEventHub.$on('hide-data-loader', this.hideDataLoader);
+            editorEventHub.$on('show-data-loader', this.showDataLoader);
         },
         data: function() {
             return {
-                dataLoader: false,
+                dataLoader: 0,
                 dragElement: null,
                 fieldsets: []
             }
@@ -754,7 +756,7 @@
                 }
             },
             getParent: function() {
-                this.dataLoader = true;
+                this.dataLoader++;
 
                 $url = this.parentType == 'ContentType' ? '/api/content/types/' + this.parentId + '?load=fieldsets' : '/api/content/manage/' + this.typeId + '/' + this.parentId + '?load=fieldsets';
                 this.$http.get($url).then(function(response) {
@@ -776,7 +778,7 @@
                     });
                     this.fieldsets = fieldsets;
 
-                    this.dataLoader = false;
+                    this.dataLoader--;
                 }, function(response) {
                     if (response.body.alerts) {
                         response.body.alerts.forEach(function(alert) {
@@ -791,8 +793,11 @@
                         });
                     }
 
-                    this.dataLoader = false;
+                    this.dataLoader--;
                 });
+            },
+            hideDataLoader: function() {
+                this.dataLoader--;
             },
             reorderElements: function(dropElement) {
                 this.fieldsets.move(this.dragElement, dropElement);
@@ -842,6 +847,9 @@
             },
             setDragElement: function(dragElement) {
                 this.dragElement = dragElement;
+            },
+            showDataLoader: function() {
+                this.dataLoader++;
             }
         },
         props: {

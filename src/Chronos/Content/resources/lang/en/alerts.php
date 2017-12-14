@@ -27,6 +27,7 @@ return [
     'Language successfully activated.' => 'Language successfully activated.',
     'Language successfully added.' => 'Language successfully added.',
     'Language successfully deactivated.' => 'Language successfully deactivated.',
+    'Media successfully updated.' => 'Media successfully updated.',
     'No files to upload.' => 'No files to upload.',
     'Success.' => 'Success.',
     ':type deletion unsuccessful.' => ':type deletion unsuccessful.',

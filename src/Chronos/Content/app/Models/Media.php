@@ -19,7 +19,7 @@ class Media extends Model
      *
      * @var array
      */
-    protected $appends = ['endpoints', 'is_image', 'sizeFormatted', 'thumb'];
+    protected $appends = ['alt', 'endpoints', 'is_image', 'sizeFormatted', 'thumb', 'title'];
 
     /**
      * The attributes that are mass assignable.
@@ -38,6 +38,16 @@ class Media extends Model
     public static $image_types = ['gif', 'jpeg', 'jpg', 'png', 'svg'];
 
 
+
+    /**
+     * Add alt tag to model.
+     */
+    public function getAltAttribute()
+    {
+        $data = unserialize($this->attributes['data']);
+
+        return $data === false ? null : $data['alt'];
+    }
 
     /**
      * Add admin URLs to model.
@@ -104,6 +114,16 @@ class Media extends Model
             return $thumb->file;
         else
             return $this->file;
+    }
+
+    /**
+     * Add title tag to model.
+     */
+    public function getTitleAttribute()
+    {
+        $data = unserialize($this->attributes['data']);
+
+        return $data === false ? null : $data['title'];
     }
 
 

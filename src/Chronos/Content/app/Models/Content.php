@@ -160,7 +160,7 @@ class Content extends Model
      *
      * This is where the magic happens. Basically this function iterates over each fieldset and field,
      * and if there is a value saved it adds it to the field's JSON object. If there are multiple values, repetitions
-     * are added, which can be read by the VueJS component on the frontend.
+     * are added, which can be read on the frontend.
      */
     public function getAllFieldsetsAttribute()
     {

@@ -56,10 +56,32 @@
                                     <tr>
                                         <td v-html="data[lastSelected].sizeFormatted"></td>
                                     </tr>
-                                    <tr v-if="data[lastSelected].is_image">
+                                    <tr v-if="data[lastSelected].is_image && data[lastSelected].image_width && data[lastSelected].image_height">
                                         <td v-html="data[lastSelected].image_width + ' × ' + data[lastSelected].image_height"></td>
                                     </tr>
                                 </table>
+
+                                <div class="media-attributes">
+                                    <div class="row">
+                                        <div class="col-sm-5">
+                                            <div class="form-group">
+                                                <label for="alt">{!! trans('chronos.content::forms.Alt tag') !!}</label>
+                                                <input class="form-control" id="alt" name="alt" type="text" v-model="data[lastSelected].alt" v-on:blur="saveMediaData(lastSelected)" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <div class="form-group">
+                                                <label for="title">{!! trans('chronos.content::forms.Title tag') !!}</label>
+                                                <input class="form-control" id="title" name="title" type="text" v-model="data[lastSelected].title" v-on:blur="saveMediaData(lastSelected)" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <br />
+                                            <span class="loader-small marginB0 marginT5" v-show="savingMediaData"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <a class="marginR15" v-bind:href="data[lastSelected].file" target="_blank">{!! trans('chronos.content::interface.Download file') !!}</a>
                                 @can ('delete_media')
                                 <a class="text-danger" data-toggle="modal" data-target="#delete-file-dialog" v-on:click="setdeleteURL(data[lastSelected].endpoints.destroy, $event)">{!! trans('chronos.content::interface.Delete file') !!}</a><br />
@@ -105,7 +127,7 @@
         data: function() {
             return {
                 data: [],
-                dataLoader: false,
+                dataLoader: 0,
                 deleteURL: null,
                 dialog: null,
                 dialogData: null,
@@ -114,6 +136,7 @@
                     search: ''
                 },
                 lastSelected: null,
+                savingMediaData: false,
                 searchOn: false,
                 selected: []
             }
@@ -226,7 +249,7 @@
                 });
             },
             getData: function() {
-                this.dataLoader = true;
+                this.dataLoader++;
                 this.lastSelected = null;
                 this.selected = [];
 
@@ -236,9 +259,9 @@
                 }}).then(function(response) {
                     this.data = response.body.data;
 
-                    this.dataLoader = false;
+                    this.dataLoader--;
                 }, function(response) {
-                    this.dataLoader = false;
+                    this.dataLoader--;
 
                     if (response.body.alerts) {
                         response.body.alerts.forEach(function(alert) {
@@ -264,6 +287,31 @@
                 this.dialogData = dialogData;
 
                 this.getData();
+            },
+            saveMediaData: function(lastSelected) {
+                this.savingMediaData = true;
+
+                this.$http.patch('/api/content/media/' + this.data[lastSelected].id, {
+                    alt: this.data[lastSelected].alt,
+                    title: this.data[lastSelected].title
+                }).then(function(response) {
+                    this.savingMediaData = false;
+                }, function(response) {
+                    this.savingMediaData = false;
+
+                    if (response.body.alerts) {
+                        response.body.alerts.forEach(function(alert) {
+                            vm.$emit('add-alert', alert);
+                        }.bind(this));
+                    }
+                    else {
+                        vm.$emit('add-alert', {
+                            type: 'error',
+                            title: 'AJAX error',
+                            message: response.statusText + ' (' + response.status + ')'
+                        });
+                    }
+                });
             },
             search: debounce(function() {
                 this.getData();

@@ -31,6 +31,7 @@ Route::delete('content/media', ['uses' => 'MediaController@destroy_bulk', 'as' =
 Route::delete('content/media/{media}', ['uses' => 'MediaController@destroy', 'as' => 'api.content.media.destroy']);
 Route::get('content/media/{media}', ['uses' => 'MediaController@show', 'as' => 'api.content.media.show']);
 Route::post('content/media', ['uses' => 'MediaController@store', 'as' => 'api.content.media.store']);
+Route::patch('content/media/{media}', ['uses' => 'MediaController@update', 'as' => 'api.content.media.update']);
 
 /* SETTINGS */
 Route::get('settings/languages', ['uses' => 'Settings\LanguagesController@index', 'as' => 'api.settings.languages']);

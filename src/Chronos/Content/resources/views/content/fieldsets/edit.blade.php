@@ -23,17 +23,17 @@
                     <div id="fieldset-editor-wrapper">
                         <p class="text-center" v-show="dataLoader"><span class="loader-small"></span></p>
 
-                        <div class="panel" v-if="!dataLoader && (!fieldsets || fieldsets.length == 0)">
+                        <div class="panel" v-show="!dataLoader && (!fieldsets || fieldsets.length == 0)">
                             <h2 class="panel-title">{!! trans('chronos.content::interface.Fieldsets') !!}</h2>
                             <p class="no-results">{!! trans('chronos.content::interface.This content type has no fieldsets. Create one now.') !!}</p>
                             <p class="text-center"><a class="btn btn-action add-fieldset" v-on:click="addFieldset">{!! trans('chronos.content::forms.Add fieldset') !!}</a></p>
                         </div>
 
-                        <div class="fieldset-list" v-if="!dataLoader">
+                        <div class="fieldset-list" v-show="!dataLoader">
                             <set v-for="fieldset in fieldsets" v-bind:key="fieldset.key" v-bind:order="fieldset.order" v-bind:fieldset-data="fieldset"></set>
                         </div>
 
-                        <a class="btn btn-action add-fieldset" v-if="!dataLoader && (fieldsets && fieldsets.length > 0)" v-on:click="addFieldset()">{!! trans('chronos.content::forms.Add fieldset') !!}</a>
+                        <a class="btn btn-action add-fieldset" v-show="!dataLoader && (fieldsets && fieldsets.length > 0)" v-on:click="addFieldset()">{!! trans('chronos.content::forms.Add fieldset') !!}</a>
                     </div>
                 </div>
                 <div class="col-xs-12 col-md-4">

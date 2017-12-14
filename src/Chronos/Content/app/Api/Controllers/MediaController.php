@@ -287,4 +287,24 @@ class MediaController extends Controller
         }
     }
 
+    public function update(Request $request, Media $media)
+    {
+        $data['alt'] = $request->has('alt') ? $request->get('alt') : '';
+        $data['title'] = $request->has('title') ? $request->get('title') : '';
+
+        $media->data = serialize($data);
+        $media->save();
+
+        return response()->json([
+            'alerts' => [
+                (object) [
+                    'type' => 'success',
+                    'title' => trans('chronos.content::alerts.Success.'),
+                    'message' => trans('chronos.content::alerts.Media successfully updated.'),
+                ]
+            ],
+            'media' => $media,
+            'status' => 200
+        ], 200);
+    }
 }

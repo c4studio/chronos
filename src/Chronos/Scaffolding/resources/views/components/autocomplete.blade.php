@@ -66,6 +66,11 @@
                 }
                 // Remote data source
                 else {
+                    // show loader
+                    if (editorEventHub) {
+                        editorEventHub.$emit('show-data-loader');
+                    }
+
                     params = {};
                     params.perPage = 0;
                     params.withInactive = 1;
@@ -85,6 +90,11 @@
                         this.values = ret;
 
                         this.setDefaults();
+
+                        // hide loader
+                        if (editorEventHub) {
+                            editorEventHub.$emit('hide-data-loader');
+                        }
                     }.bind(this), function(response) {
                         if (response.body.alerts) {
                             response.body.alerts.forEach(function(alert) {
@@ -98,6 +108,11 @@
                                 message: response.statusText + ' (' + response.status + ')'
                             });
                         }
+
+                        // hide loader
+//                        if (editorEventHub) {
+//                            editorEventHub.$emit('hide-data-loader');
+//                        }
                     });
                 }
             },

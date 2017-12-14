@@ -2,6 +2,7 @@
 
 namespace Chronos\Scaffolding;
 
+use Chronos\Scaffolding\Services\RouteMapService;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;

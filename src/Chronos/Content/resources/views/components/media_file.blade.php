@@ -55,10 +55,20 @@
         },
         methods: {
             getData: function() {
+                // show loader
+                if (editorEventHub) {
+                    editorEventHub.$emit('show-data-loader');
+                }
+
                 this.$http.get('/api/content/media/' + this.value).then(function(response) {
                     this.basename = response.body.basename;
                     this.isImage = response.body.is_image;
                     this.src = response.body.file;
+
+                    // hide loader
+                    if (editorEventHub) {
+                        editorEventHub.$emit('hide-data-loader');
+                    }
                 }, function(response) {
                     if (response.body.alerts) {
                         response.body.alerts.forEach(function(alert) {
@@ -71,6 +81,11 @@
                             title: 'AJAX error',
                             message: response.statusText + ' (' + response.status + ')'
                         });
+                    }
+
+                    // hide loader
+                    if (editorEventHub) {
+                        editorEventHub.$emit('hide-data-loader');
                     }
                 });
             },
@@ -88,11 +103,11 @@
                 if (this.name != name)
                     return;
 
-                this.alt = '';
+                this.alt = file.alt;
                 this.basename = file.basename;
                 this.isImage = file.is_image;
                 this.src = file.file;
-                this.title = '';
+                this.title = file.title;
                 this.value = file.id;
             }
         },

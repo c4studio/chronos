@@ -117,6 +117,8 @@
 
 
 <script>
+    var editorEventHub = new Vue();
+
     Vue.component('content-editor', {
         components: {
             set: {
@@ -300,10 +302,14 @@
 
             // populate data
             this.getData();
+
+            // add listeners
+            editorEventHub.$on('hide-data-loader', this.hideDataLoader);
+            editorEventHub.$on('show-data-loader', this.showDataLoader);
         },
         data: function() {
             return {
-                dataLoader: false,
+                dataLoader: 0,
                 fieldsets: [],
                 languages: [],
                 languageSelected: '{{ Config::get('app.locale') }}',
@@ -343,7 +349,7 @@
                 return hierarchy;
             },
             getData: function() {
-                this.dataLoader = true;
+                this.dataLoader++;
 
                 // add
                 if (this.contentId == null) {
@@ -370,7 +376,7 @@
                         });
                         this.fieldsets = fieldsets;
 
-                        this.dataLoader = false;
+                        this.dataLoader--;
                     }, function(response) {
                         if (response.body.alerts) {
                             response.body.alerts.forEach(function(alert) {
@@ -385,7 +391,7 @@
                             });
                         }
 
-                        this.dataLoader = false;
+                        this.dataLoader--;
                     });
 
                 }
@@ -399,7 +405,7 @@
                             this.title = content.title;
                             this.slugChanged = true;
                             this.order = content.order;
-                            this.statusScheduled = content.status_scheduled
+                            this.statusScheduled = content.status_scheduled;
                             this.status = content.status;
                             this.lockDelete = content.lock_delete;
 
@@ -418,7 +424,7 @@
                             this.fieldsets = content.allFieldsets;
                         }
 
-                        this.dataLoader = false;
+                        this.dataLoader--;
                     }, function(response) {
                         if (response.body.alerts) {
                             response.body.alerts.forEach(function(alert) {
@@ -433,7 +439,7 @@
                             });
                         }
 
-                        this.dataLoader = false;
+                        this.dataLoader--;
                     });
                 }
 
@@ -479,6 +485,9 @@
                         });
                     }
                 });
+            },
+            hideDataLoader: function() {
+                this.dataLoader--;
             },
             saveContent: function(event, update) {
                 vm.$emit('show-loader');
@@ -538,6 +547,9 @@
                 else {
                     this.statusScheduled = null;
                 }
+            },
+            showDataLoader: function() {
+                this.dataLoader++;
             },
             updateSlug: function() {
                 if (this.slugChanged)

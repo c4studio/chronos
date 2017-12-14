@@ -259,28 +259,89 @@ class ContentTypesController extends Controller
                 $fields = ContentField::where('fieldset_id', $fieldset->id)->get();
 
                 foreach ($fields as $field) {
-                    $generator->addIndent(2);
-                    $generator->addContent('ContentField::create([');
-                    $generator->addNewLines();
+                    // check if entity type, and referencing a content type
+                    $entity_data = unserialize($field->data);
+                    if (
+                        $field->type == 'entity' &&
+                        isset($entity_data['entity_type']) &&
+                        $entity_data['entity_type'] !== '\\' . ltrim(Config::get('auth.providers.users.model'), '\\')
+                    ) {
+                        list($type_model, $type_id) = explode(':', $entity_data['entity_type']);
 
-                    $generator->addIndent(3);
-                    $generator->addContent('\'fieldset_id\' => $fieldset->id,');
-                    $generator->addNewLines();
+                        $type = ContentType::where('id', $type_id)->firstOrFail();
 
-                    $except = ['fieldset_id'];
-                    foreach ($field->getFillable() as $attribute) {
-                        if (!in_array($attribute, $except)) {
-                            $value = is_string($field->{$attribute}) ? '"' . addslashes(normalize_newline($field->{$attribute})) . '"' :
+                        $generator->addIndent(2);
+                        $generator->addContent('$entity = ContentType::where(\'name\', \'' . $type->name . '\')->first();');
+                        $generator->addNewLines();
+
+                        $generator->addIndent(2);
+                        $generator->addContent('if ($entity) {');
+                        $generator->addNewLines();
+
+                        $generator->addIndent(3);
+                        $generator->addContent('$value = [\'entity_type\' => \'' . $type_model . ':\' . $entity->id . \'\'];');
+                        $generator->addNewLines();
+
+                        $data = 'serialize($value)';
+
+                        $generator->addIndent(3);
+                        $generator->addContent('ContentField::create([');
+                        $generator->addNewLines();
+
+                        $generator->addIndent(3);
+                        $generator->addContent('\'fieldset_id\' => $fieldset->id,');
+                        $generator->addNewLines();
+
+                        $generator->addIndent(3);
+                        $generator->addContent('\'data\' => ' . $data . ',');
+                        $generator->addNewLines();
+
+                        $except = ['fieldset_id', 'data'];
+                        foreach ($field->getFillable() as $attribute) {
+                            if (!in_array($attribute, $except)) {
+                                $value = is_string($field->{$attribute}) ? '"' . addslashes(normalize_newline($field->{$attribute})) . '"' :
                                     (is_null($field->{$attribute}) ? 'null' : $field->{$attribute});
-                            $generator->addIndent(3);
-                            $generator->addContent('\'' . $attribute . '\' => ' . $value . ',');
-                            $generator->addNewLines();
-                        }
-                    }
 
-                    $generator->addIndent(2);
-                    $generator->addContent(']);');
-                    $generator->addNewLines(2);
+                                $generator->addIndent(3);
+                                $generator->addContent('\'' . $attribute . '\' => ' . $value . ',');
+                                $generator->addNewLines();
+                            }
+                        }
+
+                        $generator->addIndent(3);
+                        $generator->addContent(']);');
+                        $generator->addNewLines();
+
+                        $generator->addIndent(2);
+                        $generator->addContent('}');
+                        $generator->addNewLines(2);
+                    }
+                    // default behaviour
+                    else {
+                        $generator->addIndent(2);
+                        $generator->addContent('ContentField::create([');
+                        $generator->addNewLines();
+
+                        $generator->addIndent(3);
+                        $generator->addContent('\'fieldset_id\' => $fieldset->id,');
+                        $generator->addNewLines();
+
+                        $except = ['fieldset_id'];
+                        foreach ($field->getFillable() as $attribute) {
+                            if (!in_array($attribute, $except)) {
+                                $value = is_string($field->{$attribute}) ? '"' . addslashes(normalize_newline($field->{$attribute})) . '"' :
+                                    (is_null($field->{$attribute}) ? 'null' : $field->{$attribute});
+
+                                $generator->addIndent(3);
+                                $generator->addContent('\'' . $attribute . '\' => ' . $value . ',');
+                                $generator->addNewLines();
+                            }
+                        }
+
+                        $generator->addIndent(2);
+                        $generator->addContent(']);');
+                        $generator->addNewLines(2);
+                    }
                 }
             }
 

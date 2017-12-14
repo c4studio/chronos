@@ -358,11 +358,11 @@ class ContentController extends Controller
                             if (!is_array($ids))
                                 $ids = [];
 
-                            if ($entity_data['entity_type'] == Config::get('auth.providers.users.model')) {
+                            if ($entity_data['entity_type'] == '\\' . ltrim(Config::get('auth.providers.users.model'), '\\')) {
                                 $entities = User::whereIn('id', $ids)->get()->pluck('email')->toArray();
 
                                 $generator->addIndent(2);
-                                $generator->addContent('$entities = ' . Config::get('auth.providers.users.model') . '::whereIn(\'email\', [\'' . implode('\', \'', $entities) . '\'])->get();');
+                                $generator->addContent('$entities = ' . '\\' . ltrim(Config::get('auth.providers.users.model'), '\\') . '::whereIn(\'email\', [\'' . implode('\', \'', $entities) . '\'])->get();');
                                 $generator->addNewLines();
                             }
                             else {
