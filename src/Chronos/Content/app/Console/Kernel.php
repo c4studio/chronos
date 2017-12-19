@@ -21,7 +21,7 @@ class Kernel extends ConsoleKernel
 
         // Activate scheduled posts
         $schedule->call(function() {
-            $content = Content::where('status_scheduled', '>=', Carbon::now())->get();
+            $content = Content::where('status_scheduled', '<=', Carbon::now())->get();
 
             foreach ($content as $item) {
                 $item->status = 1;

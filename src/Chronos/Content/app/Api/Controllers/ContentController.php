@@ -574,7 +574,7 @@ class ContentController extends Controller
 
         $status_scheduled =
             $request->has('status_scheduled') ?
-            Carbon::parse($request->get('status_scheduled'), new \DateTimeZone($request->get('status_scheduled_timezone_offset') / 60))->timestamp :
+            Carbon::parse($request->get('status_scheduled'))->addHours($request->get('status_scheduled_timezone_offset') / 60) :
             null;
 
         // handle update

@@ -56,7 +56,7 @@
         methods: {
             getData: function() {
                 // show loader
-                if (editorEventHub) {
+                if (typeof editorEventHub !== 'undefined') {
                     editorEventHub.$emit('show-data-loader');
                 }
 
@@ -66,7 +66,7 @@
                     this.src = response.body.file;
 
                     // hide loader
-                    if (editorEventHub) {
+                    if (typeof editorEventHub !== 'undefined') {
                         editorEventHub.$emit('hide-data-loader');
                     }
                 }, function(response) {
@@ -84,7 +84,7 @@
                     }
 
                     // hide loader
-                    if (editorEventHub) {
+                    if (typeof editorEventHub !== 'undefined') {
                         editorEventHub.$emit('hide-data-loader');
                     }
                 });

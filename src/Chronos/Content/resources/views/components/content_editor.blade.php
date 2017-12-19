@@ -411,7 +411,7 @@
 
                             // convert statusSchedule to browser timezone
                             if (this.statusScheduled !== null) {
-                                this.statusScheduled = moment(content.status_scheduled).add(new Date().getTimezoneOffset(), 'minutes').format('YYYY-MM-D H:mm');
+                                this.statusScheduled = moment(content.status_scheduled).add(new Date().getTimezoneOffset() * -1, 'minutes').format('YYYY-MM-D H:mm');
                             }
 
                             if (content.allFieldsets)

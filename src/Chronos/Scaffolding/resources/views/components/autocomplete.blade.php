@@ -67,7 +67,7 @@
                 // Remote data source
                 else {
                     // show loader
-                    if (editorEventHub) {
+                    if (typeof editorEventHub !== 'undefined') {
                         editorEventHub.$emit('show-data-loader');
                     }
 
@@ -92,7 +92,7 @@
                         this.setDefaults();
 
                         // hide loader
-                        if (editorEventHub) {
+                        if (typeof editorEventHub !== 'undefined') {
                             editorEventHub.$emit('hide-data-loader');
                         }
                     }.bind(this), function(response) {
@@ -110,9 +110,9 @@
                         }
 
                         // hide loader
-//                        if (editorEventHub) {
-//                            editorEventHub.$emit('hide-data-loader');
-//                        }
+                        if (typeof editorEventHub !== 'undefined') {
+                            editorEventHub.$emit('hide-data-loader');
+                        }
                     });
                 }
             },
