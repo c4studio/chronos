@@ -46,7 +46,7 @@ class Media extends Model
     {
         $data = unserialize($this->attributes['data']);
 
-        return $data === false ? null : $data['alt'];
+        return $data === false ? null : (isset($data['alt']) ? $data['alt'] : null);
     }
 
     /**
@@ -123,7 +123,7 @@ class Media extends Model
     {
         $data = unserialize($this->attributes['data']);
 
-        return $data === false ? null : $data['title'];
+        return $data === false ? null : (isset($data['title']) ? $data['title'] : null);
     }
 
 

@@ -82,12 +82,14 @@ class ContentServiceProvider extends ServiceProvider {
      */
     public function registerKernels()
     {
-        $this->app->singleton('chronos.content.console.kernel', function($app) {
-            $dispatcher = $app->make(Dispatcher::class);
-            return new Kernel($app, $dispatcher);
-        });
+        if (class_exists('Chronos\Content\Console\Kernel')) {
+            $this->app->singleton('chronos.content.console.kernel', function($app) {
+                $dispatcher = $app->make(Dispatcher::class);
+                return new Kernel($app, $dispatcher);
+            });
 
-        $this->app->make('chronos.content.console.kernel');
+            $this->app->make('chronos.content.console.kernel');
+        }
     }
 
 

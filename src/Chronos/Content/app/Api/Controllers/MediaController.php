@@ -289,6 +289,7 @@ class MediaController extends Controller
 
     public function update(Request $request, Media $media)
     {
+        $data = unserialize($media->data);
         $data['alt'] = $request->has('alt') ? $request->get('alt') : '';
         $data['title'] = $request->has('title') ? $request->get('title') : '';
 
