@@ -470,8 +470,17 @@ class ContentController extends Controller
         ], 200);
     }
 
-    public function show(Request $request, ContentType $type, Content $content)
+    public function show(Request $request, ContentType $type, $content)
     {
+        // retrieve content by id or slug
+        if (is_int($content))
+            $content = Content::find($content);
+        else
+            $content = Content::where('type_id', $type->id)->where('slug', $content)->first();
+
+        if (!$content)
+            abort(404);
+
         if ($request->has('load') && $request->get('load') == 'allFieldsets')
             $content->append('allFieldsets');
 
