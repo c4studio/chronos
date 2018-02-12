@@ -126,58 +126,9 @@
                     field: {
                         created: function() {
                             // populate with data
-                            if (this.fieldData.id) {
-                                this.enableAlt = this.fieldData.enable_alt;
-                                this.enableTitle = this.fieldData.enable_title;
-                                this.helpText = this.fieldData.help_text;
-                                this.id = this.fieldData.id;
-                                this.name = this.fieldData.name;
-                                this.repeatable = this.fieldData.repeatable;
-                                this.repetitions = this.fieldData.repetitions;
-                                this.rules = this.fieldData.rules;
-                                this.step = this.fieldData.step;
-                                this.type = this.fieldData.type;
-                                this.listValues = this.fieldData.values;
-                                this.listValuesParsed = this.fieldData.valuesParsed;
-                                this.widget = this.fieldData.widget;
+                            this.populateData();
 
-                                if (this.fieldData.entity_endpoints != null) {
-                                    switch (this.fieldData.entity_model) {
-                                        case '\\Chronos\\Scaffolding\\Models\\Role':
-                                            this.entityEndpoint = this.fieldData.entity_endpoints.users;
-                                            this.labelField = 'name';
-
-                                            break;
-                                        case '\\App\\Models\\User':
-                                            this.entityEndpoint = this.fieldData.entity_endpoints.index;
-                                            this.labelField = 'name';
-
-                                            break;
-                                        default:
-                                            this.entityEndpoint = this.fieldData.entity_endpoints.index;
-                                    }
-                                }
-                                else
-                                    this.entityEndpoint = null;
-
-                                if (this.widget != 'checkbox') {
-                                    if (this.fieldData.value && this.fieldData.value.length > 0)
-                                        this.values = this.fieldData.value[this.fieldsetKey];
-                                    else if (this.fieldData.default)
-                                        this.values = [this.fieldData.default];
-                                    else
-                                        this.values = [null];
-                                } else {
-                                    this.repetitions.forEach(function(repetition, key) {
-                                        if (this.fieldData.value && this.fieldData.value.length > 0)
-                                            this.values = this.fieldData.value[this.fieldsetKey];
-                                        else if (this.fieldData.default)
-                                            this.values[key] = [this.fieldData.default];
-                                        else
-                                            this.values[key] = [false];
-                                    }.bind(this));
-                                }
-                            }
+                            editorEventHub.$on('repopulate-field', this.repopulateData);
                         },
                         data: function() {
                             return {
@@ -212,6 +163,65 @@
                                 // restore values order
                                 this.values.splice(key, 1);
                             },
+                            populateData: function() {
+                                if (this.fieldData.id) {
+                                    this.enableAlt = this.fieldData.enable_alt;
+                                    this.enableTitle = this.fieldData.enable_title;
+                                    this.helpText = this.fieldData.help_text;
+                                    this.id = this.fieldData.id;
+                                    this.name = this.fieldData.name;
+                                    this.repeatable = this.fieldData.repeatable;
+                                    this.repetitions = this.fieldData.repetitions;
+                                    this.rules = this.fieldData.rules;
+                                    this.step = this.fieldData.step;
+                                    this.type = this.fieldData.type;
+                                    this.listValues = this.fieldData.values;
+                                    this.listValuesParsed = this.fieldData.valuesParsed;
+                                    this.widget = this.fieldData.widget;
+
+                                    if (this.fieldData.entity_endpoints != null) {
+                                        switch (this.fieldData.entity_model) {
+                                            case '\\Chronos\\Scaffolding\\Models\\Role':
+                                                this.entityEndpoint = this.fieldData.entity_endpoints.users;
+                                                this.labelField = 'name';
+
+                                                break;
+                                            case '\\App\\Models\\User':
+                                                this.entityEndpoint = this.fieldData.entity_endpoints.index;
+                                                this.labelField = 'name';
+
+                                                break;
+                                            default:
+                                                this.entityEndpoint = this.fieldData.entity_endpoints.index;
+                                        }
+                                    }
+                                    else
+                                        this.entityEndpoint = null;
+
+                                    if (this.widget != 'checkbox') {
+                                        if (this.fieldData.value && this.fieldData.value.length > 0)
+                                            this.values = this.fieldData.value[this.fieldsetKey];
+                                        else if (this.fieldData.default)
+                                            this.values = [this.fieldData.default];
+                                        else
+                                            this.values = [null];
+                                    } else {
+                                        this.repetitions.forEach(function(repetition, key) {
+                                            if (this.fieldData.value && this.fieldData.value.length > 0)
+                                                this.values = this.fieldData.value[this.fieldsetKey];
+                                            else if (this.fieldData.default)
+                                                this.values[key] = [this.fieldData.default];
+                                            else
+                                                this.values[key] = [false];
+                                        }.bind(this));
+                                    }
+                                }
+                            },
+                            repopulateData: function(fieldsetKey, id) {
+                                if (this.fieldsetKey === fieldsetKey && this.id === id) {
+                                    this.populateData();
+                                }
+                            },
                             repeatField: function() {
                                 var field = Object.clone(this);
                                 delete field.repetitions;
@@ -220,7 +230,7 @@
                                     this.values.push(this.fieldData.default);
                                 else
                                     this.values.push([this.fieldData.default]);
-                            },
+                            }
                         },
                         props: {
                             fieldData: {
@@ -261,7 +271,18 @@
                 },
                 methods: {
                     deleteRepetition: function(key) {
+                        this.fields.forEach(function(field) {
+                            field.value.splice(key, 1);
+                        });
+                        this.repetitions.forEach(function(fieldset, key) {
+                            fieldset.fields.forEach(function(field) {
+                                field.value.splice(key, 1);
+
+                                editorEventHub.$emit('repopulate-field', key, field.id);
+                            });
+                        });
                         this.repetitions.splice(key, 1);
+
                     },
                     repeatFieldset: function() {
                         var fieldset = Object.clone(this);
