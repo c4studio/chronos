@@ -47,8 +47,9 @@ class GallerySeeder extends Seeder {
         Permission::create(['name' => 'add_content_type_' . $gallery_type->id, 'label' => trans('chronos.content::permissions.Add :name' , ['name' => str_plural(strtolower($gallery_type->name))]), 'order' => 10]);
         Permission::create(['name' => 'edit_content_type_' . $gallery_type->id, 'label' => trans('chronos.content::permissions.Edit :name' , ['name' => str_plural(strtolower($gallery_type->name))]), 'order' => 10]);
         Permission::create(['name' => 'edit_content_type_fieldsets_' . $gallery_type->id, 'label' => trans('chronos.content::permissions.Edit :name fieldsets' , ['name' => str_plural(strtolower($gallery_type->name))]), 'order' => 10]);
-        Permission::create(['name' => 'lock_content_type_delete_' . $gallery_type->id, 'label' => trans('chronos.content::permissions.Lock :name delete' , ['name' => str_plural(strtolower($gallery_type->name))]), 'order' => 10]);
         Permission::create(['name' => 'delete_content_type_' . $gallery_type->id, 'label' => trans('chronos.content::permissions.Delete :name' , ['name' => str_plural(strtolower($gallery_type->name))]), 'order' => 10]);
+        Permission::create(['name' => 'export_content_type_' . $gallery_type->id, 'label' => trans('chronos.content::permissions.Export :name' , ['name' => str_plural(strtolower($gallery_type->name))]), 'order' => 10]);
+        Permission::create(['name' => 'lock_content_type_delete_' . $gallery_type->id, 'label' => trans('chronos.content::permissions.Lock :name delete' , ['name' => str_plural(strtolower($gallery_type->name))]), 'order' => 10]);
     }
 
 }

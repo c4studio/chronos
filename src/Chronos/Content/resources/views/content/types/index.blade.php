@@ -112,6 +112,7 @@
                             <input class="form-control" id="title_label" name="title_label" type="text" v-model="titleLabel" />
                             <span class="help-block" v-html="store.formErrors['title_label'][0]" v-if="Object.hasKey(store.formErrors, 'title_label')"></span>
                         </div>
+                        @if (settings('is_multilanguage'))
                         <div class="form-group">
                             <div class="checkbox">
                                 <label>
@@ -122,6 +123,7 @@
 
                             <span class="help-block">{!! trans('chronos.content::forms.Specifies whether this content type will be available in multiple languages.') !!}</span>
                         </div>
+                        @endif
                         <div class="form-group" v-bind:class="{ 'has-error': Object.hasKey(store.formErrors, 'notes') }">
                             <label class="control-label" for="notes">{!! trans('chronos.content::forms.Notes') !!}</label>
                             <textarea class="form-control" id="notes" name="notes" rows="3" v-model="notes"></textarea>

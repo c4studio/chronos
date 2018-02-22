@@ -71,13 +71,15 @@ class ContentTypesController extends Controller
     public function destroy(ContentType $type)
     {
         // delete permissions
-        Permission::where('name','view_content_type_' . $type->id)->first()->delete();
-        Permission::where('name','add_content_type_' . $type->id)->first()->delete();
-        Permission::where('name','edit_content_type_' . $type->id)->first()->delete();
-        Permission::where('name','edit_content_type_fieldsets_' . $type->id)->first()->delete();
-        Permission::where('name','delete_content_type_' . $type->id)->first()->delete();
-        Permission::where('name','export_content_type_' . $type->id)->first()->delete();
-        Permission::where('name','lock_content_type_delete_' . $type->id)->first()->delete();
+        $permissions = Permission::whereIn('name', [
+            'view_content_type_' . $type->id,
+            'add_content_type_' . $type->id,
+            'edit_content_type_' . $type->id,
+            'edit_content_type_fieldsets_' . $type->id,
+            'delete_content_type_' . $type->id,
+            'export_content_type_' . $type->id,
+            'lock_content_type_delete_' . $type->id
+        ])->delete();
 
         if ($type->delete())
             return response()->json([
