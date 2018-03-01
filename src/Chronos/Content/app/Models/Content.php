@@ -99,24 +99,37 @@ class Content extends Model
 
             if (@unserialize($value->value) !== false || $value->value == 'b:0;')
                 $value->value = unserialize($value->value);
+                if ($field->type == 'text' && $field->widget == 'wysiwyg') {
+                    $value->filtered_value = filter_wysiwyg($value->value);
+                }
 
             if ($fieldset->repeatable) {
                 if (!isset($model->custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key]))
                     $model->custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key] = new \stdClass();
 
-                if ($field->repeatable)
+                if ($field->repeatable) {
                     $model->custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key]->{$field->machine_name}[$value->field_repetition_key] = $value->value;
-                else
+                    if (isset($value->filtered_value))
+                        $model->custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key]->{$field->machine_name . '_filtered'}[$value->field_repetition_key] = $value->filtered_value;
+                } else {
                     $model->custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key]->{$field->machine_name} = $value->value;
+                    if (isset($value->filtered_value))
+                        $model->custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key]->{$field->machine_name . '_filtered'} = $value->filtered_value;
+                }
             }
             else {
                 if (!isset($model->custom_attributes[$fieldset->machine_name]))
                     $model->custom_attributes[$fieldset->machine_name] = new \stdClass();
 
-                if ($field->repeatable)
+                if ($field->repeatable) {
                     $model->custom_attributes[$fieldset->machine_name]->{$field->machine_name}[$value->field_repetition_key] = $value->value;
-                else
+                    if (isset($value->filtered_value))
+                        $model->custom_attributes[$fieldset->machine_name]->{$field->machine_name . '_filtered'}[$value->field_repetition_key] = $value->filtered_value;
+                } else {
                     $model->custom_attributes[$fieldset->machine_name]->{$field->machine_name} = $value->value;
+                    if (isset($value->filtered_value))
+                        $model->custom_attributes[$fieldset->machine_name]->{$field->machine_name . '_filtered'} = $value->filtered_value;
+                }
             }
         }
 
