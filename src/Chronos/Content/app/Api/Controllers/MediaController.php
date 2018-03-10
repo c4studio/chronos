@@ -17,7 +17,7 @@ class MediaController extends Controller
     {
         $itemsPerPage = $request->has('perPage')
             ? $request->get('perPage') == 0 ? Media::noStyles()->count() : $request->get('perPage')
-            : Config::get('chronos.items_per_page');
+            : Config::get('content.media_items_per_page');
 
         $q = Media::noStyles();
 
@@ -170,14 +170,14 @@ class MediaController extends Controller
                 $asset_path = $path['asset_path'];
 
                 $filename = $request->has('fileNames') ? pathinfo($request->get('fileNames')[$key])['filename'] : str_random(12);
-                $filename = transliterate(str_slug($filename, '_'));
+                $filename = transliterate(str_slug($filename));
                 $basename = $filename . '.' . $extension;
 
                 // make sure file names are unique
                 $i = 1;
                 $new_filename = $filename;
                 while (file_exists($upload_path . '/' . $basename)) {
-                    $new_filename = $filename . '_' . $i++;
+                    $new_filename = $filename . '-' . $i++;
                     $basename = $new_filename . '.' . $extension;
                 }
                 $filename = $new_filename;

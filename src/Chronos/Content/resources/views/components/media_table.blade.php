@@ -102,6 +102,8 @@
                         <p class="text-center" v-show="dataLoader"><span class="loader-small"></span></p>
                         <p class="no-results" v-show="!dataLoader && data.length === 0">{!! trans('chronos.content::interface.There are no results here. Try broadening your search.') !!}</p>
                     </div>
+
+                    @include('chronos::components.pagination')
                 </div>
             </div>
         </div>
@@ -136,6 +138,7 @@
                     search: ''
                 },
                 lastSelected: null,
+                pagination: {},
                 savingMediaData: false,
                 searchOn: false,
                 selected: []
@@ -255,9 +258,16 @@
 
                 this.$http.get('/api/content/media', {params: {
                     filters: this.filters,
-                    perPage: 0
+                    perPage: this.pagination.per_page,
+                    page: this.pagination.current
                 }}).then(function(response) {
                     this.data = response.body.data;
+
+                    // assign pagination vars
+                    this.pagination.current = response.body.current_page;
+                    this.pagination.last = response.body.last_page;
+                    this.pagination.per_page = response.body.per_page;
+                    this.pagination.items = response.body.total;
 
                     this.dataLoader--;
                 }, function(response) {
@@ -285,6 +295,11 @@
                 this.dialog.open();
 
                 this.dialogData = dialogData;
+
+                this.getData();
+            },
+            paginate: function(page) {
+                this.pagination.current = page;
 
                 this.getData();
             },
@@ -343,6 +358,12 @@
                 var modal = document.getElementById(target);
                 var dialog = new Modal(modal);
                 dialog.open();
+            },
+            showAll: function() {
+                this.pagination.current = 1;
+                this.pagination.per_page = 0;
+
+                this.getData();
             }
         },
         props: {

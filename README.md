@@ -35,7 +35,7 @@ Lavary\Menu\ServiceProvider::class,
 ...
 ```
 
-And also add the class aliases in the aliases[] array:
+And also add the class aliases in the ```$aliases[]``` array:
 
 ```php
 ...
@@ -104,7 +104,9 @@ protected $appends = ['endpoints', 'name'];
 
 Chronos requires you to set APP_URL in your .env file
 
-	APP_URL=https://chronos.ro
+```
+APP_URL=https://chronos.ro
+```
 
 
 ### Run migrations
@@ -122,14 +124,34 @@ php artisan db:seed --class=\\Chronos\\Content\\Seeds\\DatabaseSeeder
 
 Chronos runs a couple of tasks in the background, so you will need to set up task scheduling by adding the following to your Cron entries on your server:
 
-	* * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
+```
+* * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
+```
 
 
-### Run Passport install script
+### Install and configure Passport
 
-Finally, we need to run the install script of laravel/passport to generate our encryption keys:
+1. Add the following to the ```boot()``` method in ```app/Providers/AuthServiceProvider```
 
-	php artisan passport:install
+```
+Passport::routes();
+```
+
+2. In ```app/Http/Kernel.php```, add the following to the ```$middlewareGroups[]``` array:
+
+```
+...
+\Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
+...
+```
+
+3. Run the install script of laravel/passport to generate our encryption keys:
+
+```
+php artisan passport:install
+```
+
+4. Finally, create a new token in the Chronos admin, ```Settings/Access tokens```.
 
 
 ---

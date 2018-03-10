@@ -288,6 +288,7 @@ Vue.component('data-table', {
 			document.querySelector(target).value = value;
 		},
 		showAll: function() {
+			this.pagination.current = 1;
 			this.pagination.per_page = 0;
 
 			this.getData();

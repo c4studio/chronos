@@ -2,6 +2,8 @@
 
 return [
 
+    'media_items_per_page' => 30,
+
     'system_content_types' => ['Gallery'],
 
     'upload_paths' => [
