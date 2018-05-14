@@ -2,7 +2,7 @@
 
 return [
 
-    'version' => '2.2.15',
+    'version' => '2.2.16',
 
 
     'alerts' => [

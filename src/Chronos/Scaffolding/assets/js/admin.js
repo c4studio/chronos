@@ -6,7 +6,7 @@ const vueStore = {
 	},
 	updateFormErrors: function(formErrors) {
 		if (!formErrors.status || formErrors.status != 200)
-			this.state.formErrors = JSON.deflate(formErrors);
+			this.state.formErrors = JSON.deflate(formErrors.errors);
 		else
 			this.state.formErrors = [];
 	}
