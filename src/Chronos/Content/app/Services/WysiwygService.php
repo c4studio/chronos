@@ -108,7 +108,7 @@ class WysiwygService
             $attr_matches = static::extract_attributes($matches[1]);
 
             // skip if attributes don't match up
-            if (count($attr_matches[1]) != count($attr_matches[2])) {
+            if (!is_array($attr_matches) || empty($attr_matches) || count($attr_matches[1]) != count($attr_matches[2])) {
                 static::context_aware_replace_2('\[gallery(.*?)\]', $matches[0], '', $text);
                 continue;
             }
@@ -154,7 +154,7 @@ class WysiwygService
             $attr_matches = static::extract_attributes($matches[1]);
 
             // skip if attributes don't match up
-            if (count($attr_matches[1]) != count($attr_matches[2])) {
+            if (!is_array($attr_matches) || empty($attr_matches) || count($attr_matches[1]) != count($attr_matches[2])) {
                 $text = preg_replace('/\[link(.*?)\]/', '', $text);
                 continue;
             }
@@ -185,7 +185,7 @@ class WysiwygService
             $attr_matches = static::extract_attributes($matches[1]);
 
             // skip if attributes don't match up
-            if (count($attr_matches[1]) != count($attr_matches[2])) {
+            if (!is_array($attr_matches) || empty($attr_matches) || count($attr_matches[1]) != count($attr_matches[2])) {
                 static::context_aware_replace_2('\[media(.*?)\]', $matches[0], '', $text);
                 continue;
             }
@@ -227,7 +227,7 @@ class WysiwygService
             $attr_matches = static::extract_attributes($matches[1]);
 
             // skip if attributes don't match up
-            if (count($attr_matches[1]) != count($attr_matches[2])) {
+            if (!is_array($attr_matches) || empty($attr_matches) || count($attr_matches[1]) != count($attr_matches[2])) {
                 static::context_aware_replace_2('\[youtube(.*?)\]', $matches[0], '', $text);
                 continue;
             }

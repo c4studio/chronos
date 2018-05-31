@@ -9,7 +9,7 @@
                 <field v-for="field in fields" v-bind:fieldset="field.fieldset" v-bind:fieldset-key="key" v-bind:field-data="field"></field>
             </div>
             <div class="repetition-meta" v-if="repeatable">
-                <span class="repetition-key" v-html="key + 1"></span><a class="delete-repetition" v-on:click="deleteRepetition(key)" v-if="key > 0">{!! trans('chronos.content::forms.Remove repetition') !!}</a>
+                <span class="repetition-key" v-html="key + 1"></span><a class="delete-repetition" v-on:click="deleteRepetition(key)">{!! trans('chronos.content::forms.Remove repetition') !!}</a>
             </div>
         </div>
         <div class="fieldset-footer" v-if="repeatable">
@@ -128,7 +128,9 @@
                             // populate with data
                             this.populateData();
 
+                            editorEventHub.$on('delete-fieldset-repetition', this.deleteFieldsetFields);
                             editorEventHub.$on('repopulate-field', this.repopulateData);
+                            editorEventHub.$on('shiftup-fieldset-repetition', this.shiftUpFieldsetFields);
                         },
                         data: function() {
                             return {
@@ -152,6 +154,20 @@
                             }
                         },
                         methods: {
+                            deleteFieldsetFields: function(fieldset_id, fieldset_key, field) {
+                                if (this.fieldset.id == fieldset_id && this.fieldsetKey == fieldset_key) {
+                                    if (field !== null) {
+                                        if (this.id == field.id) {
+                                            this.repetitions = field.repetitions;
+                                            this.values = field.values;
+                                        }
+                                    }
+                                    else {
+                                        this.repetitions = [];
+                                        this.values = [];
+                                    }
+                                }
+                            },
                             deleteRepetition: function(key) {
                                 // delete repetition
                                 this.repetitions.splice(key, 1);
@@ -230,6 +246,11 @@
                                     this.values.push(this.fieldData.default);
                                 else
                                     this.values.push([this.fieldData.default]);
+                            },
+                            shiftUpFieldsetFields: function(fieldset_id, fieldset_key) {
+                                if (this.fieldset.id == fieldset_id && this.fieldsetKey == fieldset_key) {
+                                    editorEventHub.$emit('delete-fieldset-repetition', fieldset_id, fieldset_key -1, this);
+                                }
                             }
                         },
                         props: {
@@ -271,16 +292,11 @@
                 },
                 methods: {
                     deleteRepetition: function(key) {
-                        this.fields.forEach(function(field) {
-                            field.value.splice(key, 1);
-                        });
-                        this.repetitions.forEach(function(fieldset, key) {
-                            fieldset.fields.forEach(function(field) {
-                                field.value.splice(key, 1);
+                        if (this.repetitions.length > key + 1)
+                            editorEventHub.$emit('shiftup-fieldset-repetition', this.id, key + 1);
+                        else
+                            editorEventHub.$emit('delete-fieldset-repetition', this.id, key, null);
 
-                                editorEventHub.$emit('repopulate-field', key, field.id);
-                            });
-                        });
                         this.repetitions.splice(key, 1);
 
                     },
