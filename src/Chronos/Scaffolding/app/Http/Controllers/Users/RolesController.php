@@ -28,7 +28,7 @@ class RolesController extends Controller
                     elseif ($k == 1) $array[$item] = $value;
                     else {
                         $temp = $array;
-                        $array = array();
+                        $array = [];
                         $array[$item] = $temp;
                     }
                 }

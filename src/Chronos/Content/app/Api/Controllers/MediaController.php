@@ -170,7 +170,7 @@ class MediaController extends Controller
                 $asset_path = $path['asset_path'];
 
                 $filename = $request->has('fileNames') ? pathinfo($request->get('fileNames')[$key])['filename'] : str_random(12);
-                $filename = transliterate(str_slug($filename));
+                $filename = str_transliterate(str_slug($filename));
                 $basename = $filename . '.' . $extension;
 
                 // make sure file names are unique

@@ -262,6 +262,7 @@ Vue.component('data-table', {
 		search: debounce(function() {
 			this.getData();
 
+			this.pagination.current = 1;
 			this.searchOn = true;
 		}, 500),
 		selectAll: function() {
