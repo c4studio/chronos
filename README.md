@@ -145,13 +145,30 @@ Passport::routes();
 ...
 ```
 
-3. Run the install script of laravel/passport to generate our encryption keys:
+3. Change the driver to ```passport``` in ```config/auth.php```
+
+```
+'guards' => [
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
+    ],
+
+    'api' => [
+        'driver' => 'passport',
+        'provider' => 'users',
+        'hash' => false,
+    ],
+],
+```
+
+4. Run the install script of laravel/passport to generate our encryption keys:
 
 ```
 php artisan passport:install
 ```
 
-4. Finally, create a new token in the Chronos admin, ```Settings/Access tokens```.
+5. Finally, create a new token in the Chronos admin, ```Settings/Access tokens```.
 
 
 ---
