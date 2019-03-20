@@ -47,8 +47,20 @@ class MediaController extends Controller
 
     public function destroy(Media $media)
     {
-        $pathinfo = pathinfo($media->file);
-        $path = parse_url($pathinfo['dirname'])['path'];
+        $pathinfo = parse_url(pathinfo($media->file)['dirname']);
+        $path = null;
+        if (!isset($pathinfo['path'])) {
+            // if we're here, it means we're using cookieless subdomains to host media files
+            foreach (config('content.upload_paths') as $p) {
+                if ($pathinfo['host'] == preg_replace('#^https?://#', '', $p['asset_path'])) {
+                    $path = $p['upload_path'];
+                    break;
+                }
+            }
+        } else {
+            // if we're here, we're probably using a simple upload folder
+            $path = $pathinfo['path'];
+        }
         $upload_path = public_path($path);
 
         foreach ($media->image_styles as $style) {
@@ -93,8 +105,20 @@ class MediaController extends Controller
             foreach ($request->get('media') as $media_id) {
                 $media = Media::find($media_id);
 
-                $pathinfo = pathinfo($media->file);
-                $path = parse_url($pathinfo['dirname'])['path'];
+                $pathinfo = parse_url(pathinfo($media->file)['dirname']);
+                $path = null;
+                if (!isset($pathinfo['path'])) {
+                    // if we're here, it means we're using cookieless subdomains to host media files
+                    foreach (config('content.upload_paths') as $p) {
+                        if ($pathinfo['host'] == preg_replace('#^https?://#', '', $p['asset_path'])) {
+                            $path = $p['upload_path'];
+                            break;
+                        }
+                    }
+                } else {
+                    // if we're here, we're probably using a simple upload folder
+                    $path = $pathinfo['path'];
+                }
                 $upload_path = public_path($path);
 
                 foreach ($media->image_styles as $style) {

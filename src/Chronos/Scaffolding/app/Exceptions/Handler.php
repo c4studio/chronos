@@ -54,8 +54,9 @@ class Handler extends BaseHandler
             // loop through available upload paths and determine if current path is one of them
             $paths = \Config::get('content.upload_paths');
             foreach ($paths as $path) {
-                $check_path = trim(parse_url($path['asset_path'])['path'], '/') . '/*';
-                if ($request->is($check_path)) {
+                $full_path = parse_url($path['asset_path']);
+                $check_path = isset($full_path['path']) ? trim($full_path['path'], '/') . '/*' : basename($request->path());
+                if ($request->is($check_path) && $request->getHttpHost() == $full_path['host']) {
 
                     // check if it is a generatable image style
                     $basename = basename($request->path());
