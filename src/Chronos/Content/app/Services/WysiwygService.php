@@ -171,6 +171,7 @@ class WysiwygService
 
             // replace
             $replace_tpl = $link_tpl->with([
+                'class' => isset($attrs['class']) ? $attrs['class'] : '',
                 'target' => isset($attrs['target']) ? $attrs['target'] : null,
                 'text' => $attrs['text'],
                 'url' => $attrs['url']
@@ -210,8 +211,9 @@ class WysiwygService
             $replace_tpl = $media_tpl->with([
                 'media' => $media,
                 'alt' => isset($attrs['alt']) ? $attrs['alt'] : '',
-                'title' => isset($attrs['title']) ? $attrs['title'] : '',
-                'style' => isset($attrs['style']) ? $attrs['style'] : config('chronos.default_image_style')
+                'class' => isset($attrs['class']) ? $attrs['class'] : '',
+                'style' => isset($attrs['style']) ? $attrs['style'] : config('chronos.default_image_style'),
+                'title' => isset($attrs['title']) ? $attrs['title'] : ''
             ])->render();
             static::context_aware_replace_2('\[media(.*?)\]', $matches[0], $replace_tpl, $text);
         }
