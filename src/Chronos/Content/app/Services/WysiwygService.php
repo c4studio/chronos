@@ -113,8 +113,10 @@ class WysiwygService
                 continue;
             }
 
-            foreach ($attr_matches[1] as $key => $attr)
+            $attrs = [];
+            foreach ($attr_matches[1] as $key => $attr) {
                 $attrs[$attr] = $attr_matches[2][$key];
+            }
 
             // skip if id is not set
             if (!isset($attrs['id'])) {
@@ -159,8 +161,10 @@ class WysiwygService
                 continue;
             }
 
-            foreach ($attr_matches[1] as $key => $attr)
+            $attrs = [];
+            foreach ($attr_matches[1] as $key => $attr) {
                 $attrs[$attr] = $attr_matches[2][$key];
+            }
 
 
             // skip if text or url is not set
@@ -191,6 +195,7 @@ class WysiwygService
                 continue;
             }
 
+            $attrs = [];
             foreach ($attr_matches[1] as $key => $attr) {
                 $attrs[$attr] = $attr_matches[2][$key];
             }
@@ -234,8 +239,10 @@ class WysiwygService
                 continue;
             }
 
-            foreach ($attr_matches[1] as $key => $attr)
+            $attrs = [];
+            foreach ($attr_matches[1] as $key => $attr) {
                 $attrs[$attr] = $attr_matches[2][$key];
+            }
 
             // skip vid is not set
             if (!isset($attrs['vid'])) {
