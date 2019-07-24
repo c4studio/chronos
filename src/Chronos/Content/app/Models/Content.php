@@ -67,9 +67,9 @@ class Content extends Model
 
         return sprintf(
             "%s/%s-%s",
-            $this->getTable(),
-            $this->getKey(),
-            $this->updated_at->timestamp
+            $model->getTable(),
+            $model->getKey(),
+            $model->updated_at->timestamp
         );
     }
 
@@ -160,8 +160,6 @@ class Content extends Model
                 }
             }
         });
-
-        return Cache::remember('Content:' . $this->attributes['id'] . ':fieldsets', 60 * 60 * 24 * 7, function () {
 
         return $model;
     }
