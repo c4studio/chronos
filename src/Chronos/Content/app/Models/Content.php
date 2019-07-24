@@ -3,6 +3,7 @@
 namespace Chronos\Content\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Content extends Model
 {
@@ -50,6 +51,18 @@ class Content extends Model
 
 
 
+    private function cacheKey()
+    {
+        return sprintf(
+            "%s/%s-%s",
+            $this->getTable(),
+            $this->getKey(),
+            $this->updated_at->timestamp
+        );
+    }
+
+
+
     /**
      * Dynamically retrieve attributes on the model.
      *
@@ -91,47 +104,52 @@ class Content extends Model
     {
         $model = parent::newFromBuilder($attributes);
 
-        $values = ContentFieldData::where('content_id', $model->attributes['id'])->get();
+        $model->custom_attributes = Cache::remember($this->cacheKey() . ':custom_attributes', 60 * 60 * 24 * 7, function () use ($model) {
+            $custom_attributes = [];
 
-        foreach ($values as $value) {
-            $field = $value->field;
-            $fieldset = $value->field->fieldset;
+            $values = ContentFieldData::where('content_id', $model->attributes['id'])->get();
+            foreach ($values as $value) {
+                $field = $value->field;
+                $fieldset = $value->field->fieldset;
 
-            if (@unserialize($value->value) !== false || $value->value == 'b:0;')
-                $value->value = unserialize($value->value);
+                if (@unserialize($value->value) !== false || $value->value == 'b:0;') {
+                    $value->value = unserialize($value->value);
+                }
                 if ($field->type == 'text' && $field->widget == 'wysiwyg') {
                     $value->filtered_value = filter_wysiwyg($value->value);
                 }
 
-            if ($fieldset->repeatable) {
-                if (!isset($model->custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key]))
-                    $model->custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key] = new \stdClass();
+                if ($fieldset->repeatable) {
+                    if (!isset($custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key]))
+                        $custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key] = new \stdClass();
 
-                if ($field->repeatable) {
-                    $model->custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key]->{$field->machine_name}[$value->field_repetition_key] = $value->value;
-                    if (isset($value->filtered_value))
-                        $model->custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key]->{$field->machine_name . '_filtered'}[$value->field_repetition_key] = $value->filtered_value;
+                    if ($field->repeatable) {
+                        $custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key]->{$field->machine_name}[$value->field_repetition_key] = $value->value;
+                        if (isset($value->filtered_value))
+                            $custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key]->{$field->machine_name . '_filtered'}[$value->field_repetition_key] = $value->filtered_value;
+                    } else {
+                        $custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key]->{$field->machine_name} = $value->value;
+                        if (isset($value->filtered_value))
+                            $custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key]->{$field->machine_name . '_filtered'} = $value->filtered_value;
+                    }
                 } else {
-                    $model->custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key]->{$field->machine_name} = $value->value;
-                    if (isset($value->filtered_value))
-                        $model->custom_attributes[$fieldset->machine_name][$value->fieldset_repetition_key]->{$field->machine_name . '_filtered'} = $value->filtered_value;
+                    if (!isset($custom_attributes[$fieldset->machine_name]))
+                        $custom_attributes[$fieldset->machine_name] = new \stdClass();
+
+                    if ($field->repeatable) {
+                        $custom_attributes[$fieldset->machine_name]->{$field->machine_name}[$value->field_repetition_key] = $value->value;
+                        if (isset($value->filtered_value))
+                            $custom_attributes[$fieldset->machine_name]->{$field->machine_name . '_filtered'}[$value->field_repetition_key] = $value->filtered_value;
+                    } else {
+                        $custom_attributes[$fieldset->machine_name]->{$field->machine_name} = $value->value;
+                        if (isset($value->filtered_value))
+                            $custom_attributes[$fieldset->machine_name]->{$field->machine_name . '_filtered'} = $value->filtered_value;
+                    }
                 }
             }
-            else {
-                if (!isset($model->custom_attributes[$fieldset->machine_name]))
-                    $model->custom_attributes[$fieldset->machine_name] = new \stdClass();
+        });
 
-                if ($field->repeatable) {
-                    $model->custom_attributes[$fieldset->machine_name]->{$field->machine_name}[$value->field_repetition_key] = $value->value;
-                    if (isset($value->filtered_value))
-                        $model->custom_attributes[$fieldset->machine_name]->{$field->machine_name . '_filtered'}[$value->field_repetition_key] = $value->filtered_value;
-                } else {
-                    $model->custom_attributes[$fieldset->machine_name]->{$field->machine_name} = $value->value;
-                    if (isset($value->filtered_value))
-                        $model->custom_attributes[$fieldset->machine_name]->{$field->machine_name . '_filtered'} = $value->filtered_value;
-                }
-            }
-        }
+        return Cache::remember('Content:' . $this->attributes['id'] . ':fieldsets', 60 * 60 * 24 * 7, function () {
 
         return $model;
     }
@@ -177,50 +195,52 @@ class Content extends Model
      */
     public function getAllFieldsetsAttribute()
     {
-        $fieldsets = [];
-        $all_fieldsets = [];
+        return Cache::remember($this->cacheKey() . ':fieldsets', 60 * 60 * 24 * 7, function () {
+            $fieldsets = [];
+            $all_fieldsets = [];
 
-        if ($this->type->fieldsets)
-            $all_fieldsets = $this->type->fieldsets;
-        if ($this->fieldsets)
-            $all_fieldsets = $all_fieldsets->merge($this->fieldsets);
+            if ($this->type->fieldsets)
+                $all_fieldsets = $this->type->fieldsets;
+            if ($this->fieldsets)
+                $all_fieldsets = $all_fieldsets->merge($this->fieldsets);
 
-        if ($all_fieldsets) {
-            foreach ($all_fieldsets as $fieldset) {
-                $fieldset_orig = clone $fieldset;
-                $fieldset_repetitions = [$fieldset_orig];
+            if ($all_fieldsets) {
+                foreach ($all_fieldsets as $fieldset) {
+                    $fieldset_orig = clone $fieldset;
+                    $fieldset_repetitions = [$fieldset_orig];
 
-                foreach ($fieldset->fields as $field) {
-                    $field_orig = clone $field;
-                    $field_repetitions = [$field_orig];
+                    foreach ($fieldset->fields as $field) {
+                        $field_orig = clone $field;
+                        $field_repetitions = [$field_orig];
 
-                    $field_values = [];
-                    $values = ContentFieldData::query()->where('content_id', $this->id)->where('field_id', $field->id)->get();
+                        $field_values = [];
+                        $values = ContentFieldData::query()->where('content_id', $this->id)->where('field_id', $field->id)->get();
 
-                    if ($values) {
-                        foreach ($values as $valueData) {
-                            if (@unserialize($valueData->value) !== false || $valueData->value == 'b:0;')
-                                $valueData->value = unserialize($valueData->value);
+                        if ($values) {
+                            foreach ($values as $valueData) {
+                                if (@unserialize($valueData->value) !== false || $valueData->value == 'b:0;')
+                                    $valueData->value = unserialize($valueData->value);
 
-                            if (!isset($fieldset_repetitions[$valueData->fieldset_repetition_key]))
-                                $fieldset_repetitions[$valueData->fieldset_repetition_key] = clone $fieldset_orig;
-                            if (!isset($field_repetitions[$valueData->field_repetition_key]))
-                                $field_repetitions[$valueData->field_repetition_key] = clone $field_orig;
+                                if (!isset($fieldset_repetitions[$valueData->fieldset_repetition_key]))
+                                    $fieldset_repetitions[$valueData->fieldset_repetition_key] = clone $fieldset_orig;
+                                if (!isset($field_repetitions[$valueData->field_repetition_key]))
+                                    $field_repetitions[$valueData->field_repetition_key] = clone $field_orig;
 
-                            $field_values[$valueData->fieldset_repetition_key][$valueData->field_repetition_key] = $valueData->value;
+                                $field_values[$valueData->fieldset_repetition_key][$valueData->field_repetition_key] = $valueData->value;
+                            }
                         }
+                        $field->value = $field_values;
+                        $field->repetitions = $field_repetitions;
                     }
-                    $field->value = $field_values;
-                    $field->repetitions = $field_repetitions;
+
+                    $fieldset->repetitions = $fieldset_repetitions;
+                    $fieldsets[] = $fieldset;
                 }
 
-                $fieldset->repetitions = $fieldset_repetitions;
-                $fieldsets[] = $fieldset;
             }
 
-        }
-
-        return $fieldsets;
+            return $fieldsets;
+        });
     }
 
     /**
