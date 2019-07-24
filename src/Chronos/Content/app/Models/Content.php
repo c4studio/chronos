@@ -59,8 +59,12 @@ class Content extends Model
      *
      * @return string
      */
-    private function cacheKey()
+    private function cacheKey($model = null)
     {
+        if (!$model) {
+            $model = $this;
+        }
+
         return sprintf(
             "%s/%s-%s",
             $this->getTable(),
@@ -112,7 +116,7 @@ class Content extends Model
     {
         $model = parent::newFromBuilder($attributes);
 
-        $model->custom_attributes = Cache::remember($this->cacheKey() . ':custom_attributes', 60 * 60 * 24 * 7, function () use ($model) {
+        $model->custom_attributes = Cache::remember($this->cacheKey($model) . ':custom_attributes', 60 * 60 * 24 * 7, function () use ($model) {
             $custom_attributes = [];
 
             $values = ContentFieldData::where('content_id', $model->attributes['id'])->get();
