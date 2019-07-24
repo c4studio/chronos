@@ -51,6 +51,14 @@ class Content extends Model
 
 
 
+    /**
+     * Generates cache key for model
+     *
+     * As we include the updated_at timestamp in the cache key,
+     * it will be invalidated whenever model gets updated
+     *
+     * @return string
+     */
     private function cacheKey()
     {
         return sprintf(
