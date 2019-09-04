@@ -159,6 +159,8 @@ class Content extends Model
                     }
                 }
             }
+
+            return $custom_attributes;
         });
 
         return $model;
@@ -171,7 +173,7 @@ class Content extends Model
      */
     public function toArray()
     {
-        return array_merge(parent::toArray(), $this->custom_attributes);
+        return $this->custom_attributes ? array_merge(parent::toArray(), $this->custom_attributes) : parent::toArray();
     }
 
 
