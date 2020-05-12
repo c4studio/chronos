@@ -225,6 +225,10 @@
             entityTypes: {
                 contentTypes: [],
                 userRoles: []
+            },
+            pendingRequests: {
+                contentTypes: false,
+                userRoles: false
             }
         }
     };
@@ -239,7 +243,12 @@
                                 contentTypes: [],
                                 userRoles: []
                             };
-                            if (Object.keys(fieldsetEditorStore.state.entityTypes.contentTypes.length == 0)) {
+                            if (
+                                !fieldsetEditorStore.state.pendingRequests.contentTypes
+                                && Object.keys(fieldsetEditorStore.state.entityTypes.contentTypes.length == 0)
+                            ) {
+                                fieldsetEditorStore.state.pendingRequests.contentTypes = true;
+
                                 Vue.http.get('/api/content/types').then(function (response) {
                                     entityTypes['contentTypes'] = [];
                                     response.body.data.forEach(function (contentType) {
@@ -252,6 +261,8 @@
 
                                     fieldsetEditorStore.state.entityTypes = entityTypes;
                                     this.entityTypes = fieldsetEditorStore.state.entityTypes;
+
+                                    fieldsetEditorStore.state.pendingRequests.contentTypes = false;
                                 }.bind(this), function(response) {
                                     if (response.body.alerts) {
                                         response.body.alerts.forEach(function(alert) {
@@ -265,10 +276,17 @@
                                             message: response.statusText + ' (' + response.status + ')'
                                         });
                                     }
+
+                                    fieldsetEditorStore.state.pendingRequests.contentTypes = false;
                                 });
                             }
 
-                            if (Object.keys(fieldsetEditorStore.state.entityTypes.userRoles.length == 0)) {
+                            if (
+                                !fieldsetEditorStore.state.pendingRequests.userRoles
+                                && Object.keys(fieldsetEditorStore.state.entityTypes.userRoles.length == 0)
+                            ) {
+                                fieldsetEditorStore.state.pendingRequests.userRoles = true;
+
                                 Vue.http.get('/api/users/roles/').then(function (response) {
                                     entityTypes['userRoles'] = [];
                                     response.body.data.forEach(function(role) {
@@ -281,6 +299,8 @@
 
                                     fieldsetEditorStore.state.entityTypes = entityTypes;
                                     this.entityTypes = fieldsetEditorStore.state.entityTypes;
+
+                                    fieldsetEditorStore.state.pendingRequests.userRoles = false;
                                 }.bind(this), function(response) {
                                     if (response.body.alerts) {
                                         response.body.alerts.forEach(function(alert) {
@@ -294,6 +314,8 @@
                                             message: response.statusText + ' (' + response.status + ')'
                                         });
                                     }
+
+                                    fieldsetEditorStore.state.pendingRequests.userRoles = false;
                                 });
                             }
                         },
