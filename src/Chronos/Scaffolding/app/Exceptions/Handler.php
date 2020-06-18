@@ -127,10 +127,12 @@ class Handler extends BaseHandler
         }
 
         // check if Chronos path
-        if ($request->is('admin') || $request->is('admin/*'))
+        if ($request->is('admin') || $request->is('admin/*')) {
             return redirect()->guest(route('chronos.auth.login'));
+	}
         // or app
-        else
-            return redirect()->guest('login');
+        else {
+	    return redirect($e->redirectTo());
+	}
     }
 }
